@@ -31,7 +31,8 @@ This repository answers the customer-analytics team's three open questions for F
 | `common.py` | Shared helpers with documented edge cases (importing runs nothing) | supports Parts 1 to 4 |
 | `part1.py` ... `part4.py` | One script per Part | yes |
 | `outputs/part*_results.txt`, `outputs/*.csv` | Every results file and CSV named in the brief | yes |
-| `tests/run_tests.py` | 56 independent checks (edge cases, cross-checks, format) | extra |
+| `tests/test_checks.py`, `tests/run_tests.py` | 56 independent checks (edge cases, cross-checks, format) | extra |
+| `docs/walkthrough/` | Line-by-line walkthrough, traceability matrix, glossary, viva prep | extra |
 | `data_profile.py`, `robustness.py` | Data-quality profile and robustness analysis | extra |
 | `outputs/extras/data_profile.txt`, `outputs/extras/robustness.txt` | Output of the two extra scripts | extra |
 
@@ -55,7 +56,7 @@ If `pip` refuses a system-wide install (the "externally managed environment" mes
 Optional, not required by the brief:
 
 ```
-python tests/run_tests.py        # 56 checks; prints "56 tests, 56 passed, 0 failed"
+python tests/test_checks.py      # 56 checks (or python tests/run_tests.py / pytest -q)
 python data_profile.py           # writes outputs/extras/data_profile.txt
 python robustness.py             # writes outputs/extras/robustness.txt
 ```
@@ -106,7 +107,7 @@ python robustness.py             # writes outputs/extras/robustness.txt
 
 ### Verification
 
-`python tests/run_tests.py` runs 56 checks without any test framework. They fall into three groups:
+`python tests/test_checks.py` (or `python tests/run_tests.py` / `pytest -q`) runs 56 checks without any test framework. They fall into three groups:
 
 1. **Edge cases of the helpers** (table above): corrupt files, overflow, ties, zero denominators, leakage, degenerate boosting.
 2. **Cross-checks against independent references**, used only to verify and never to produce a graded number: `numpy.polyfit` and `numpy.linalg.lstsq` for every regression in Part 1; a Newton-Raphson solution for the logistic minimum (1000 gradient updates end within 0.001 of it); a numerical-gradient check of the logistic gradient; a brute-force Python sort for KNN; a slow point-by-point K-means; the minimum-spanning-tree identity and a separate Lance–Williams implementation for all 15 hierarchical merges; `numpy.linalg.eigvalsh` on the correlation matrix for PCA; hand calculations for AdaBoost, entropy and the parameter counts.
