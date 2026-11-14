@@ -220,3 +220,75 @@ Author: Gaurav Chakraborty
 
 
 print("Loaded Part 1 builder.")
+
+
+# ----------------------------------------------------------------------------- 4. part2.md
+def make_part2_doc() -> None:
+    spans = parse_spans(ROOT / "part2.py")
+    table = make_markdown_table(spans, {
+        1: ("Module docstring documenting Tasks 2.1-2.8 and author attribution.", "Defines classification scope and tasks.", "Header", "Module header documentation."),
+        6: ("Imports numpy library.", "NumPy numerical array operations.", "Dependencies", "Standardized math functions."),
+        7: ("Imports shared helpers for classification, scaling, metrics, and I/O.", "Imports split_stratified, standardise_train_test, train_logistic, etc.", "Dependencies", "Shared primitives."),
+        12: ("Loads dataset matrices X, y, val from data/records.csv.", "X (800x7), y (800), val (800).", "Task 2 Data Loading", "Validates records integrity."),
+        13: ("Task 2.1: Performs 70/30 stratified train/test split.", "tr (560 rows), te (240 rows).", "Task 2.1 Stratification", "Preserves file order; floor(7*count/10) per class."),
+        14: ("Task 2.1: Standardises features using training set mean and sample SD only.", "Xtr (560x7), Xte (240x7).", "Task 2.1 Preprocessing", "Completely prevents test-set leakage."),
+        15: ("Task 2.1: Slices class labels for train and test sets.", "ytr (560), yte (240).", "Task 2.1 Labels", "Binary ground truth churn flags."),
+        16: ("Initializes results accumulator list R.", "Stores (key, value) pairs for outputs/part2_results.txt.", "Results Export", "Guarantees key uniqueness."),
+        17: ("Defines add helper function.", "Appends tuple (k, v) to R.", "Results Export", "Maintains ordering of output keys."),
+        19: ("Task 2.1: Records train rows and positive churner count.", "train_rows = 560, train_positives = 119.", "Task 2.1 Partition Counts", "Checked by test_part2_split_checkpoints."),
+        20: ("Task 2.1: Records test rows and positive churner count.", "test_rows = 240, test_positives = 51.", "Task 2.1 Partition Counts", "Checked by test_part2_split_checkpoints."),
+        22: ("Task 2.2: Trains logistic regression from scratch via gradient descent.", "eta = 0.1, 1000 epochs, records at 1, 10, 100, 1000.", "Task 2.2 Optimization", "Batch gradient descent on binary cross-entropy."),
+        23: ("Task 2.2: Records binary cross-entropy loss across epochs.", "L0 = 0.6931, L1 = 0.6728, L10 = 0.5731, L100 = 0.4510, L1000 = 0.4357.", "Task 2.2 Loss Convergence", "Monotonically decreases towards empirical minimum."),
+        25: ("Task 2.2: Records learned weights for features X1 through X7.", "w1=-0.5554, w2=0.5505, w3=0.9013, w4=-0.1459, w5=-0.2162, w6=0.2348, w7=-0.0120.", "Task 2.2 Model Parameters", "Standardized feature weights."),
+        27: ("Task 2.2: Records learned bias term.", "bias = -2.0696.", "Task 2.2 Model Parameters", "Reflects baseline log-odds of churn."),
+        28: ("Task 2.2: Computes predicted churn probabilities on test and train sets.", "ptest = sigmoid(Xte @ w + b), ptrain = sigmoid(Xtr @ w + b).", "Task 2.2 Inference", "Evaluated via stable sigmoid."),
+        29: ("Task 2.2: Records test set binary cross-entropy loss.", "test_bce = bce(yte, ptest) = 0.4437.", "Task 2.2 Generalization", "Evaluates out-of-sample log loss."),
+        31: ("Task 2.3: Compares learning rates eta in {0.01, 0.1, 1.0} over 200 epochs.", "Restarts from zero; records loss at epoch 200.", "Task 2.3 Learning Rate Sensitivity", "L200(0.01)=0.4855 > L200(0.1)=0.4445 > L200(1.0)=0.4357."),
+        36: ("Task 2.4: Computes odds ratios exp(w_j) for each standardized predictor.", "OR_X1=0.5739, OR_X2=1.7341, OR_X3=2.4629, OR_X4=0.8642, OR_X5=0.8056, OR_X6=1.2646, OR_X7=0.9881.", "Task 2.4 Interpretability", "X3 (discount share) has highest odds ratio (2.4629)."),
+        40: ("Task 2.5: Evaluates confusion matrix and rate metrics at thresholds 0.5 and 0.3.", "Iterates over tau in (0.5, 0.3); evaluates TP, FP, TN, FN, acc, prec, rec, f1, spec.", "Task 2.5 Threshold Evaluation", "Lowering tau from 0.5 to 0.3 raises recall from 0.4706 to 0.7451."),
+        46: ("Task 2.5: Computes blind majority-class accuracy baseline.", "blind_accuracy = mean(yte == 0) = 189 / 240 = 0.7875.", "Task 2.5 Baseline", "Baseline that predicts nobody ever churns."),
+        48: ("Task 2.6: Sweeps decision threshold tau from 0.1 to 0.9 in steps of 0.1.", "Builds ROC curve coordinates (FPR, TPR) and confusion cells.", "Task 2.6 ROC Sweep", "Generates outputs/part2_thresholds.csv."),
+        55: ("Task 2.7: Runs 5-fold cross-validation on training data to select best K for KNN.", "Evaluates odd K in 1..21; folds = training index % 5.", "Task 2.7 Model Selection", "Outputs outputs/part2_knn_cv.csv; selects K = 5 (mean CV F1 = 0.4541)."),
+        58: ("Task 2.7: Evaluates KNN classifier at best K = 5 on test set.", "Computes test predictions via majority vote of 5 nearest neighbours.", "Task 2.7 KNN Evaluation", "KNN test metrics: acc=0.7583, prec=0.4146, rec=0.3333, f1=0.3696."),
+        66: ("Task 2.8: Defines asymmetric business cost function.", "Cost = 50 * FP + 400 * FN.", "Task 2.8 Cost Function", "Reflects INR 50 coupon cost vs INR 400 lost churner margin."),
+        70: ("Task 2.8: Performs grid search over tau = k/20 to find cost-optimal threshold.", "Grid search on training set; selects tau* = 0.15 (train cost INR 13,950).", "Task 2.8 Optimal Decision Rule", "Ties broken by strictly favoring the smaller threshold."),
+        72: ("Task 2.8: Evaluates test set cost at optimal tau = 0.15.", "cost_test_at_tau = 50 * 73 + 400 * 6 = INR 6,050.", "Task 2.8 Business Impact", "Saves INR 5,750 over tau=0.5 (INR 11,800) and INR 14,350 over flagging nobody (INR 20,400)."),
+        73: ("Task 2.8: Evaluates test set cost at standard tau = 0.5.", "cost_test_at_0.5 = 50 * 20 + 400 * 27 = INR 11,800.", "Task 2.8 Comparison", "Standard threshold misses 27 churners."),
+        74: ("Task 2.8: Evaluates test set cost of inertia (flagging nobody).", "cost_test_flag_nobody = 400 * 51 = INR 20,400.", "Task 2.8 Baseline Cost", "Cost if no customer retention campaign is run."),
+        76: ("Task 2.8: Records test set operational metrics at tau = 0.15.", "Flagged = 118, Missed = 6, Recall = 45 / 51 = 0.8824.", "Task 2.8 Operational Metrics", "High recall catches 88.24% of all churners."),
+        80: ("Persists Part 2 results atomically to outputs/part2_results.txt.", "write_results(outputs/part2_results.txt, R).", "Task 2 Deliverables", "Writes all graded classification metrics."),
+    })
+    header = """# Walkthrough: part2.py (Classification, ROC, & Cost Optimization)
+
+Author: Gaurav Chakraborty
+
+## 1. Specification & Requirements Implemented
+- **Tasks Implemented**:
+  - Task 2.1: Stratified 70/30 train/test split and standardized scaling.
+  - Task 2.2: From-scratch logistic regression optimized via binary cross-entropy.
+  - Task 2.3: Learning rate comparison across $\eta \in \{0.01, 0.1, 1.0\}$.
+  - Task 2.4: Odds ratios $\text{OR}_j = \exp(w_j)$ for feature interpretation.
+  - Task 2.5: Evaluation metrics at $\tau = 0.5$ and $\tau = 0.3$ vs blind majority baseline.
+  - Task 2.6: Threshold sweep generating monotone ROC points table.
+  - Task 2.7: $K$-Nearest Neighbours with 5-fold CV hyperparameter selection.
+  - Task 2.8: Asymmetric operational cost minimization ($C_{\text{FA}} = \text{INR } 50, C_{\text{Miss}} = \text{INR } 400$).
+- **Inputs**: `data/records.csv` ($800 \times 10$).
+- **Outputs**:
+  - `outputs/part2_results.txt` (43 key-value pairs).
+  - `outputs/part2_thresholds.csv` ($9 \times 7$ table).
+  - `outputs/part2_knn_cv.csv` ($11 \times 2$ table).
+
+## 2. Worked Numeric Examples (Live Computation)
+- **Task 2.1**: Train rows $= 560$ (119 churners), Test rows $= 240$ (51 churners).
+- **Task 2.2**: $L_0 = 0.6931 \to L_{1000} = 0.4357$; $w_3 = +0.9013$ (discount share), $w_1 = -0.5554$ (tenure), $\text{bias} = -2.0696$.
+- **Task 2.3**: $L_{200}(0.01) = 0.4855 > L_{200}(0.1) = 0.4445 > L_{200}(1.0) = 0.4357$.
+- **Task 2.4**: $\text{OR}(X_3) = 2.4629$ (odds of churn increase $146\%$ per SD of discount share).
+- **Task 2.5**: $\tau = 0.5 \implies F_1 = 0.5053, \text{Recall} = 0.4706$; $\tau = 0.3 \implies F_1 = 0.5714, \text{Recall} = 0.7451$; Blind accuracy $= 0.7875$.
+- **Task 2.7**: Best $K = 5$ (mean CV $F_1 = 0.4541$); Test $F_1 = 0.3696, \text{Recall} = 0.3333$.
+- **Task 2.8**: Optimal $\tau^* = 0.15$; Test cost $= \text{INR } 6,050$ vs $\text{INR } 11,800$ at $\tau = 0.50$ and $\text{INR } 20,400$ for flagging nobody.
+
+## 3. Line-by-Line Code & Statement Breakdown
+
+"""
+    (DOCS / "part2.md").write_text(header + table + "\n", encoding="utf-8")
+    print("Wrote part2.md")
