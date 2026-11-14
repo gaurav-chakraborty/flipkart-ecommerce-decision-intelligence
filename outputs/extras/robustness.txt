@@ -1,0 +1,73 @@
+A. COST-RATIO SENSITIVITY (pinned split; false alarm fixed at INR 50, threshold re-chosen on TRAINING rows)
+miss_cost_inr, chosen_tau, test_cost, test_flagged, test_missed, cost_at_0.5, cost_flag_nobody
+100, 0.25, 3550, 92, 10, 3700, 5100
+200, 0.20, 4800, 107, 8, 6400, 10200
+400, 0.15, 6050, 118, 6, 11800, 20400
+800, 0.05, 4800, 147, 0, 22600, 40800
+1600, 0.05, 4800, 147, 0, 44200, 81600
+reading: the cheaper a missed churner is relative to a coupon, the higher the chosen threshold and the fewer customers are flagged.
+at INR 100 the chosen threshold (0.25) costs INR 3550 against INR 3700 at tau=0.5 and INR 5100 for flagging nobody, so the gain from a low threshold is small when a miss is cheap.
+GRID-EDGE CASE: for miss cost(s) INR 800, INR 1600 the search picks tau=0.05, the lowest value on the k/20 grid, so the true optimum may lie below the grid; the grid is part of the brief's rule and was not widened.
+
+B. BOOTSTRAP OF THE 240 TEST ROWS (2000 resamples, seed 2508, percentile 95% intervals)
+test cost at tau=0.15: point 6050, 95% interval [4300, 8200]
+test cost at tau=0.50: point 11800, 95% interval [8150, 15601]
+saving of 0.15 over 0.50: 95% interval [2398, 9400]; share of resamples where 0.15 is cheaper = 1.0000
+recall at tau=0.15: point 0.8824, 95% interval [0.7777, 0.9615]
+
+C. 30 OTHER STRATIFIED RANDOM 70/30 SPLITS (shuffled within class; scaler, model and tau all fitted on that split's training rows)
+seed, chosen_tau, test_cost_chosen, test_cost_0.5, test_cost_nobody
+0, 0.10, 5250, 12850, 20400
+1, 0.05, 6100, 12550, 20400
+2, 0.15, 6250, 12550, 20400
+3, 0.15, 5100, 10300, 20400
+4, 0.05, 4600, 13450, 20400
+5, 0.10, 5200, 12800, 20400
+6, 0.10, 5950, 13600, 20400
+7, 0.15, 5550, 11700, 20400
+8, 0.15, 6100, 13700, 20400
+9, 0.15, 6350, 13450, 20400
+10, 0.05, 5600, 13050, 20400
+11, 0.05, 5850, 11800, 20400
+12, 0.10, 5300, 10600, 20400
+13, 0.15, 4750, 12850, 20400
+14, 0.15, 5350, 13200, 20400
+15, 0.10, 5950, 12650, 20400
+16, 0.10, 4950, 13350, 20400
+17, 0.15, 5350, 14050, 20400
+18, 0.15, 5700, 14000, 20400
+19, 0.20, 7000, 11700, 20400
+20, 0.15, 4250, 10700, 20400
+21, 0.10, 4750, 14950, 20400
+22, 0.05, 5700, 15650, 20400
+23, 0.10, 6300, 14800, 20400
+24, 0.05, 5950, 13750, 20400
+25, 0.15, 5650, 13000, 20400
+26, 0.15, 6250, 13050, 20400
+27, 0.15, 5850, 13200, 20400
+28, 0.10, 5350, 13500, 20400
+29, 0.10, 6600, 14600, 20400
+chosen tau: min 0.05, median 0.10, max 0.20
+train-chosen tau cheaper than 0.5 in 30 of 30 splits; cheaper than flagging nobody in 30 of 30
+mean saving versus 0.5 = INR 7417 (min INR 4700, max INR 10200)
+
+D. CALIBRATION OF THE LOGISTIC MODEL ON THE TEST ROWS (pinned split)
+predicted_bin, n, mean_predicted, observed_rate
+[0.00, 0.10), 104, 0.0263, 0.0288
+[0.10, 0.20), 29, 0.1456, 0.1724
+[0.20, 0.40), 43, 0.2851, 0.2791
+[0.40, 0.60), 38, 0.4929, 0.3684
+[0.60, 1.00), 26, 0.6968, 0.6538
+
+E. COEFFICIENT UNCERTAINTY (Wald, observed information at the Task 2.2 solution; weights are per training SD)
+term, weight, std_error, z, ci95_low, ci95_high, odds_ratio, or_ci95_low, or_ci95_high, ci_excludes_zero
+X1 tenure, -0.5554, 0.1905, -2.92, -0.9287, -0.1820, 0.5739, 0.3951, 0.8336, yes
+X2 complaints, 0.5505, 0.1545, 3.56, 0.2476, 0.8533, 1.7341, 1.2810, 2.3475, yes
+X3 discount_share, 0.9013, 0.1905, 4.73, 0.5279, 1.2748, 2.4629, 1.6954, 3.5779, yes
+X4 avg_order, -0.1459, 0.1410, -1.03, -0.4224, 0.1305, 0.8642, 0.6555, 1.1394, no
+X5 loyalty, -0.2162, 0.1527, -1.42, -0.5154, 0.0830, 0.8056, 0.5973, 1.0866, no
+X6 cod, 0.2348, 0.1211, 1.94, -0.0025, 0.4721, 1.2646, 0.9975, 1.6033, no
+X7 plus, -0.0120, 0.1233, -0.10, -0.2537, 0.2297, 0.9881, 0.7759, 1.2582, no
+bias, -2.0696, 0.1909, -10.84, -2.4437, -1.6955, 0.1262, 0.0868, 0.1835, yes
+reading: terms whose interval contains 0 cannot be told apart from 'no effect' with 119 training positives; the model keeps them anyway (no feature selection was asked for).
+effective sample: 560 training rows, 119 positives -> about 17.0 events per predictor.

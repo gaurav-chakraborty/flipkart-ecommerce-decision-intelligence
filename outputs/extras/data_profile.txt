@@ -1,0 +1,43 @@
+rows = 800
+missing_or_nonfinite_cells = 0
+duplicate_rows = 0
+
+column, min, max, mean, sd(n-1), distinct_values
+X1 tenure, 1.0000, 74.2000, 32.2494, 16.1959, 444
+X2 complaints, 0.0000, 10.0000, 3.8988, 2.3351, 11
+X3 discount_share, 0.0100, 0.9900, 0.4335, 0.2330, 509
+X4 avg_order, 5.0000, 82.5000, 18.7998, 9.8662, 305
+X5 loyalty, 8.9000, 89.6000, 53.2905, 13.7468, 409
+X6 cod, 0.0000, 1.0000, 0.4263, 0.4948, 2
+X7 plus, 0.0000, 1.0000, 0.4975, 0.5003, 2
+outcome, 0.0000, 1.0000, 0.2125, 0.4093, 2
+value, 0.5300, 104.5300, 8.9382, 9.1723, 635
+
+-- values pinned at a clipping bound by the generator (edge cases for the maths) --
+X1 == 1.0 (floor): 16
+X2 == 0 (floor): 60
+X3 == 0.01 (floor): 10, X3 == 0.99 (cap): 2
+X5 == 0 (floor): 0, X5 == 100 (cap): 0
+
+-- ties that make sort order matter (why stable sorts are pinned) --
+distinct X4 values: 305 of 800 rows (X4 is rounded to 0.1, so Task 1.4 fitted values are heavily tied)
+
+-- class balance --
+outcome rate overall = 0.2125 (170 of 800)
+outcome rate cod=1: 0.2727 (n=341); cod=0: 0.1678 (n=459)
+outcome rate plus=1: 0.1683 (n=398); plus=0: 0.2562 (n=402)
+outcome rate tenure in (0, 12]: 0.4731 (n=93)
+outcome rate tenure in (12, 24]: 0.4378 (n=185)
+outcome rate tenure in (24, 48]: 0.1165 (n=369)
+outcome rate tenure in (48, inf]: 0.0131 (n=153)
+
+-- skew of the value column --
+median value = 5.7650, mean = 8.9382, 90th pct = 19.3320, 99th pct = 42.1436, max = 104.5300
+share of total order value from the 8 largest orders (1% of rows) = 0.0642
+
+-- correlation matrix of the five continuous predictors (cross-check only) --
+  1.000  -0.426  -0.710  -0.237   0.557
+ -0.426   1.000   0.374   0.508  -0.211
+ -0.710   0.374   1.000   0.175  -0.578
+ -0.237   0.508   0.175   1.000  -0.103
+  0.557  -0.211  -0.578  -0.103   1.000
