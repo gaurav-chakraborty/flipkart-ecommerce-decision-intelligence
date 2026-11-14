@@ -33,6 +33,7 @@ This repository answers the customer-analytics team's three open questions for F
 | `outputs/part*_results.txt`, `outputs/*.csv` | Every results file and CSV named in the brief | yes |
 | `tests/test_checks.py`, `tests/run_tests.py` | 56 independent checks (edge cases, cross-checks, format) | extra |
 | `docs/walkthrough/` | Line-by-line walkthrough, traceability matrix, glossary, viva prep | extra |
+| `web/`, `vercel.json` | Interactive executive dashboard for Vercel static deployment | extra |
 | `data_profile.py`, `robustness.py` | Data-quality profile and robustness analysis | extra |
 | `outputs/extras/data_profile.txt`, `outputs/extras/robustness.txt` | Output of the two extra scripts | extra |
 
