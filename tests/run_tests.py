@@ -1,5 +1,9 @@
 """Independent verification of the capstone.  Run from the repository root:  python tests/run_tests.py
 
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+
 Plain asserts, no test framework needed.  Two kinds of checks:
   (1) edge cases of the helper functions (zero denominators, ties, overflow, bad inputs, leakage);
   (2) cross-checks of every from-scratch routine against an INDEPENDENT reference (NumPy built-ins such as

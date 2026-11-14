@@ -2,6 +2,10 @@ Domain: E-commerce
 
 # Flipkart E-commerce Decision Intelligence (synthetic data)
 
+**Author:** Gaurav Chakraborty  
+**Student ID:** iitmd_dsai_2508432  
+**Course:** Capstone Project — Flipkart E-commerce Decision Intelligence  
+
 This repository answers the customer-analytics team's three open questions for Flipkart: whether the average-order-value planning assumption still holds, which customers will churn (no purchase in the next 90 days), and what kinds of shoppers the base contains. All data comes from `generate_data.py`; nothing here reflects Flipkart's real records, products, policies or performance. Money is in Indian Rupees (INR); one unit of the order-value columns is INR 100. Everything runs offline on Python 3.10+ with NumPy only, in under two seconds in total.
 
 **Results at a glance**

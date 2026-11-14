@@ -1,3 +1,9 @@
+"""Part 1: Statistical Estimation and Regression Analysis (Tasks 1.1 - 1.7).
+
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+"""
 import numpy as np
 from common import load, write_results, halves_by_fitted
 
@@ -27,6 +33,8 @@ def ols1(x, t):
     xm, tm = x.mean(), t.mean()
     cov = np.sum((x - xm) * (t - tm)) / (len(x) - 1)
     var = np.sum((x - xm) ** 2) / (len(x) - 1)
+    if var == 0:
+        raise ValueError("variance of predictor x is zero")
     s = cov / var
     return s, tm - s * xm
 slope, icpt = ols1(x4, val)

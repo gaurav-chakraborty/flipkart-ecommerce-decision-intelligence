@@ -1,4 +1,9 @@
 """EXTRA (not part of the brief's graded outputs): data-quality profile of data/records.csv.
+
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+
 Writes outputs/extras/data_profile.txt.  Shows that the file is clean and documents the edge cases
 the generator creates (clipping at bounds, tied values, class imbalance)."""
 import os

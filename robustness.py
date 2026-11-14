@@ -1,4 +1,9 @@
 """EXTRA (not part of the brief's graded outputs): how fragile are the Part 2 conclusions?
+
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+
 Writes outputs/extras/robustness.txt.  Every random draw uses numpy.random.default_rng with a fixed seed,
 so the file is reproducible.  Nothing here feeds back into any graded number.
 

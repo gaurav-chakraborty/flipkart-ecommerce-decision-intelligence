@@ -1,3 +1,9 @@
+"""Part 4: Decision Trees, Ensembles, and Deep Architectures (Tasks 4.1 - 4.5).
+
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+"""
 import numpy as np
 from common import *
 from common import predict_at, knn_label, adaboost_round
@@ -13,12 +19,16 @@ def add(k, v): R.append((k, v))
 # ---------- 4.1 splits ----------
 def entropy(P, n):
     if n == 0: return 0.0
+    if P < 0 or P > n:
+        raise ValueError("P must be between 0 and n")
     out = 0.0
     for p in (P / n, 1 - P / n):
         if p > 0: out -= p * np.log2(p)
     return out
 def gini(P, n):
     if n == 0: return 0.0
+    if P < 0 or P > n:
+        raise ValueError("P must be between 0 and n")
     p = P / n
     return 1 - p * p - (1 - p) ** 2
 

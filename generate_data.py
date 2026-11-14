@@ -1,4 +1,9 @@
 """Synthetic records for the capstone (all values are invented; no real company data).
+
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+
 Run once from the repository root:  python generate_data.py
 It writes data/records.csv and prints:  <rows> <columns> <positive_count> <md5 of the file>
 Do not edit anything below the line marked NUMERIC CORE: every number in the brief was

@@ -1,4 +1,9 @@
-"""Part 2 - classification and evaluation (Tasks 2.1 - 2.8)."""
+"""Part 2: Classification and Evaluation (Tasks 2.1 - 2.8).
+
+Author: Gaurav Chakraborty
+Student ID: iitmd_dsai_2508432
+Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+"""
 import numpy as np
 from common import (load, split_stratified, standardise_train_test, train_logistic, sigmoid, bce,
                     confusion, metrics, predict_at, choose_tau, knn_predict, knn_label, select_k,

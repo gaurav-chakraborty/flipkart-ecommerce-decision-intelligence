@@ -1,5 +1,9 @@
 """Shared helpers for the Flipkart E-commerce capstone.
 
+Student: Gaurav Chakraborty
+Roll Number / Student ID: iitmd_dsai_2508432
+Project: Capstone Project — Flipkart E-commerce Decision Intelligence
+
 Importing this module never runs a Part.  Every helper documents the edge case it guards:
   * zero denominators in rate metrics return 0.0 (the brief's rule),
   * a constant column cannot be standardised (raises instead of dividing by zero),
@@ -19,15 +23,25 @@ EPS_TIE = 1e-12   # tolerance so that "probability >= tau" is not flipped by 1e-
 # ----------------------------------------------------------------------------- data
 def load(path="data/records.csv"):
     """Return X (800x7: X1..X7), outcome y, order value. Validates shape, finiteness and ranges."""
+    if not os.path.exists(path):
+        raise FileNotFoundError("data file not found: %s" % path)
     with open(path) as f:
         r = csv.reader(f)
-        header = next(r)
+        try:
+            header = next(r)
+        except StopIteration:
+            raise ValueError("empty data file: no header found in %s" % path)
         rows = list(r)
+    if not rows:
+        raise ValueError("empty dataset: no data rows in %s" % path)
     if len(header) != 10:
         raise ValueError("expected 10 columns, found %d" % len(header))
     if any(len(row) != 10 for row in rows):
         raise ValueError("ragged row in %s" % path)
-    arr = np.array([[float(v) for v in row[1:]] for row in rows])
+    try:
+        arr = np.array([[float(v) for v in row[1:]] for row in rows])
+    except (ValueError, TypeError) as e:
+        raise ValueError("non-numeric value in data: %s" % e)
     if not np.all(np.isfinite(arr)):
         raise ValueError("non-finite value in data")
     X, y, val = arr[:, 0:7], arr[:, 7], arr[:, 8]
@@ -89,14 +103,18 @@ def split_stratified(y):
 
 def fit_scaler(Xtrain):
     """Training mean and sample SD (ddof=1). A constant column is an error, not a silent divide by 0."""
+    Xtrain = np.asarray(Xtrain, dtype=float)
+    if len(Xtrain) < 2:
+        raise ValueError("cannot standardise fewer than 2 samples")
     mu = Xtrain.mean(axis=0)
     sd = Xtrain.std(axis=0, ddof=1)
-    if np.any(sd == 0):
+    if np.any(sd == 0) or np.any(np.isnan(sd)):
         raise ValueError("cannot standardise a constant column")
     return mu, sd
 
 
 def standardise_train_test(X, tr, te):
+    X = np.asarray(X, dtype=float)
     mu, sd = fit_scaler(X[tr])                    # test rows never touch mu / sd
     return (X[tr] - mu) / sd, (X[te] - mu) / sd
 
@@ -116,8 +134,13 @@ def sigmoid(z):
 def bce(y, p):
     """Mean binary cross-entropy; p is clipped to [1e-15, 1-1e-15] so a saturated model gives a
     large finite loss instead of inf/nan."""
-    p = np.clip(p, 1e-15, 1 - 1e-15)
-    return float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
+    y, p = np.asarray(y, dtype=float), np.asarray(p, dtype=float)
+    if len(y) != len(p):
+        raise ValueError("y and p must have the same length")
+    if len(y) == 0:
+        return 0.0
+    p = np.clip(p, 1e-15, 1.0 - 1e-15)
+    return float(-np.mean(y * np.log(p) + (1.0 - y) * np.log(1.0 - p)))
 
 
 def train_logistic(Xs, y, eta, epochs, record=()):
@@ -137,6 +160,8 @@ def train_logistic(Xs, y, eta, epochs, record=()):
 # ----------------------------------------------------------------------------- metrics
 def confusion(y, pred):
     y, pred = np.asarray(y), np.asarray(pred)
+    if len(y) != len(pred):
+        raise ValueError("y and pred must have the same length")
     tp = int(np.sum((pred == 1) & (y == 1)))
     fp = int(np.sum((pred == 1) & (y == 0)))
     tn = int(np.sum((pred == 0) & (y == 0)))
@@ -145,7 +170,7 @@ def confusion(y, pred):
 
 
 def safe_div(a, b):
-    return a / b if b else 0.0
+    return a / b if (b is not None and b != 0 and math.isfinite(b)) else 0.0
 
 
 def metrics(tp, fp, tn, fn):
@@ -171,6 +196,15 @@ def knn_predict(Xref, yref, Xq, K):
         raise ValueError("K must be odd and positive")
     if K > len(Xref):
         raise ValueError("K exceeds the number of reference rows")
+    Xref, yref, Xq = np.asarray(Xref, float), np.asarray(yref, float), np.asarray(Xq, float)
+    if len(Xref) != len(yref):
+        raise ValueError("Xref and yref must have the same length")
+    if len(Xq) == 0:
+        return np.zeros(0, dtype=float)
+    if Xref.ndim != 2 or Xq.ndim != 2:
+        raise ValueError("Xref and Xq must be 2D arrays")
+    if Xref.shape[1] != Xq.shape[1]:
+        raise ValueError("feature dimension mismatch between Xref and Xq")
     shares = np.zeros(len(Xq))
     for i, q in enumerate(Xq):
         d = np.sqrt(((Xref - q) ** 2).sum(axis=1))
@@ -221,15 +255,26 @@ def halves_by_fitted(resid, fitted):
     sample SD of the residuals in the lower half, the upper half, and their ratio upper / lower.
     Edge case: many fitted values are tied (X4 is rounded to 0.1); a non-stable sort may move tied rows
     across the median and change the result on some NumPy versions."""
+    resid, fitted = np.asarray(resid, float), np.asarray(fitted, float)
+    if len(resid) != len(fitted):
+        raise ValueError("resid and fitted must have the same length")
+    if len(resid) < 4:
+        raise ValueError("need at least 4 rows to compute halves sample SD")
     order = np.argsort(fitted, kind="stable")
     half = len(order) // 2
     sd_lo, sd_up = resid[order[:half]].std(ddof=1), resid[order[half:]].std(ddof=1)
+    if sd_lo == 0:
+        raise ZeroDivisionError("lower half residual standard deviation is zero")
     return float(sd_lo), float(sd_up), float(sd_up / sd_lo)
 
 
 def choose_tau(y, p, c_fa=50, c_miss=400):
     """Task 2.8: tau = k/20 for k = 1..19, cost = c_fa * fp + c_miss * fn; lowest cost wins and a tie goes
     to the SMALLER tau (strict '<' while scanning upward). Returns (tau, cost)."""
+    if len(y) != len(p):
+        raise ValueError("y and p must have the same length")
+    if c_fa < 0 or c_miss < 0:
+        raise ValueError("costs must be non-negative")
     best_t, best_c = None, None
     for k in range(1, 20):
         t = k / 20
