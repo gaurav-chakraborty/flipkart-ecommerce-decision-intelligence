@@ -7,7 +7,7 @@ Course: Capstone Project — Flipkart E-commerce Decision Intelligence
 import numpy as np
 from common import (load, split_stratified, standardise_train_test, train_logistic, sigmoid, bce,
                     confusion, metrics, predict_at, choose_tau, knn_predict, knn_label, select_k,
-                    write_results, write_csv)
+                    write_results, write_csv, FALSE_ALARM_COST_INR, MISS_COST_INR)
 
 X, y, val = load()
 tr, te = split_stratified(y)                       # 2.1 stratified 70/30, file order kept
@@ -70,12 +70,12 @@ for k, v in zip(("tp", "fp", "tn", "fn", "accuracy", "precision", "recall", "f1"
 # 2.8 money-optimal threshold chosen on TRAINING rows (ties -> smaller tau)
 def cost(yv, pv, tau):
     _, fp_, _, fn_ = confusion(yv, predict_at(pv, tau))
-    return 50 * fp_ + 400 * fn_
+    return FALSE_ALARM_COST_INR * fp_ + MISS_COST_INR * fn_
 best_tau, best_c = choose_tau(ytr, ptrain)           # ties -> smaller tau (see common.choose_tau)
 add("cost_tau", best_tau); add("cost_train_at_tau", best_c)
 add("cost_test_at_tau", cost(yte, ptest, best_tau))
 add("cost_test_at_0.5", cost(yte, ptest, 0.5))
-add("cost_test_flag_nobody", 400 * int(yte.sum()))
+add("cost_test_flag_nobody", MISS_COST_INR * int(yte.sum()))
 # extras (not required by the brief): behaviour of the chosen threshold on the test rows
 _tp, _fp, _tn, _fn = confusion(yte, predict_at(ptest, best_tau))
 add("cost_tau_test_flagged", _tp + _fp); add("cost_tau_test_missed", _fn)

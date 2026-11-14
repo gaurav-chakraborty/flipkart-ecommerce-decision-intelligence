@@ -1,8 +1,8 @@
 Domain: E-commerce
+Author: Gaurav Chakraborty
 
 # Flipkart E-commerce Decision Intelligence (synthetic data)
 
-**Author:** Gaurav Chakraborty  
 **Student ID:** iitmd_dsai_2508432  
 **Course:** Capstone Project — Flipkart E-commerce Decision Intelligence  
 
@@ -26,12 +26,12 @@ This repository answers the customer-analytics team's three open questions for F
 | Path | Purpose | Graded by the brief? |
 |---|---|---|
 | `README.md` | This file (all written answers, memo, limitations) | yes |
-| `requirements.txt` | `numpy==2.5.4` | yes |
+| `requirements.txt` | `numpy==2.2.6` | yes |
 | `generate_data.py`, `data/records.csv` | Provided generator (verbatim) and its output | yes |
 | `common.py` | Shared helpers with documented edge cases (importing runs nothing) | supports Parts 1 to 4 |
 | `part1.py` ... `part4.py` | One script per Part | yes |
 | `outputs/part*_results.txt`, `outputs/*.csv` | Every results file and CSV named in the brief | yes |
-| `tests/run_tests.py` | 54 independent checks (edge cases, cross-checks, format) | extra |
+| `tests/run_tests.py` | 56 independent checks (edge cases, cross-checks, format) | extra |
 | `data_profile.py`, `robustness.py` | Data-quality profile and robustness analysis | extra |
 | `outputs/extras/data_profile.txt`, `outputs/extras/robustness.txt` | Output of the two extra scripts | extra |
 
@@ -55,7 +55,7 @@ If `pip` refuses a system-wide install (the "externally managed environment" mes
 Optional, not required by the brief:
 
 ```
-python tests/run_tests.py        # 54 checks; prints "54 tests, 54 passed, 0 failed"
+python tests/run_tests.py        # 56 checks; prints "56 tests, 56 passed, 0 failed"
 python data_profile.py           # writes outputs/extras/data_profile.txt
 python robustness.py             # writes outputs/extras/robustness.txt
 ```
@@ -82,31 +82,31 @@ python robustness.py             # writes outputs/extras/robustness.txt
 
 | Area | Edge case | Handling | Checked by |
 |---|---|---|---|
-| Data | Missing, ragged, non-finite or out-of-range rows | The loader raises instead of continuing; the shipped file has 0 missing cells and 0 duplicate rows | `loader_rejects_corrupt_files`, `data_profile.txt` |
+| Data | Missing, ragged, non-finite or out-of-range rows | The loader raises instead of continuing; the shipped file has 0 missing cells and 0 duplicate rows | `test_loader_rejects_corrupt_files`, `data_profile.txt` |
 | Data | Values pinned at generator bounds: 16 tenures at 1.0, 60 customers with 0 complaints, 10 discount shares at 0.01 and 2 at 0.99 | Kept as they are (they are legitimate clipped data, not errors); nothing is deleted or imputed | `data_profile.txt` |
-| Data | Logarithms need positive inputs | Loader requires value and X4 to be strictly positive (minimums 0.53 and 5.0) | `loader_rejects_corrupt_files` |
-| Data | Only 305 distinct X4 values in 800 rows, so Task 1.4 fitted values are heavily tied; four rows share the fitted value at the median boundary | Stable sort is pinned (the default sort happens to give the same ratio on this NumPy build, but nothing guarantees that on other versions) | `halves_by_fitted_is_a_stable_split_even_with_massive_ties` |
-| Data | Class imbalance (21.25% churn) | Stratified split, blind-accuracy baseline, F1 / recall and a money-based threshold instead of accuracy | `part2_split_checkpoints`, `part2_confusion_tables_are_internally_consistent` |
-| Data | A class with no rows | Split raises an error | `split_is_stratified_ordered_disjoint_and_complete` |
-| Numerics | Sigmoid overflow for very large scores | Branch-wise stable sigmoid; tests run with NumPy warnings turned into errors | `sigmoid_is_stable_and_symmetric` |
-| Numerics | log(0) in cross-entropy for a saturated, wrong prediction | Probabilities clipped to [1e-15, 1 - 1e-15], giving a large finite loss | `bce_finite_when_model_is_saturated_and_wrong` |
-| Numerics | Constant column cannot be standardised | Scaler raises | `scaler_uses_training_statistics_only_and_rejects_constants` |
-| Numerics | Zero denominators in precision, recall, F1, specificity (for example nobody flagged at τ = 0.9) | Return 0.0, the brief's rule | `metrics_zero_denominator_rules` |
-| Numerics | Probability exactly on a threshold, or differing by float noise | `>=` with 1e-12 tolerance | `threshold_rule_is_greater_or_equal_with_float_tolerance` |
-| Numerics | Negative zero or NaN / infinity in an output file | Printed as `0.0000`; the writer refuses non-finite values and duplicate keys | `writers_refuse_bad_values_and_never_print_negative_zero` |
-| Algorithms | KNN with even K, K larger than the reference set, or equal distances | Raises for invalid K; stable sort breaks ties by file position | `knn_input_validation_and_tie_break`, `knn_tie_break_survives_hundreds_of_equal_distances` |
-| Algorithms | Test rows leaking into any statistic | Scaler is fitted on training rows only; tests wreck the test rows and check nothing changes | `scaler_uses_training_statistics_only_and_rejects_constants` |
-| Algorithms | Cost threshold ties, and an optimum at the edge of the k / 20 grid | Strict `<` keeps the smaller τ; at miss costs of INR 800 and INR 1,600 the search hits the lowest grid value 0.05 (see `robustness.txt`), which is reported, not hidden | `choose_tau_tie_goes_to_the_smaller_threshold` |
-| Algorithms | K-means empty cluster, non-optimal solution | Empty cluster keeps its centroid (never occurs here, asserted); pinned start rows give a reproducible but not necessarily global optimum | `part3_kmeans_matches_slow_reimplementation_and_is_a_fixed_point` |
-| Algorithms | The elbow rule finding no K | Would be written as 0; on this data it returns 3 | `part3_elbow_rule_recomputed` |
-| Algorithms | PCA sign ambiguity | Largest-magnitude loading made positive | `part3_pca_matches_numpy_on_the_correlation_matrix` |
-| Algorithms | AdaBoost with weighted error 0, 0.5 or above, or weights not summing to 1 | Rejected with an error instead of an infinite or negative α | `adaboost_round_guards_and_known_identities` |
-| Deliverable | NumPy version differences | Every order-sensitive step is pinned (stable sorts, sign convention, tolerance); the clean-copy test regenerates all files and compares them byte for byte | `pipeline_is_deterministic_from_a_clean_copy` |
-| Deliverable | Forbidden content (images, dollar signs, external links, over-long memo) | Checked mechanically | `required_layout_exists`, `readme_structure_memo_and_money_rules` |
+| Data | Logarithms need positive inputs | Loader requires value and X4 to be strictly positive (minimums 0.53 and 5.0) | `test_loader_rejects_corrupt_files` |
+| Data | Only 305 distinct X4 values in 800 rows, so Task 1.4 fitted values are heavily tied; four rows share the fitted value at the median boundary | Stable sort is pinned (the default sort happens to give the same ratio on this NumPy build, but nothing guarantees that on other versions) | `test_halves_by_fitted_is_a_stable_split_even_with_massive_ties` |
+| Data | Class imbalance (21.25% churn) | Stratified split, blind-accuracy baseline, F1 / recall and a money-based threshold instead of accuracy | `test_part2_split_checkpoints`, `test_part2_confusion_tables_are_internally_consistent` |
+| Data | A class with no rows | Split raises an error | `test_split_is_stratified_ordered_disjoint_and_complete` |
+| Numerics | Sigmoid overflow for very large scores | Branch-wise stable sigmoid; tests run with NumPy warnings turned into errors | `test_sigmoid_is_stable_and_symmetric` |
+| Numerics | log(0) in cross-entropy for a saturated, wrong prediction | Probabilities clipped to [1e-15, 1 - 1e-15], giving a large finite loss | `test_bce_finite_when_model_is_saturated_and_wrong` |
+| Numerics | Constant column cannot be standardised | Scaler raises | `test_scaler_uses_training_statistics_only_and_rejects_constants` |
+| Numerics | Zero denominators in precision, recall, F1, specificity (for example nobody flagged at τ = 0.9) | Return 0.0, the brief's rule | `test_metrics_zero_denominator_rules` |
+| Numerics | Probability exactly on a threshold, or differing by float noise | `>=` with 1e-12 tolerance | `test_threshold_rule_is_greater_or_equal_with_float_tolerance` |
+| Numerics | Negative zero or NaN / infinity in an output file | Printed as `0.0000`; the writer refuses non-finite values and duplicate keys | `test_writers_refuse_bad_values_and_never_print_negative_zero` |
+| Algorithms | KNN with even K, K larger than the reference set, or equal distances | Raises for invalid K; stable sort breaks ties by file position | `test_knn_input_validation_and_tie_break`, `test_knn_tie_break_survives_hundreds_of_equal_distances` |
+| Algorithms | Test rows leaking into any statistic | Scaler is fitted on training rows only; tests wreck the test rows and check nothing changes | `test_scaler_uses_training_statistics_only_and_rejects_constants` |
+| Algorithms | Cost threshold ties, and an optimum at the edge of the k / 20 grid | Strict `<` keeps the smaller τ; at miss costs of INR 800 and INR 1,600 the search hits the lowest grid value 0.05 (see `robustness.txt`), which is reported, not hidden | `test_choose_tau_tie_goes_to_the_smaller_threshold` |
+| Algorithms | K-means empty cluster, non-optimal solution | Empty cluster keeps its centroid (never occurs here, asserted); pinned start rows give a reproducible but not necessarily global optimum | `test_part3_kmeans_matches_slow_reimplementation_and_is_a_fixed_point` |
+| Algorithms | The elbow rule finding no K | Would be written as 0; on this data it returns 3 | `test_part3_elbow_rule_recomputed` |
+| Algorithms | PCA sign ambiguity | Largest-magnitude loading made positive | `test_part3_pca_matches_numpy_on_the_correlation_matrix` |
+| Algorithms | AdaBoost with weighted error 0, 0.5 or above, or weights not summing to 1 | Rejected with an error instead of an infinite or negative α | `test_adaboost_round_guards_and_known_identities` |
+| Deliverable | NumPy version differences | Every order-sensitive step is pinned (stable sorts, sign convention, tolerance); the clean-copy test regenerates all files and compares them byte for byte | `test_pipeline_is_deterministic_from_a_clean_copy` |
+| Deliverable | Forbidden content (images, dollar signs, external links, over-long memo) | Checked mechanically | `test_required_layout_exists`, `test_readme_structure_memo_and_money_rules` |
 
 ### Verification
 
-`python tests/run_tests.py` runs 54 checks without any test framework. They fall into three groups:
+`python tests/run_tests.py` runs 56 checks without any test framework. They fall into three groups:
 
 1. **Edge cases of the helpers** (table above): corrupt files, overflow, ties, zero denominators, leakage, degenerate boosting.
 2. **Cross-checks against independent references**, used only to verify and never to produce a graded number: `numpy.polyfit` and `numpy.linalg.lstsq` for every regression in Part 1; a Newton-Raphson solution for the logistic minimum (1000 gradient updates end within 0.001 of it); a numerical-gradient check of the logistic gradient; a brute-force Python sort for KNN; a slow point-by-point K-means; the minimum-spanning-tree identity and a separate Lance–Williams implementation for all 15 hierarchical merges; `numpy.linalg.eigvalsh` on the correlation matrix for PCA; hand calculations for AdaBoost, entropy and the parameter counts.

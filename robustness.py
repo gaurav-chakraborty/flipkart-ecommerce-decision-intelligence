@@ -14,12 +14,13 @@ so the file is reproducible.  Nothing here feeds back into any graded number.
   E. coefficient uncertainty  - Wald standard errors / 95% intervals for the Task 2.2 weights (which effects are distinguishable from 0?)
 """
 import os
+from pathlib import Path
 
 import numpy as np
-from common import (load, split_stratified, standardise_train_test, train_logistic, sigmoid,
+from common import (ROOT, load, split_stratified, standardise_train_test, train_logistic, sigmoid,
                     confusion, metrics, predict_at, choose_tau)
 
-EXTRAS_DIR = os.path.join("outputs", "extras")
+EXTRAS_DIR = ROOT / "outputs" / "extras"
 os.makedirs(EXTRAS_DIR, exist_ok=True)      # a fresh clone may not have this folder yet
 
 X, y, val = load()
@@ -127,5 +128,9 @@ for j, nm in enumerate(["X1 tenure", "X2 complaints", "X3 discount_share", "X4 a
     line("%s, %.4f, %.4f, %.2f, %.4f, %.4f, %.4f, %.4f, %.4f, %s" % (nm, wt[j], se[j], wt[j] / se[j], lo, hi, np.exp(wt[j]), np.exp(lo), np.exp(hi), "yes" if lo > 0 or hi < 0 else "no"))
 line("reading: terms whose interval contains 0 cannot be told apart from 'no effect' with 119 training positives; the model keeps them anyway (no feature selection was asked for).")
 line("effective sample: 560 training rows, 119 positives -> about %.1f events per predictor." % (119 / 7))
-open(os.path.join(EXTRAS_DIR, "robustness.txt"), "w").write("\n".join(L) + "\n")
+out_file = EXTRAS_DIR / "robustness.txt"
+tmp_file = EXTRAS_DIR / "robustness.txt.tmp"
+with open(tmp_file, "w", encoding="utf-8", newline="\n") as f:
+    f.write("\n".join(L) + "\n")
+os.replace(tmp_file, out_file)
 print("\n".join(L))

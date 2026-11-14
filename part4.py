@@ -5,8 +5,24 @@ Student ID: iitmd_dsai_2508432
 Course: Capstone Project — Flipkart E-commerce Decision Intelligence
 """
 import numpy as np
-from common import *
-from common import predict_at, knn_label, adaboost_round
+from common import (
+    load,
+    split_stratified,
+    standardise_train_test,
+    train_logistic,
+    sigmoid,
+    select_k,
+    knn_predict,
+    knn_label,
+    predict_at,
+    confusion,
+    metrics,
+    adaboost_round,
+    write_results,
+    write_csv,
+    FALSE_ALARM_COST_INR,
+    MISS_COST_INR,
+)
 
 X, y, val = load()
 tr, te = split_stratified(y)
@@ -19,16 +35,12 @@ def add(k, v): R.append((k, v))
 # ---------- 4.1 splits ----------
 def entropy(P, n):
     if n == 0: return 0.0
-    if P < 0 or P > n:
-        raise ValueError("P must be between 0 and n")
     out = 0.0
     for p in (P / n, 1 - P / n):
         if p > 0: out -= p * np.log2(p)
     return out
 def gini(P, n):
     if n == 0: return 0.0
-    if P < 0 or P > n:
-        raise ValueError("P must be between 0 and n")
     p = P / n
     return 1 - p * p - (1 - p) ** 2
 
@@ -72,7 +84,7 @@ for name, pred in (("logistic", pred_log), ("knn", pred_knn), ("stump", pred_stu
     tp, fp, tn, fn = confusion(yte, pred)
     _, prec, rec, f1, _ = metrics(tp, fp, tn, fn)
     vote_rows.append([name, tp, fp, tn, fn, prec, rec, f1])
-    costs[name] = 50 * fp + 400 * fn
+    costs[name] = FALSE_ALARM_COST_INR * fp + MISS_COST_INR * fn
 write_csv("outputs/part4_voting.csv", ["model", "tp", "fp", "tn", "fn", "precision", "recall", "f1"], vote_rows)
 for name in costs:                      # extra keys: cost rule of Task 2.8 applied to each 4.2 model at its stated rule
     add("cost_test_%s" % name, costs[name])

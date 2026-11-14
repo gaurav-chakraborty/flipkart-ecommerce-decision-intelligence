@@ -16,8 +16,6 @@ def add(k, v): R.append((k, v))
 
 # 3.1 K-means
 def kmeans(Z, K):
-    if K < 1 or K > len(Z):
-        raise ValueError("K must be between 1 and %d" % len(Z))
     step = len(Z) // K
     cent = Z[[i * step for i in range(K)]].copy()
     assign = None
@@ -78,8 +76,6 @@ D = np.array([[0.0, 7.9, 7.4, 2.9, 2.9, 6.1],
               [6.1, 2.0, 1.3, 4.5, 3.4, 0.0]])
 
 def linkage_dist(a, b, rule):
-    if rule not in ("single", "complete", "average"):
-        raise ValueError("unsupported linkage rule: %s" % rule)
     ds = [D[i, j] for i in a for j in b]
     return min(ds) if rule == "single" else (max(ds) if rule == "complete" else sum(ds) / len(ds))
 

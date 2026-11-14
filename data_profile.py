@@ -7,11 +7,12 @@ Course: Capstone Project — Flipkart E-commerce Decision Intelligence
 Writes outputs/extras/data_profile.txt.  Shows that the file is clean and documents the edge cases
 the generator creates (clipping at bounds, tied values, class imbalance)."""
 import os
+from pathlib import Path
 
 import numpy as np
-from common import load, write_results  # noqa: F401  (load validates the file)
+from common import ROOT, load, write_results  # noqa: F401  (load validates the file)
 
-EXTRAS_DIR = os.path.join("outputs", "extras")
+EXTRAS_DIR = ROOT / "outputs" / "extras"
 os.makedirs(EXTRAS_DIR, exist_ok=True)      # a fresh clone may not have this folder yet
 
 X, y, val = load()
@@ -56,5 +57,9 @@ line("-- correlation matrix of the five continuous predictors (cross-check only)
 Cm = np.corrcoef(X[:, :5], rowvar=False)
 for i in range(5):
     line(" ".join("%7.3f" % Cm[i, j] for j in range(5)))
-open(os.path.join(EXTRAS_DIR, "data_profile.txt"), "w").write("\n".join(L) + "\n")
+out_file = EXTRAS_DIR / "data_profile.txt"
+tmp_file = EXTRAS_DIR / "data_profile.txt.tmp"
+with open(tmp_file, "w", encoding="utf-8", newline="\n") as f:
+    f.write("\n".join(L) + "\n")
+os.replace(tmp_file, out_file)
 print("\n".join(L))

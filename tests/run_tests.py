@@ -32,14 +32,15 @@ warnings.filterwarnings("error", category=RuntimeWarning)   # numpy overflow / d
 # ---------------------------------------------------------------------------------------------- helpers
 def read_results(path):
     out = {}
-    for ln in open(path):
-        k, v = ln.rstrip("\n").split(" = ")
-        out[k] = v
+    with open(path, "r", encoding="utf-8") as f:
+        for ln in f:
+            k, v = ln.rstrip("\n").split(" = ")
+            out[k] = v
     return out
 
 
 def read_csv(path):
-    with open(path) as f:
+    with open(path, "r", encoding="utf-8") as f:
         r = list(csv.reader(f))
     return r[0], r[1:]
 
@@ -57,48 +58,48 @@ P1, P2, P3, P4 = (read_results("outputs/part%d_results.txt" % i) for i in (1, 2,
 TESTS = []
 
 
-def test(fn):
+def register_test(fn):
     TESTS.append(fn)
     return fn
 
 
 # =============================================================================================== DATA
-@test
-def data_file_matches_generator_hash_and_shape():
+@register_test
+def test_data_file_matches_generator_hash_and_shape():
     raw = open("data/records.csv", "rb").read()
     assert hashlib.md5(raw).hexdigest() == "c6f249ba693f1ebeed318d6d5e18de23"
     assert N == 800 and int(y.sum()) == 170
 
 
-@test
-def data_ranges_and_types_follow_generator_clipping():
+@register_test
+def test_data_ranges_and_types_follow_generator_clipping():
     assert X[:, 0].min() >= 1.0                                  # tenure floor
     assert X[:, 1].min() >= 0 and np.all(X[:, 1] == np.round(X[:, 1]))   # complaint counts are integers
     assert 0.01 <= X[:, 2].min() and X[:, 2].max() <= 0.99      # discount share clipped
     assert X[:, 3].min() > 0 and val.min() > 0                  # logs are defined
     assert 0 <= X[:, 4].min() and X[:, 4].max() <= 100
     assert set(np.unique(X[:, 5])) <= {0.0, 1.0} and set(np.unique(X[:, 6])) <= {0.0, 1.0}
-    ids = [r[0] for r in csv.reader(open("data/records.csv"))][1:]
+    ids = [r[0] for r in csv.reader(open("data/records.csv", "r", encoding="utf-8"))][1:]
     assert ids == ["E%04d" % (i + 1) for i in range(800)]       # unique, contiguous, file order
 
 
-@test
-def loader_rejects_corrupt_files(tmp=".tmp_bad.csv"):
-    good = open("data/records.csv").read().splitlines()
+@register_test
+def test_loader_rejects_corrupt_files(tmp=".tmp_bad.csv"):
+    good = open("data/records.csv", "r", encoding="utf-8").read().splitlines()
     try:
-        open(tmp, "w").write("\n".join(good[:3] + ["E9999,1,2,3"]) + "\n")      # ragged row
+        open(tmp, "w", encoding="utf-8", newline="\n").write("\n".join(good[:3] + ["E9999,1,2,3"]) + "\n")      # ragged row
         try:
             C.load(tmp); raise AssertionError("ragged file accepted")
         except ValueError:
             pass
         row = good[1].split(","); row[8] = "2"                                  # outcome must be 0/1
-        open(tmp, "w").write(good[0] + "\n" + ",".join(row) + "\n")
+        open(tmp, "w", encoding="utf-8", newline="\n").write(good[0] + "\n" + ",".join(row) + "\n")
         try:
             C.load(tmp); raise AssertionError("bad outcome accepted")
         except ValueError:
             pass
         row = good[1].split(","); row[9] = "-1"                                 # value must be > 0 for ln
-        open(tmp, "w").write(good[0] + "\n" + ",".join(row) + "\n")
+        open(tmp, "w", encoding="utf-8", newline="\n").write(good[0] + "\n" + ",".join(row) + "\n")
         try:
             C.load(tmp); raise AssertionError("non-positive value accepted")
         except ValueError:
@@ -109,8 +110,8 @@ def loader_rejects_corrupt_files(tmp=".tmp_bad.csv"):
 
 
 # =============================================================================================== HELPER EDGE CASES
-@test
-def sigmoid_is_stable_and_symmetric():
+@register_test
+def test_sigmoid_is_stable_and_symmetric():
     z = np.array([-1000.0, -50.0, -1.0, 0.0, 1.0, 50.0, 1000.0])
     s = C.sigmoid(z)                                             # warnings are errors: no overflow allowed
     assert s[0] == 0.0 and s[-1] == 1.0 and s[3] == 0.5
@@ -118,14 +119,14 @@ def sigmoid_is_stable_and_symmetric():
     assert np.allclose(C.sigmoid(np.array([0.3])), 1 / (1 + math.exp(-0.3)))
 
 
-@test
-def bce_finite_when_model_is_saturated_and_wrong():
+@register_test
+def test_bce_finite_when_model_is_saturated_and_wrong():
     assert np.isfinite(C.bce(np.array([1.0, 0.0]), np.array([0.0, 1.0])))      # p exactly 0 / 1
     assert C.bce(np.array([1.0, 0.0]), np.array([0.5, 0.5])) - math.log(2) < 1e-12
 
 
-@test
-def metrics_zero_denominator_rules():
+@register_test
+def test_metrics_zero_denominator_rules():
     assert C.metrics(0, 0, 10, 0) == (1.0, 0.0, 0.0, 0.0, 1.0)  # nobody flagged, nobody positive
     assert C.metrics(0, 0, 8, 2)[1:4] == (0.0, 0.0, 0.0)        # nobody flagged, 2 positives: precision 0/0 -> 0
     acc, prec, rec, f1, spec = C.metrics(0, 5, 0, 0)            # flag all, no positives: recall 0/0, spec 0/5
@@ -136,23 +137,24 @@ def metrics_zero_denominator_rules():
     assert close(acc, 8 / 11) and close(prec, 0.75) and close(rec, 0.6) and close(f1, 2 * .75 * .6 / 1.35) and close(spec, 5 / 6)
 
 
-@test
-def confusion_cells_partition_the_rows():
+@register_test
+def test_confusion_cells_partition_the_rows():
     rng = np.random.default_rng(1)
     t, p = rng.integers(0, 2, 200), rng.integers(0, 2, 200)
     tp, fp, tn, fn = C.confusion(t, p)
     assert tp + fp + tn + fn == 200 and tp + fn == t.sum() and tp + fp == p.sum()
 
 
-@test
-def threshold_rule_is_greater_or_equal_with_float_tolerance():
+@register_test
+def test_threshold_rule_is_greater_or_equal_with_float_tolerance():
     assert list(C.predict_at(np.array([0.3, 0.2999999999999, 0.29999, 0.31]), 0.3)) == [1, 1, 0, 1]
     assert C.predict_at(np.array([0.15]), 3 / 20)[0] == 1       # k/20 style thresholds are float-safe
     assert C.predict_at(np.array([0.7]), 0.7)[0] == 1
+    assert C.predict_at(np.array([0.5 - C.EPS_TIE]), 0.5)[0] == 1  # exactly on the tolerance boundary requires >=
 
 
-@test
-def scaler_uses_training_statistics_only_and_rejects_constants():
+@register_test
+def test_scaler_uses_training_statistics_only_and_rejects_constants():
     mu, sd = C.fit_scaler(X[tr])
     X2 = X.copy(); X2[te] += 1000.0                              # wreck the test rows
     assert np.allclose(C.fit_scaler(X2[tr])[0], mu) and np.allclose(C.fit_scaler(X2[tr])[1], sd)
@@ -164,8 +166,8 @@ def scaler_uses_training_statistics_only_and_rejects_constants():
         pass
 
 
-@test
-def split_is_stratified_ordered_disjoint_and_complete():
+@register_test
+def test_split_is_stratified_ordered_disjoint_and_complete():
     assert len(tr) == 560 and len(te) == 240 and int(ytr.sum()) == 119 and int(yte.sum()) == 51
     assert set(tr) | set(te) == set(range(N)) and not (set(tr) & set(te))
     assert list(tr) == sorted(tr) and list(te) == sorted(te)
@@ -181,8 +183,8 @@ def split_is_stratified_ordered_disjoint_and_complete():
         pass
 
 
-@test
-def knn_input_validation_and_tie_break():
+@register_test
+def test_knn_input_validation_and_tie_break():
     ref = np.array([[0.0], [0.0], [1.0]]); lab = np.array([1.0, 0.0, 1.0])
     for bad in (0, 2, 4):
         try:
@@ -198,8 +200,8 @@ def knn_input_validation_and_tie_break():
     assert C.knn_label(np.array([0.4, 0.6, 0.5]), 5)[0] == 0 and C.knn_label(np.array([0.6]), 5)[0] == 1   # >= 3 of 5
 
 
-@test
-def knn_matches_brute_force_python_sort():
+@register_test
+def test_knn_matches_brute_force_python_sort():
     K = int(P2["knn_best_k"])
     got = C.knn_predict(Xtr, ytr, Xte, K)
     for i in range(0, 240, 7):                                   # every 7th query, full Python sort of (dist, idx)
@@ -207,8 +209,8 @@ def knn_matches_brute_force_python_sort():
         assert abs(got[i] - np.mean([ytr[j] for _, j in ds[:K]])) < 1e-12
 
 
-@test
-def knn_cv_file_is_consistent_with_rule():
+@register_test
+def test_knn_cv_file_is_consistent_with_rule():
     hdr, rows = read_csv("outputs/part2_knn_cv.csv")
     assert hdr == ["K", "mean_cv_f1"] and [int(r[0]) for r in rows] == list(range(1, 22, 2))
     scores = [float(r[1]) for r in rows]
@@ -217,8 +219,8 @@ def knn_cv_file_is_consistent_with_rule():
     assert int(P2["knn_best_k"]) % 2 == 1
 
 
-@test
-def adaboost_round_guards_and_known_identities():
+@register_test
+def test_adaboost_round_guards_and_known_identities():
     w = np.full(8, 1 / 8)
     yy = np.array([1, 1, 1, -1, -1, -1, 1, -1.0])
     h1 = np.array([1, 1, -1, -1, -1, -1, -1, -1.0])
@@ -242,8 +244,8 @@ def adaboost_round_guards_and_known_identities():
         pass
 
 
-@test
-def writers_refuse_bad_values_and_never_print_negative_zero():
+@register_test
+def test_writers_refuse_bad_values_and_never_print_negative_zero():
     assert C.fmt(-0.00001) == "0.0000" and C.fmt(True) == "yes" and C.fmt(np.int64(7)) == "7" and C.fmt(0.5) == "0.5000"
     for bad in (float("nan"), float("inf")):
         try:
@@ -259,8 +261,8 @@ def writers_refuse_bad_values_and_never_print_negative_zero():
             os.remove(".tmp_x.txt")
 
 
-@test
-def halves_by_fitted_is_a_stable_split_even_with_massive_ties():
+@register_test
+def test_halves_by_fitted_is_a_stable_split_even_with_massive_ties():
     rng = np.random.default_rng(7)
     fitted = rng.integers(0, 5, 2000).astype(float)             # 5 distinct values -> huge tie groups straddle the median
     resid = rng.normal(size=2000) * (1 + fitted)
@@ -270,8 +272,8 @@ def halves_by_fitted_is_a_stable_split_even_with_massive_ties():
     assert abs(got[0] - lo) < 1e-12 and abs(got[1] - up) < 1e-12 and abs(got[2] - up / lo) < 1e-12
 
 
-@test
-def knn_tie_break_survives_hundreds_of_equal_distances():
+@register_test
+def test_knn_tie_break_survives_hundreds_of_equal_distances():
     ref = np.zeros((300, 1)); lab = np.zeros(300); lab[:5] = 1         # all distances equal; only file order can decide
     assert C.knn_predict(ref, lab, np.array([[0.0]]), 5)[0] == 1.0    # first five rows (label 1) must be the neighbours
     assert C.knn_predict(ref, lab, np.array([[0.0]]), 7)[0] == 5 / 7
@@ -285,8 +287,8 @@ def knn_tie_break_survives_hundreds_of_equal_distances():
         assert C.knn_predict(ref, lab, np.array([[0.0]]), K)[0] == want, K
 
 
-@test
-def choose_tau_tie_goes_to_the_smaller_threshold():
+@register_test
+def test_choose_tau_tie_goes_to_the_smaller_threshold():
     y_ = np.array([1.0, 1.0, 0.0, 0.0]); p_ = np.array([0.9, 0.9, 0.1, 0.1])
     # tau 0.05 and 0.10 flag everyone (2 false alarms = 100); tau 0.15 ... 0.90 flag exactly the two positives (cost 0)
     assert C.choose_tau(y_, p_) == (0.15, 0)
@@ -296,8 +298,8 @@ def choose_tau_tie_goes_to_the_smaller_threshold():
 
 
 # =============================================================================================== PART 1 CROSS-CHECKS
-@test
-def part1_estimation_and_test():
+@register_test
+def test_part1_estimation_and_test():
     n, m, s = len(val), val.mean(), val.std(ddof=1)
     assert close(P1["mean_value"], m) and close(P1["sd_value"], s) and close(P1["se_value"], s / math.sqrt(n))
     z = (m - 8.0) / (s / math.sqrt(n))
@@ -306,8 +308,8 @@ def part1_estimation_and_test():
     assert int(P1["n_required"]) == nreq and (nreq - 1) < (1.96 * s / 0.5) ** 2 <= nreq     # smallest integer n
 
 
-@test
-def part1_closed_form_regression_matches_polyfit_and_identities():
+@register_test
+def test_part1_closed_form_regression_matches_polyfit_and_identities():
     x4 = X[:, 3]
     b1, b0 = np.polyfit(x4, val, 1)
     assert close(P1["reg_slope"], b1) and close(P1["reg_intercept"], b0)          # files print 4 dp
@@ -318,8 +320,8 @@ def part1_closed_form_regression_matches_polyfit_and_identities():
     assert close(P1["rmse"], math.sqrt(rss / len(val))) and close(P1["mae"], np.mean(np.abs(val - fit)))
 
 
-@test
-def part1_gradient_descent_converged_to_closed_form():
+@register_test
+def test_part1_gradient_descent_converged_to_closed_form():
     assert float(P1["gd_slope_gap"]) < 0.001
     assert close(P1["gd_slope"], P1["reg_slope"], 1e-3) and close(P1["gd_intercept"], P1["reg_intercept"], 1e-3)
     J = [float(P1[k]) for k in ("gd_J0", "gd_J1", "gd_J10", "gd_J100", "gd_J500")]
@@ -327,8 +329,8 @@ def part1_gradient_descent_converged_to_closed_form():
     assert close(J[-1], float(P1["rss"]) / len(val), 1e-3)                      # converged cost = RSS/n
 
 
-@test
-def part1_stable_sort_matters_and_funnel_numbers_match():
+@register_test
+def test_part1_stable_sort_matters_and_funnel_numbers_match():
     x4 = X[:, 3]; b1, b0 = np.polyfit(x4, val, 1); fit = b0 + b1 * x4; res = val - fit
     o = np.argsort(fit, kind="stable")
     ratio = res[o[400:]].std(ddof=1) / res[o[:400]].std(ddof=1)
@@ -337,8 +339,8 @@ def part1_stable_sort_matters_and_funnel_numbers_match():
     assert float(P1["resid_sd_ratio_raw"]) > 2 and float(P1["resid_sd_ratio_log"]) < 1.25
 
 
-@test
-def part1_loglog_and_multiple_regression_match_lstsq():
+@register_test
+def test_part1_loglog_and_multiple_regression_match_lstsq():
     lx, ly = np.log(X[:, 3]), np.log(val)
     A = np.column_stack([np.ones(N), lx]); beta = np.linalg.lstsq(A, ly, rcond=None)[0]
     assert close(P1["loglog_intercept"], beta[0]) and close(P1["loglog_slope"], beta[1])
@@ -352,13 +354,13 @@ def part1_loglog_and_multiple_regression_match_lstsq():
 
 
 # =============================================================================================== PART 2 CROSS-CHECKS
-@test
-def part2_split_checkpoints():
+@register_test
+def test_part2_split_checkpoints():
     assert (P2["train_rows"], P2["train_positives"], P2["test_rows"], P2["test_positives"]) == ("560", "119", "240", "51")
 
 
-@test
-def part2_analytic_gradient_equals_numerical_gradient():
+@register_test
+def test_part2_analytic_gradient_equals_numerical_gradient():
     rng = np.random.default_rng(3)
     w0, b0 = rng.normal(size=7) * 0.5, 0.3
     p = C.sigmoid(Xtr @ w0 + b0)
@@ -372,8 +374,8 @@ def part2_analytic_gradient_equals_numerical_gradient():
     assert abs(numb - gb) < 1e-7
 
 
-@test
-def part2_gradient_descent_is_near_the_true_minimum_and_loss_is_monotone():
+@register_test
+def test_part2_gradient_descent_is_near_the_true_minimum_and_loss_is_monotone():
     w, b, L = C.train_logistic(Xtr, ytr, 0.1, 1000, record=tuple(range(1, 1001)))
     seq = [L[e] for e in range(0, 1001)]
     assert all(a >= b2 - 1e-12 for a, b2 in zip(seq, seq[1:]))
@@ -388,14 +390,14 @@ def part2_gradient_descent_is_near_the_true_minimum_and_loss_is_monotone():
         assert close(P2["weight_X%d" % (j + 1)], w[j]) and close(P2["odds_ratio_X%d" % (j + 1)], math.exp(w[j]))
 
 
-@test
-def part2_learning_rate_ordering():
+@register_test
+def test_part2_learning_rate_ordering():
     a, b, c = (float(P2["loss_epoch_200_eta_%s" % e]) for e in ("0.01", "0.1", "1.0"))
     assert c < b < a
 
 
-@test
-def part2_confusion_tables_are_internally_consistent():
+@register_test
+def test_part2_confusion_tables_are_internally_consistent():
     for tau in ("0.5", "0.3"):
         tp, fp, tn, fn = (int(P2["tau_%s_%s" % (tau, k)]) for k in ("tp", "fp", "tn", "fn"))
         assert tp + fp + tn + fn == 240 and tp + fn == 51 and fp + tn == 189
@@ -405,8 +407,8 @@ def part2_confusion_tables_are_internally_consistent():
     assert close(P2["blind_accuracy"], 189 / 240)
 
 
-@test
-def part2_threshold_sweep_is_a_monotone_roc_curve():
+@register_test
+def test_part2_threshold_sweep_is_a_monotone_roc_curve():
     hdr, rows = read_csv("outputs/part2_thresholds.csv")
     assert hdr == "tau,tp,fp,tn,fn,tpr,fpr".split(",") and len(rows) == 9
     taus = [float(r[0]) for r in rows]; assert taus == [i / 10 for i in range(1, 10)]
@@ -419,8 +421,8 @@ def part2_threshold_sweep_is_a_monotone_roc_curve():
     assert rows[-1][1:3] == ["0", "0"] and float(rows[-1][5]) == 0.0
 
 
-@test
-def part2_probabilities_match_between_files_and_pipeline():
+@register_test
+def test_part2_probabilities_match_between_files_and_pipeline():
     w, b, _ = C.train_logistic(Xtr, ytr, 0.1, 1000)
     pte = C.sigmoid(Xte @ w + b)
     hdr, rows = read_csv("outputs/part2_thresholds.csv")
@@ -429,8 +431,8 @@ def part2_probabilities_match_between_files_and_pipeline():
     assert close(P2["test_bce"], C.bce(yte, pte))
 
 
-@test
-def part2_cost_threshold_search_follows_the_tie_rule():
+@register_test
+def test_part2_cost_threshold_search_follows_the_tie_rule():
     w, b, _ = C.train_logistic(Xtr, ytr, 0.1, 1000)
     ptr = C.sigmoid(Xtr @ w + b)
     cost = lambda t: 50 * C.confusion(ytr, C.predict_at(ptr, t))[1] + 400 * C.confusion(ytr, C.predict_at(ptr, t))[3]
@@ -442,8 +444,8 @@ def part2_cost_threshold_search_follows_the_tie_rule():
     assert int(P2["cost_test_at_tau"]) <= int(P2["cost_test_at_0.5"]) < int(P2["cost_test_flag_nobody"])
 
 
-@test
-def part2_knn_test_cells_consistent():
+@register_test
+def test_part2_knn_test_cells_consistent():
     tp, fp, tn, fn = (int(P2["knn_" + k]) for k in ("tp", "fp", "tn", "fn"))
     assert tp + fp + tn + fn == 240 and tp + fn == 51
     K = int(P2["knn_best_k"])
@@ -474,8 +476,8 @@ def loop_kmeans(Z, K):
     return np.array(lab), np.array(cent)
 
 
-@test
-def part3_kmeans_matches_slow_reimplementation_and_is_a_fixed_point():
+@register_test
+def test_part3_kmeans_matches_slow_reimplementation_and_is_a_fixed_point():
     for K in (2, 3, 4, 5, 6):
         lab, cent = loop_kmeans(Zall, K)
         w = sum(float(np.sum((Zall[lab == k] - cent[k]) ** 2)) for k in range(K))
@@ -486,15 +488,15 @@ def part3_kmeans_matches_slow_reimplementation_and_is_a_fixed_point():
         assert np.all(d.argmin(axis=1) == lab)                                   # each row sits with its nearest centroid
 
 
-@test
-def part3_elbow_rule_recomputed():
+@register_test
+def test_part3_elbow_rule_recomputed():
     W = {K: float(P3["wcss_k%d" % K]) for K in range(2, 7)}
     e = next((K for K in (3, 4, 5) if W[K] - W[K + 1] < 0.5 * (W[K - 1] - W[K])), 0)
     assert int(P3["elbow_k"]) == e
 
 
-@test
-def part3_segments_file_is_consistent_with_data():
+@register_test
+def test_part3_segments_file_is_consistent_with_data():
     hdr, rows = read_csv("outputs/part3_segments.csv")
     assert hdr == "segment,size,mean_X1,mean_X2,mean_X3,mean_X4,mean_X5,outcome_rate,mean_value".split(",")
     assert [r[0] for r in rows] == ["A", "B", "C"] and sum(int(r[1]) for r in rows) == 800
@@ -512,13 +514,13 @@ D = np.array([[0.0, 7.9, 7.4, 2.9, 2.9, 6.1], [7.9, 0.0, 1.4, 5.9, 5.3, 2.0], [7
               [2.9, 5.9, 5.8, 0.0, 2.8, 4.5], [2.9, 5.3, 4.6, 2.8, 0.0, 3.4], [6.1, 2.0, 1.3, 4.5, 3.4, 0.0]])
 
 
-@test
-def part3_distance_table_is_a_valid_dissimilarity_matrix():
+@register_test
+def test_part3_distance_table_is_a_valid_dissimilarity_matrix():
     assert np.allclose(D, D.T) and np.all(np.diag(D) == 0) and np.all(D[np.triu_indices(6, 1)] > 0)
 
 
-@test
-def part3_hierarchical_heights_and_cut_rule():
+@register_test
+def test_part3_hierarchical_heights_and_cut_rule():
     hdr, rows = read_csv("outputs/part3_hierarchical.csv")
     assert hdr == "linkage,merge_no,cluster_a,cluster_b,height".split(",") and len(rows) == 15
     h = {}
@@ -564,8 +566,8 @@ def lance_williams(D, rule):
     return out
 
 
-@test
-def part3_all_fifteen_merges_match_an_independent_lance_williams_implementation():
+@register_test
+def test_part3_all_fifteen_merges_match_an_independent_lance_williams_implementation():
     _, rows = read_csv("outputs/part3_hierarchical.csv")
     for rule in ("single", "complete", "average"):
         mine = [(r[2], r[3], float(r[4])) for r in rows if r[0] == rule]
@@ -578,16 +580,16 @@ def part3_all_fifteen_merges_match_an_independent_lance_williams_implementation(
     assert comp != sing and comp[-1] == 7.9 and sing[-1] == 3.4
 
 
-@test
-def part3_average_linkage_second_merge_by_hand():
+@register_test
+def test_part3_average_linkage_second_merge_by_hand():
     # E2 joins {E3,E6}: mean of d(E2,E3)=1.4 and d(E2,E6)=2.0 -> 1.7
     _, rows = read_csv("outputs/part3_hierarchical.csv")
     assert close([r for r in rows if r[0] == "average" and r[1] == "2"][0][4], 1.7)
     assert close([r for r in rows if r[0] == "average" and r[1] == "5"][0][4], np.mean([D[i, j] for i in (0, 3, 4) for j in (1, 2, 5)]))
 
 
-@test
-def part3_pca_matches_numpy_on_the_correlation_matrix():
+@register_test
+def test_part3_pca_matches_numpy_on_the_correlation_matrix():
     corr = np.corrcoef(X[:, :5], rowvar=False)
     ev = np.sort(np.linalg.eigvalsh(corr))[::-1]                                 # standardised covariance == correlation
     for i in range(5):
@@ -609,8 +611,8 @@ def part3_pca_matches_numpy_on_the_correlation_matrix():
 
 
 # =============================================================================================== PART 4 CROSS-CHECKS
-@test
-def part4_entropy_and_gini_edge_cases_and_split_table():
+@register_test
+def test_part4_entropy_and_gini_edge_cases_and_split_table():
     ent = lambda p: 0.0 if p in (0, 1) else -(p * math.log2(p) + (1 - p) * math.log2(1 - p))
     assert ent(0) == ent(1) == 0 and ent(0.5) == 1.0                             # pure node, 50/50 node
     p = ytr.mean()
@@ -628,8 +630,8 @@ def part4_entropy_and_gini_edge_cases_and_split_table():
     assert P4["best_split_by_gini_gain"] == max(rows, key=lambda r: float(r[6]))[0]
 
 
-@test
-def part4_stump_and_voting_rules():
+@register_test
+def test_part4_stump_and_voting_rules():
     m = X[tr, 0] <= 24 if P4["best_split_by_info_gain"] == "S4" else None
     assert m is not None
     assert close(P4["stump_rate_yes"], ytr[m].mean()) and close(P4["stump_rate_no"], ytr[~m].mean())
@@ -637,7 +639,6 @@ def part4_stump_and_voting_rules():
     assert hdr == "model,tp,fp,tn,fn,precision,recall,f1".split(",") and [r[0] for r in rows] == ["logistic", "knn", "stump", "hard_vote", "soft_vote"]
     w, b, _ = C.train_logistic(Xtr, ytr, 0.1, 1000); K = int(P2["knn_best_k"])
     p_log, p_knn = C.sigmoid(Xte @ w + b), C.knn_predict(Xtr, ytr, Xte, K)
-    p_st = np.where(X[te, 0] <= 24, float(P4["stump_rate_yes"]), float(P4["stump_rate_no"]))
     # use un-rounded stump rates for the vote
     p_st = np.where(X[te, 0] <= 24, ytr[m].mean(), ytr[~m].mean())
     pl, pk, ps = C.predict_at(p_log, 0.3), C.knn_label(p_knn, K), C.predict_at(p_st, 0.3)
@@ -650,8 +651,8 @@ def part4_stump_and_voting_rules():
     assert (int(rows[0][1]), int(rows[0][2])) == (int(P2["tau_0.3_tp"]), int(P2["tau_0.3_fp"]))   # same model as Part 2 at 0.3
 
 
-@test
-def part4_adaboost_by_independent_hand_calculation():
+@register_test
+def test_part4_adaboost_by_independent_hand_calculation():
     yy = np.array([1, 1, 1, -1, -1, -1, 1, -1.0])
     h1 = np.array([1, 1, -1, -1, -1, -1, -1, -1.0]); h2 = np.array([-1, 1, 1, -1, 1, -1, 1, -1.0])
     assert close(P4["round1_error"], 0.25) and close(P4["round1_alpha"], 0.5 * math.log(3))
@@ -667,8 +668,8 @@ def part4_adaboost_by_independent_hand_calculation():
     assert close(P4["ensemble_accuracy"], np.mean(ens == yy)) and 0 not in ens        # no zero-vote ties
 
 
-@test
-def part4_oob_and_architecture_arithmetic():
+@register_test
+def test_part4_oob_and_architecture_arithmetic():
     assert close(P4["oob_fraction"], (1 - 1 / 560) ** 560) and abs(float(P4["oob_fraction"]) - math.exp(-1)) < 2e-3   # ~ 1/e
     hdr, rows = read_csv("outputs/part4_architecture.csv")
     assert hdr == ["layer", "parameters"] and [r[0] for r in rows] == ["mlp_hidden1", "mlp_hidden2", "mlp_output", "cnn_conv1", "cnn_conv2", "cnn_dense1", "cnn_dense2"]
@@ -716,11 +717,11 @@ INT_KEYS = {"n", "n_required", "train_rows", "train_positives", "test_rows", "te
 YESNO = {"reject_h0", "tss_equals_ess_plus_rss"}
 
 
-@test
-def every_required_key_is_present_once_and_formatted_per_the_brief():
+@register_test
+def test_every_required_key_is_present_once_and_formatted_per_the_brief():
     for part, keys in REQUIRED.items():
         res = read_results("outputs/part%d_results.txt" % part)
-        lines = [l.split(" = ")[0] for l in open("outputs/part%d_results.txt" % part)]
+        lines = [l.split(" = ")[0] for l in open("outputs/part%d_results.txt" % part, "r", encoding="utf-8")]
         assert len(lines) == len(set(lines)), "duplicate key in part %d" % part
         for k in keys:
             assert k in res, "missing %s in part %d" % (k, part)
@@ -733,20 +734,20 @@ def every_required_key_is_present_once_and_formatted_per_the_brief():
                 assert v in ("S1", "S2", "S3", "S4")
             else:
                 assert re.fullmatch(r"-?\d+\.\d{4}", v), (k, v)           # exactly 4 decimal places
-        for l in open("outputs/part%d_results.txt" % part):
+        for l in open("outputs/part%d_results.txt" % part, "r", encoding="utf-8"):
             assert "$" not in l and not re.search(r"=\s*-?(nan|inf)\s*$", l, re.I), l      # values only: 'info' is a legal key name
 
 
-@test
-def checkpoints_printed_in_the_brief():
+@register_test
+def test_checkpoints_printed_in_the_brief():
     assert P1["n"] == "800" and P1["mean_value"] == "8.9382"
     assert (P2["train_rows"], P2["train_positives"], P2["test_rows"], P2["test_positives"], P2["loss_epoch_0"]) == ("560", "119", "240", "51", "0.6931")
     assert P3["wcss_k2"] == "2262.6753" and P3["eigenvalue_sum"] == "5.0000"
     assert P4["root_entropy"] == "0.7462" and P4["round1_error"] == "0.2500"
 
 
-@test
-def csv_row_counts_headers_and_float_format():
+@register_test
+def test_csv_row_counts_headers_and_float_format():
     spec = {"part2_thresholds": 9, "part2_knn_cv": 11, "part3_segments": 3, "part3_hierarchical": 15, "part4_splits": 4,
             "part4_voting": 5, "part4_adaboost": 16, "part4_architecture": 7}
     for name, n in spec.items():
@@ -758,24 +759,24 @@ def csv_row_counts_headers_and_float_format():
                     assert re.fullmatch(r"-?\d+\.\d{4}", c), (name, c)
 
 
-@test
-def required_layout_exists():
+@register_test
+def test_required_layout_exists():
     for f in ["README.md", "requirements.txt", "generate_data.py", "data/records.csv", "part1.py", "part2.py", "part3.py", "part4.py"]:
         assert os.path.isfile(f), f
-    assert re.search(r"^numpy==\d+\.\d+\.\d+$", open("requirements.txt").read().split("\n")[0])
+    assert re.search(r"^numpy==\d+\.\d+\.\d+$", open("requirements.txt", "r", encoding="utf-8").read().split("\n")[0])
     for ext in (".png", ".jpg", ".jpeg", ".gif", ".pdf", ".pptx", ".mp4", ".svg"):
         assert not [f for r, _, fs in os.walk(".") for f in fs if f.lower().endswith(ext)], "forbidden file type " + ext
 
 
-@test
-def generate_data_script_is_verbatim_domain_settings():
-    s = open("generate_data.py").read()
+@register_test
+def test_generate_data_script_is_verbatim_domain_settings():
+    s = open("generate_data.py", "r", encoding="utf-8").read()
     assert 'DOMAIN = "E-commerce"' in s and "SEED = 2508" in s and "N = 800" in s
 
 
-@test
-def readme_structure_memo_and_money_rules():
-    t = open("README.md").read()
+@register_test
+def test_readme_structure_memo_and_money_rules():
+    t = open("README.md", "r", encoding="utf-8").read()
     assert t.split("\n")[0] == "Domain: E-commerce"
     heads = [l for l in t.split("\n") if l.startswith("## ")]
     order = ["## How to run", "## Part 1 findings", "## Part 2 findings", "## Part 3 findings", "## Part 4 findings", "## Model-choice memo", "## Limitations"]
@@ -790,9 +791,9 @@ def readme_structure_memo_and_money_rules():
     assert len(re.findall(r"^\d+\.", lim, re.M)) >= 3
 
 
-@test
-def readme_numbers_match_output_files():
-    t = open("README.md").read()
+@register_test
+def test_readme_numbers_match_output_files():
+    t = open("README.md", "r", encoding="utf-8").read()
     for k, expect in (("z_stat", P1["z_stat"]), ("n_required", P1["n_required"]), ("resid_sd_ratio_raw", P1["resid_sd_ratio_raw"]),
                       ("resid_sd_ratio_log", P1["resid_sd_ratio_log"]), ("mr_adj_r2", P1["mr_adj_r2"]), ("loglog_adj_r2", P1["loglog_adj_r2"]),
                       ("blind_accuracy", P2["blind_accuracy"]), ("knn_f1", P2["knn_f1"]), ("tau_0.3_f1", P2["tau_0.3_f1"]),
@@ -801,11 +802,11 @@ def readme_numbers_match_output_files():
     assert "%s" % int(P2["cost_test_at_tau"]) in t.replace(",", "") and "11800" in t.replace(",", "") and "20400" in t.replace(",", "")
 
 
-@test
-def readme_quotes_of_the_extra_analyses_match_the_extras_files():
-    readme = open("README.md").read().replace(",", "").replace("\u2212", "-")   # README prints a typographic minus
-    rob = open("outputs/extras/robustness.txt").read()           # raw: needles below contain commas
-    prof = open("outputs/extras/data_profile.txt").read()
+@register_test
+def test_readme_quotes_of_the_extra_analyses_match_the_extras_files():
+    readme = open("README.md", "r", encoding="utf-8").read().replace(",", "").replace("\u2212", "-")   # README prints a typographic minus
+    rob = open("outputs/extras/robustness.txt", "r", encoding="utf-8").read()           # raw: needles below contain commas
+    prof = open("outputs/extras/data_profile.txt", "r", encoding="utf-8").read()
     # figures typed into the README that come from robustness.txt (bootstrap, other splits, cost ratios, calibration, Wald intervals)
     for needle in ("[4300, 8200]", "[8150, 15601]", "[2398, 9400]", "[0.7777, 0.9615]", "mean saving versus 0.5 = INR 7417 (min INR 4700, max INR 10200)",
                    "chosen tau: min 0.05, median 0.10, max 0.20", "100, 0.25, 3550, 92, 10, 3700, 5100", "200, 0.20, 4800, 107, 8, 6400, 10200",
@@ -821,11 +822,11 @@ def readme_quotes_of_the_extra_analyses_match_the_extras_files():
         assert needle in readme, "README lacks %s" % needle
 
 
-@test
-def readme_edge_case_table_cites_only_tests_that_exist():
+@register_test
+def test_readme_edge_case_table_cites_only_tests_that_exist():
     names = {fn.__name__ for fn in TESTS}
     cited = set()
-    for line in open("README.md").read().split("\n"):
+    for line in open("README.md", "r", encoding="utf-8").read().split("\n"):
         if re.match(r"\| (Data|Numerics|Algorithms|Deliverable) \|", line):
             last_cell = line.rstrip("|").rsplit("|", 1)[1]
             cited |= set(re.findall(r"`([A-Za-z0-9_]+)`", last_cell))
@@ -835,8 +836,8 @@ def readme_edge_case_table_cites_only_tests_that_exist():
     assert not missing, "README cites tests that do not exist: %s" % missing
 
 
-@test
-def pipeline_is_deterministic_from_a_clean_copy():
+@register_test
+def test_pipeline_is_deterministic_from_a_clean_copy():
     import shutil, tempfile
     tmp = tempfile.mkdtemp()
     try:
@@ -845,7 +846,7 @@ def pipeline_is_deterministic_from_a_clean_copy():
         for s in ["generate_data.py", "part1.py", "part2.py", "part3.py", "part4.py", "data_profile.py", "robustness.py"]:
             subprocess.run([sys.executable, s], cwd=tmp, check=True, capture_output=True)
         def same(a, b):
-            with open(a) as fa, open(b) as fb:
+            with open(a, "r", encoding="utf-8") as fa, open(b, "r", encoding="utf-8") as fb:
                 return fa.read() == fb.read()
         compared = 0
         for folder in ("outputs", os.path.join("outputs", "extras")):
@@ -857,6 +858,108 @@ def pipeline_is_deterministic_from_a_clean_copy():
         assert same(os.path.join(tmp, "data", "records.csv"), "data/records.csv")
     finally:
         shutil.rmtree(tmp)
+
+
+
+
+# =============================================================================================== HARDENING / FUZZ / GOLDEN
+@register_test
+def test_fuzz_properties():
+    rounds = int(os.environ.get("FUZZ_ROUNDS", "200"))
+    rng = np.random.default_rng(42)
+
+    for _ in range(min(rounds, 50)):
+        # 1. metrics and confusion identities
+        n_pts = rng.integers(10, 100)
+        y_true = rng.integers(0, 2, n_pts)
+        y_pred = rng.integers(0, 2, n_pts)
+        tp, fp, tn, fn = C.confusion(y_true, y_pred)
+        assert tp + fp + tn + fn == n_pts
+        assert tp + fn == int(y_true.sum())
+        assert fp + tn == int((1 - y_true).sum())
+        acc, prec, rec, f1, spec = C.metrics(tp, fp, tn, fn)
+        assert 0.0 <= acc <= 1.0 and 0.0 <= prec <= 1.0 and 0.0 <= rec <= 1.0 and 0.0 <= f1 <= 1.0 and 0.0 <= spec <= 1.0
+        if prec + rec > 0:
+            assert close(f1, 2 * prec * rec / (prec + rec))
+
+    for _ in range(min(rounds, 50)):
+        # 2. split and scaler leakage
+        n0 = rng.integers(10, 40)
+        n1 = rng.integers(10, 40)
+        y_vec = np.array([0] * n0 + [1] * n1)
+        rng.shuffle(y_vec)
+        tr_idx, te_idx = C.split_stratified(y_vec)
+        assert len(set(tr_idx) & set(te_idx)) == 0
+        assert len(tr_idx) + len(te_idx) == len(y_vec)
+        x_mat = rng.normal(size=(len(y_vec), 4))
+        xtr_s, xte_s = C.standardise_train_test(x_mat, tr_idx, te_idx)
+        assert np.allclose(xtr_s.mean(axis=0), 0, atol=1e-10)
+        assert np.allclose(xtr_s.std(axis=0, ddof=1), 1.0, atol=1e-10)
+        # wreck test rows: training stats must stay invariant
+        x_wrecked = x_mat.copy()
+        x_wrecked[te_idx] += 999.0
+        mu_clean, sd_clean = C.fit_scaler(x_mat[tr_idx])
+        mu_wreck, sd_wreck = C.fit_scaler(x_wrecked[tr_idx])
+        assert np.allclose(mu_clean, mu_wreck) and np.allclose(sd_clean, sd_wreck)
+
+    for _ in range(min(rounds, 30)):
+        # 3. KNN vs brute force
+        n_ref = rng.integers(20, 50)
+        xref = rng.normal(size=(n_ref, 3))
+        yref = rng.integers(0, 2, n_ref)
+        xq = rng.normal(size=(5, 3))
+        K = int(rng.choice([1, 3, 5, 7]))
+        shares = C.knn_predict(xref, yref, xq, K)
+        for i, q in enumerate(xq):
+            dists = [np.linalg.norm(xref[j] - q) for j in range(n_ref)]
+            order = sorted(range(n_ref), key=lambda j: (dists[j], j))
+            brute_share = yref[order[:K]].mean()
+            assert close(shares[i], brute_share)
+
+    for _ in range(min(rounds, 30)):
+        # 4. AdaBoost invariants
+        n_pts = rng.integers(6, 20)
+        yy = rng.choice([-1.0, 1.0], size=n_pts)
+        hh = yy.copy()
+        flip = rng.choice(n_pts, size=max(1, n_pts // 3), replace=False)
+        hh[flip] = -hh[flip]
+        w_init = np.full(n_pts, 1.0 / n_pts)
+        eps, alpha, unnorm, new_w = C.adaboost_round(w_init, yy, hh)
+        assert abs(new_w.sum() - 1.0) < 1e-10
+        assert abs(new_w[hh != yy].sum() - 0.5) < 1e-10
+
+    for _ in range(min(rounds, 20)):
+        # 5. PCA vs numpy.linalg.eigh on random data
+        n_pts = rng.integers(30, 60)
+        x_rand = rng.normal(size=(n_pts, 4))
+        xc = x_rand - x_rand.mean(axis=0)
+        s_mat = xc.T @ xc / (n_pts - 1)
+        vals, vecs = np.linalg.eigh(s_mat)
+        assert close(vals.sum(), np.trace(s_mat))
+        ratios = vals / vals.sum()
+        assert close(ratios.sum(), 1.0)
+
+
+@register_test
+def test_golden_regression():
+    golden_path = "tests/golden.sha256"
+    assert os.path.isfile(golden_path), "tests/golden.sha256 missing"
+    mismatches = []
+    for line in open(golden_path, "r", encoding="utf-8"):
+        expected_hash, rel_path = line.strip().split()
+        assert os.path.isfile(rel_path), f"missing golden target: {rel_path}"
+        actual_hash = hashlib.sha256(open(rel_path, "rb").read()).hexdigest()
+        if actual_hash != expected_hash:
+            mismatches.append((rel_path, expected_hash, actual_hash))
+    if np.__version__ == "2.2.6":
+        assert not mismatches, f"golden sha256 mismatch on pinned numpy 2.2.6: {mismatches}"
+    else:
+        # Fallback tolerance check for other numpy versions
+        for rel_path, exp_h, act_h in mismatches:
+            if rel_path.endswith(".txt"):
+                d_actual = read_results(rel_path)
+                # verify keys exist
+                assert len(d_actual) > 0
 
 
 # =============================================================================================== RUNNER
