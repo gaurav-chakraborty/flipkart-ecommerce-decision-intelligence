@@ -17,7 +17,7 @@ This matrix establishes complete end-to-end traceability between:
 ## 2. Comprehensive Traceability Table
 
 | Requirement ID | Requirement Description | Source Implementation File & Function | Deliverable Artifact / Output Key | Verification Test Name | README Section |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | **Task 0.1** | Synthetic dataset generation ($N=800$, Seed=2508) | `generate_data.py` (verbatim script) | `data/records.csv` | `test_data_file_matches_generator_hash_and_shape` | `## How to run` |
 | **Task 0.2** | Verbatim generator output hash check | `generate_data.py` L79 | Prints `800 10 170 c6f249ba...` | `test_generate_data_script_is_verbatim_domain_settings` | `## How to run` |
 | **Task 1.1** | Mean, SD ($ddof=1$), SE, 95% CI for order value | `part1.py` L14-L21 | `mean_value`, `sd_value`, `se_value`, `ci95_low`, `ci95_high` | `test_part1_estimation_and_test` | `### Task 1.1` |

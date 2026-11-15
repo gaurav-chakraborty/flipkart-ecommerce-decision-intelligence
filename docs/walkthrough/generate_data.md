@@ -19,7 +19,7 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ## 3. Line-by-Line Code & Statement Breakdown
 
 | Lines | Exact Code | Plain English Description | Mathematical Formulation / Rationale | Requirement Satisfied | Edge Case Guarded / Failure Mode |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | L1-L5 | `"""Synthetic records for the capstone (all values are invented; no real company data). Run once from the repository root:  python generate_data.py It writes...` | Module docstring specifying synthetic domain data and invariant requirements. | Defines generation parameters: values are simulated for Flipkart decision intelligence. | Task 0 / Domain setup | Must stay verbatim; modifying below NUMERIC CORE invalidates reference numbers. |
 | L6 | `import csv` | Imports standard library modules for CSV formatting, MD5 hashing, math, and RNG. | csv for tabular write, hashlib for MD5 integrity, math/random/os for baseline ops. | System setup | Uses only standard library and NumPy. |
 | L7 | `import hashlib` | Imports required Python modules and symbols. | Standard library and NumPy interface. | Environment setup and dependencies | ModuleNotFoundError if third-party dependencies are unpinned. |

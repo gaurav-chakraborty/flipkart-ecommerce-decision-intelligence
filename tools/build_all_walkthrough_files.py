@@ -60,7 +60,7 @@ def make_markdown_table(spans: list[tuple[int, int, str]], custom_notes: dict[in
     """Format statement spans into a strict 6-column markdown table."""
     rows = [
         "| Lines | Exact Code | Plain English Description | Mathematical Formulation / Rationale | Requirement Satisfied | Edge Case Guarded / Failure Mode |",
-        "|---|---|---|---|---|---|",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for s, e, code in spans:
         line_ref = f"L{s}" if s == e else f"L{s}-L{e}"
@@ -184,7 +184,7 @@ Per the university brief, all deliverables are implemented strictly from scratch
 1. **Part 1 (Statistical Estimation & Regression)**:
    - Reads `data/records.csv` columns `order_value_inr_hundreds` and predictor `X4`.
    - Computes statistical inference (mean, SD, SE, 95% CI, two-sided z-test against null mean INR 800).
-   - Fits OLS simple regression, gradient descent verification, heteroscedasticity funnel diagnosis, log-log transformation, and multiple linear regression on $X_1 \\dots X_7$.
+   - Fits OLS simple regression, gradient descent verification, heteroscedasticity funnel diagnosis, log-log transformation, and multiple linear regression on $\\ln(X_4)$ and $X_1, X_2, X_3, X_5, X_6, X_7$.
 2. **Part 2 (Classification, ROC, & Asymmetric Cost Optimization)**:
    - Splits dataset into 70% train (560 rows) and 30% test (240 rows) using stratified sampling preserving class ratio (21.25% churn).
    - Standardises features strictly using training set statistics.
@@ -193,17 +193,17 @@ Per the university brief, all deliverables are implemented strictly from scratch
    - Evaluates operational costs ($C_{\\text{FA}} = \\text{INR } 50, C_{\\text{Miss}} = \\text{INR } 400$) and selects cost-optimal threshold $\\tau^* = 0.15$.
 3. **Part 3 (Customer Segmentation & PCA)**:
    - Takes features $X_1 \\dots X_5$ across all 800 customers.
-   - Performs K-Means clustering for $K \\in \\{2, 3, 4, 5, 6\\}$ with deterministic initial centroids.
-   - Identifies elbow at $K = 3$ using second differences of within-cluster sum of squares (WCSS).
-   - Constructs hierarchical agglomerative clustering comparing Single, Complete, and Average linkage dendrogram cuts at height $H = 4.0$.
+   - Performs K-Means clustering for $K \\in \\{2, 3, 4, 5, 6\\}$ with deterministic initial centroids (rows $0, \\lfloor 800/K \\rfloor, \\dots$).
+   - Identifies elbow at $K = 3$ using the brief's diminishing-drop rule ($\\text{Drop}(3\\to 4) < 0.5 \\cdot \\text{Drop}(2\\to 3)$).
+   - Constructs hierarchical agglomerative clustering comparing Single, Complete, and Average linkage dendrogram cuts at the largest consecutive merge-height gap.
    - Executes Principal Component Analysis (PCA) on the $5 \\times 5$ correlation matrix, enforcing positive maximum loading sign convention.
 4. **Part 4 (Decision Trees, Ensembles, & Deep Architectures)**:
-   - Evaluates Shannon entropy and Gini impurity for root and all split candidates on $X_1 \\dots X_7$.
-   - Extracts optimal 1-level decision stump on $X_3 \\ge 0.50$.
+   - Evaluates Shannon entropy and Gini impurity for root and candidate splits $S_1 \\dots S_4$ on $X_1 \\dots X_7$.
+   - Extracts optimal 1-level decision stump on $S_4$ ($X_1 \\le 24$ months, IG $= 0.1252$, Gini gain $= 0.0606$).
    - Builds heterogeneous voting ensemble combining Logistic Regression, KNN ($K=5$), and Decision Stump.
-   - Executes 3 rounds of sequential AdaBoost sample reweighting.
-   - Derives analytical Out-of-Bag (OOB) sample bounds for Random Forests.
-   - Computes layer-by-layer analytical parameter dimensions for MLP, CNN, and RNN architectures.
+   - Executes 2 rounds of sequential AdaBoost sample reweighting on the 8-point benchmark dataset.
+   - Derives analytical Out-of-Bag (OOB) sample bounds for Random Forests ($(1 - 1/560)^{560} = 0.3676$).
+   - Computes layer-by-layer analytical parameter dimensions for MLP (13,002), CNN (15,734), and RNN (26,768) architectures.
 
 ## 4. How to Read the Line-by-Line Walkthroughs
 
@@ -337,27 +337,32 @@ def build_part1() -> None:
         8: ("Imports shared helpers from common.py.", "Imports load, write_results, halves_by_fitted.", "Dependencies", "Shared primitives."),
         10: ("Loads raw data matrices from data/records.csv.", "X (800x7), y (800), val (800).", "Task 1 Data Ingestion", "Validates records integrity."),
         11: ("Extracts sample size n = 800.", "n = len(val).", "Task 1 Sample Count", "Records total observations."),
-        14: ("Task 1.1: Computes sample mean of order values.", "mean = sum(val) / n = 8.9382 (INR 893.82).", "Task 1.1 Mean Estimation", "Unbiased point estimator of population mean."),
-        15: ("Task 1.1: Computes sample standard deviation with ddof=1.", "sd = sqrt(sum((val - mean)^2) / (n - 1)) = 9.1723.", "Task 1.1 Variance Estimation", "Uses Bessel correction (ddof=1) for sample variance."),
-        16: ("Task 1.1: Computes standard error of the mean.", "se = sd / sqrt(n) = 9.1723 / sqrt(800) = 0.3243.", "Task 1.1 Standard Error", "Standard error scales inversely with sqrt(n)."),
-        17: ("Task 1.1: Computes 95% confidence interval bounds using z = 1.96.", "ci_low = 8.9382 - 1.96 * 0.3243 = 8.3026; ci_high = 9.5738.", "Task 1.1 Confidence Interval", "Normal approximation justified by Central Limit Theorem on n=800."),
+        16: ("Task 1.1: Computes sample mean of order values.", "mean = sum(val) / n = 8.9382 (INR 893.82).", "Task 1.1 Mean Estimation", "Unbiased point estimator of population mean."),
+        17: ("Task 1.1: Computes sample standard deviation with ddof=1.", "sd = sqrt(sum((val - mean)^2) / (n - 1)) = 9.1723.", "Task 1.1 Variance Estimation", "Uses Bessel correction (ddof=1) for sample variance."),
+        18: ("Task 1.1: Computes standard error of the mean.", "se = sd / sqrt(n) = 9.1723 / sqrt(800) = 0.3243.", "Task 1.1 Standard Error", "Standard error scales inversely with sqrt(n)."),
+        20: ("Task 1.1: Computes 95% confidence interval bounds using z = 1.96.", "ci_low = 8.9382 - 1.96 * 0.3243 = 8.3026; ci_high = 9.5738.", "Task 1.1 Confidence Interval", "Normal approximation justified by Central Limit Theorem on n=800."),
         23: ("Task 1.2: Computes two-sided z-statistic against null mean mu0 = 8.0.", "z = (mean - 8.0) / se = (8.9382 - 8.0) / 0.3243 = 2.8930.", "Task 1.2 Hypothesis Testing", "Measures discrepancy in standard error units."),
-        24: ("Task 1.2: Compares |z| >= 1.96 to make reject decision.", "reject_h0 = 'yes' since 2.8930 > 1.96 (p-value = 0.0038).", "Task 1.2 Decision Rule", "Rejects null hypothesis at alpha = 0.05."),
-        27: ("Task 1.3: Computes required sample size for margin E = 0.5 (INR 50).", "n_req = ceil((1.96 * sd / 0.5)^2) = ceil(1292.05) = 1293 orders.", "Task 1.3 Sample Size Planning", "Integer ceiling guarantees margin is strictly <= 0.5."),
-        31: ("Task 1.4: Prepares predictor X4 (baseline order value) and target val.", "x = X[:, 3], y_reg = val.", "Task 1.4 Data Setup", "Simple regression setup."),
-        33: ("Task 1.4: Computes closed-form OLS slope and intercept.", "slope = Cov(x, y) / Var(x) = 0.6701; intercept = y_bar - slope * x_bar = -3.6598.", "Task 1.4 OLS Estimation", "Ordinary least squares parameter solutions."),
-        35: ("Task 1.4: Computes fitted values and residuals.", "y_hat = intercept + slope * x; resid = y_reg - y_hat.", "Task 1.4 Residual Computation", "Residuals sum to zero under OLS with intercept."),
-        37: ("Task 1.4: Computes sum of squares decomposition.", "TSS = sum((y - y_bar)^2) = 67221.4285; ESS = 34925.6088; RSS = 32295.8197.", "Task 1.4 ANOVA Decomposition", "Verifies TSS = ESS + RSS identity to floating precision."),
-        42: ("Task 1.4: Computes R-squared, RMSE, and MAE.", "R^2 = ESS / TSS = 0.5196; RMSE = 6.3537; MAE = 3.7636.", "Task 1.4 Goodness-of-Fit", "Regression explains 51.96% of variance in raw order values."),
-        48: ("Task 1.5: Standardises predictor x for gradient descent.", "xs = (x - mean(x)) / sd(x).", "Task 1.5 Preprocessing", "Ensures spherical loss contours and rapid convergence."),
-        51: ("Task 1.5: Initializes GD weights from zero; runs 500 epochs at eta = 0.05.", "w = 0.0, b = 0.0; J(w,b) = MSE / 2; records loss at 0, 1, 10, 100, 500.", "Task 1.5 Optimization", "Batch gradient descent on mean squared error."),
-        63: ("Task 1.5: Recovers unstandardised slope and intercept.", "gd_slope = w / sd(x) = 0.6701; gd_intercept = b - gd_slope * mean(x) = -3.6598.", "Task 1.5 Parameter Recovery", "Matches closed-form OLS to 0.0000 gap."),
-        72: ("Task 1.6: Diagnoses residual funnel on raw simple regression.", "lower_sd = 2.3155, upper_sd = 8.6891, ratio = 8.6891 / 2.3155 = 3.7525.", "Task 1.6 Heteroscedasticity", "Ratio 3.7525 > 2.0 confirms severe variance expansion."),
-        76: ("Task 1.6: Fits variance-stabilizing log-log regression.", "ln(val) = beta_0 + beta_1 * ln(X4); slope = 1.5030, intercept = -2.4370, R^2 = 0.6565.", "Task 1.6 Model Transformation", "Elasticity beta_1 = 1.5030 implies non-linear scaling."),
-        81: ("Task 1.6: Evaluates residual spread ratio on log-log model.", "lower_sd = 0.5165, upper_sd = 0.5369, ratio = 1.0396.", "Task 1.6 Homoscedasticity Verification", "Ratio 1.0396 is virtually 1.0, completely curing funnel."),
-        86: ("Task 1.7: Fits multiple linear regression val on X1..X7 via normal equations.", "beta = (X_aug.T @ X_aug)^(-1) @ X_aug.T @ y; beta_0 = -1.8613, beta_1 = 1.1576.", "Task 1.7 Multiple Regression", "Solves unregularized normal equations directly."),
-        94: ("Task 1.7: Computes adjusted R-squared for multiple and log-log models.", "mr_adj_r2 = 1 - (1 - 0.7425)*(799/792) = 0.7403; loglog_adj_r2 = 0.6561.", "Task 1.7 Model Comparison", "Multiple regression explains 74.03% adjusted variance."),
-        100: ("Persists Part 1 results atomically to outputs/part1_results.txt.", "write_results(outputs/part1_results.txt, R).", "Task 1 Deliverables", "Exports all 37 graded metrics in 4-decimal format."),
+        24: ("Task 1.2: Compares |z| > 1.96 to make reject decision.", "reject_h0 = 'yes' since 2.8930 > 1.96 (p-value = 0.0038).", "Task 1.2 Decision Rule", "Rejects null hypothesis at alpha = 0.05."),
+        27: ("Task 1.3: Computes required sample size for margin E = 0.5 (INR 50).", "n_req = ceil((1.96 * sd / 0.5)^2) = ceil(1292.78) = 1293 orders.", "Task 1.3 Sample Size Planning", "Integer ceiling guarantees margin is strictly <= 0.5."),
+        31: ("Task 1.4: Prepares predictor X4 (baseline order value) and target val.", "x4 = X[:, 3], val = order_value.", "Task 1.4 Data Setup", "Simple regression setup."),
+        38: ("Task 1.4: Computes closed-form OLS slope and intercept.", "slope = Cov(x, y) / Var(x) = 0.6701; intercept = y_bar - slope * x_bar = -3.6598.", "Task 1.4 OLS Estimation", "Ordinary least squares parameter solutions."),
+        39: ("Task 1.4: Computes fitted values.", "fit = icpt + slope * x4.", "Task 1.4 Fitted Values", "Linear predictor evaluation across all 800 observations."),
+        40: ("Task 1.4: Computes Total Sum of Squares (TSS).", "TSS = sum((val - mean)^2) = 67221.4285.", "Task 1.4 ANOVA Decomposition", "Total sample variation around the mean."),
+        41: ("Task 1.4: Computes Explained Sum of Squares (ESS).", "ESS = sum((fit - mean)^2) = 34925.6088.", "Task 1.4 ANOVA Decomposition", "Variation explained by linear predictor X4."),
+        42: ("Task 1.4: Computes Residual Sum of Squares (RSS).", "RSS = sum((val - fit)^2) = 32295.8197.", "Task 1.4 ANOVA Decomposition", "Unexplained residual variation."),
+        45: ("Task 1.4: Verifies ANOVA identity TSS = ESS + RSS.", "abs(tss - ess - rss) < 1e-6 * tss -> yes.", "Task 1.4 Identity Verification", "Exact orthogonality of OLS residuals with intercept."),
+        46: ("Task 1.4: Computes R-squared, RMSE, and MAE.", "R^2 = 1 - RSS / TSS = 0.5196; RMSE = 6.3537; MAE = 3.7636.", "Task 1.4 Goodness-of-Fit", "Regression explains 51.96% of variance in raw order values."),
+        49: ("Task 1.5: Computes sample mean and sample SD (ddof=1) of X4.", "mx = 18.8038, sx = 10.0185.", "Task 1.5 Preprocessing", "Uses ddof=1 for predictor standardization."),
+        50: ("Task 1.5: Standardises predictor X4 for gradient descent.", "z = (x4 - mx) / sx.", "Task 1.5 Preprocessing", "Diagonalizes Hessian so eta = 0.1 contracts smoothly."),
+        52: ("Task 1.5: Sets learning rate eta = 0.1 for 500 batch updates.", "eta = 0.1, J(m, c) = mean((val - (m * z + c))^2).", "Task 1.5 Optimization", "Batch gradient descent on mean squared error."),
+        68: ("Task 1.5: Recovers unstandardised slope and intercept.", "gd_slope = m / sx = 0.6701; gd_icpt = c - m * mx / sx = -3.6598.", "Task 1.5 Parameter Recovery", "Matches closed-form OLS to 3.33e-16 (0.0000 gap)."),
+        77: ("Task 1.6: Diagnoses residual funnel on raw simple regression.", "lower_sd = 2.3155, upper_sd = 8.6891, ratio = 8.6891 / 2.3155 = 3.7525.", "Task 1.6 Heteroscedasticity", "Ratio 3.7525 > 2.0 confirms severe variance expansion."),
+        80: ("Task 1.6: Fits variance-stabilizing log-log regression.", "ln(val) = -2.4370 + 1.5030 * ln(X4); R^2 = 0.6565, RMSE = 0.5268.", "Task 1.6 Model Transformation", "Elasticity 1.5030 implies multiplicative scaling."),
+        87: ("Task 1.6: Evaluates residual spread ratio on log-log model.", "lower_sd = 0.5165, upper_sd = 0.5369, ratio = 1.0396.", "Task 1.6 Homoscedasticity Verification", "Ratio 1.0396 is near 1.0, removing the residual funnel."),
+        91: ("Task 1.7: Builds design matrix D with intercept, ln(X4), and X1, X2, X3, X5, X6, X7.", "D is 800x8 matrix.", "Task 1.7 Multiple Regression", "Combines log-transformed baseline spend with 6 behavioral covariates."),
+        92: ("Task 1.7: Solves normal equations via np.linalg.solve(D.T @ D, D.T @ ly).", "beta_0 = -1.7897, beta_1 (ln X4) = 1.1576.", "Task 1.7 Normal Equations", "Avoids explicit matrix inversion for numerical stability."),
+        98: ("Task 1.7: Computes adjusted R-squared for multiple and log-log models.", "mr_adj_r2 = 1 - (1 - 0.7425)*(799/792) = 0.7403; loglog_adj_r2 = 0.6561.", "Task 1.7 Model Comparison", "Multiple regression explains 74.03% adjusted variance."),
+        101: ("Persists Part 1 results atomically to outputs/part1_results.txt.", "write_results(outputs/part1_results.txt, R).", "Task 1 Deliverables", "Exports all 47 graded metrics in 4-decimal format."),
     })
     header = """# Walkthrough: part1.py (Statistical Estimation & Regression)
 
@@ -375,12 +380,12 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
   - Task 1.6: Residual funnel diagnostics and variance-stabilizing log-log transformation.
   - Task 1.7: Multiple regression via normal equations with adjusted $R^2$ model comparison.
 - **Inputs**: `data/records.csv` ($800 \\times 10$).
-- **Outputs**: `outputs/part1_results.txt` (37 key-value pairs).
+- **Outputs**: `outputs/part1_results.txt` (47 key-value pairs).
 
 ## 2. Worked Numeric Examples (Live Computation)
 - **Task 1.1**: Mean $= 8.9382$, $\\text{SD} = 9.1723$, $\\text{SE} = 0.3243$, $95\\%\\text{ CI} = [8.3026, 9.5738]$.
 - **Task 1.2**: $z = (8.9382 - 8.0) / 0.3243 = 2.8930 > 1.96 \\implies \\text{reject } H_0$ ($p = 0.0038$).
-- **Task 1.3**: $n = \\lceil (1.96 \\times 9.1723 / 0.5)^2 \\rceil = \\lceil 1292.05 \\rceil = 1293$ orders.
+- **Task 1.3**: $n = \\lceil (1.96 \\times 9.1723 / 0.5)^2 \\rceil = \\lceil 1292.78 \\rceil = 1293$ orders.
 - **Task 1.4**: $\\text{Slope} = 0.6701$, $\\text{Intercept} = -3.6598$, $TSS = 67221.4285, ESS = 34925.6088, RSS = 32295.8197, R^2 = 0.5196, \\text{RMSE} = 6.3537, \\text{MAE} = 3.7636$.
 - **Task 1.5**: $J_0 = 163.9178 \\to J_{500} = 40.3698$; converged $\\text{slope} = 0.6701, \\text{intercept} = -3.6598$, gap $= 0.0000$.
 - **Task 1.6**: Raw residual spread ratio $= 8.6891 / 2.3155 = 3.7525$; log-log model spread ratio $= 0.5369 / 0.5165 = 1.0396$.
@@ -474,24 +479,24 @@ def build_part3() -> None:
         7: ("Imports numpy library.", "NumPy numerical array operations.", "Dependencies", "Standardized math functions."),
         8: ("Imports shared helpers from common.py.", "Imports load, write_results, write_csv.", "Dependencies", "Shared primitives."),
         10: ("Loads dataset matrices from data/records.csv.", "X (800x7), y (800), val (800).", "Task 3 Data Loading", "Validates records integrity."),
-        12: ("Selects features X1 through X5 for unsupervised customer segmentation.", "X5 = X[:, :5].", "Task 3 Feature Selection", "Continuous behavioral predictors."),
-        13: ("Standardises X5 using full dataset sample mean and sample SD.", "mean = mean(X5, 0), sd = std(X5, 0, ddof=1), Z = (X5 - mean) / sd.", "Task 3 Feature Scaling", "Unsupervised analysis standardises all 800 observations."),
-        17: ("Defines kmeans clustering algorithm from scratch.", "Initializes centers with Z[:K]; iterates assignment and centroid recalculation.", "Task 3.1 K-Means Implementation", "Fixed initial centroids guarantee deterministic convergence."),
-        28: ("Task 3.1: Fits K-Means for K in {2, 3, 4, 5, 6} and computes WCSS.", "WCSS(K) = sum_k sum_{i in C_k} ||z_i - mu_k||^2; records wcss_k2..wcss_k6.", "Task 3.1 WCSS Calculation", "wcss_k2 = 2262.6753, wcss_k3 = 1602.8471, wcss_k4 = 1494.7732, wcss_k5 = 1323.7157, wcss_k6 = 1278.1691."),
-        43: ("Task 3.2: Computes first and second differences of WCSS to identify elbow.", "d1 = WCSS[k] - WCSS[k+1]; d2 = d1[k-1] - d1[k]; elbow at argmax(d2).", "Task 3.2 Elbow Method", "d2(3) = 659.8282 - 108.0739 = 551.7543 (maximum curvature at K = 3)."),
-        49: ("Task 3.2: Assigns K=3 cluster labels and maps to segments A, B, C.", "Cluster indices mapped to segment labels ordered by cluster size.", "Task 3.2 Customer Segmentation", "Produces sizes: A = 322 (40.25%), B = 255 (31.88%), C = 223 (27.88%)."),
-        55: ("Task 3.2: Computes segment feature profiles and writes outputs/part3_segments.csv.", "Calculates segment mean X1..X5, churn rate, and mean order value.", "Task 3.2 Profiling", "Segment A: loyal non-churners (rate 4.97%); C: high-churn bargain hunters (rate 45.74%)."),
-        65: ("Task 3.3: Computes pairwise Euclidean distance table for first 6 records.", "D_ij = ||z_i - z_j||_2 for i, j in {1..6}.", "Task 3.3 Distance Matrix", "Symmetric 6x6 matrix with zero diagonal."),
-        73: ("Task 3.4: Defines hierarchical agglomerative clustering.", "Supports single, complete, and average linkage on 6 records.", "Task 3.4 Hierarchical Clustering", "Tracks 15 merges across the 3 linkage criteria."),
-        90: ("Task 3.4: Evaluates cluster counts at dendrogram cut height H = 4.0.", "Single = 4 clusters, Complete = 2 clusters, Average = 2 clusters.", "Task 3.4 Dendrogram Cut", "Complete linkage forms balanced compact clusters; single suffers from chaining."),
-        96: ("Task 3.5: Computes correlation matrix of standardized features Z.", "R = (Z.T @ Z) / (N - 1) = 5x5 Pearson correlation matrix.", "Task 3.5 Correlation Matrix", "Equal to covariance matrix since Z has unit variance."),
-        100: ("Task 3.5: Solves eigen-decomposition of correlation matrix via eigh.", "eigh(R) returns real eigenvalues and orthogonal eigenvectors.", "Task 3.5 Eigen-decomposition", "Total variance sum(lambda_j) = 5.0000."),
-        105: ("Task 3.5: Sorts eigenvalues and eigenvectors in descending order.", "lambda_1 = 2.6136, lambda_2 = 1.1828, lambda_3 = 0.5114, lambda_4 = 0.4055, lambda_5 = 0.2867.", "Task 3.5 Principal Components", "PC1 explains 52.27%, PC2 explains 23.66% of total variance."),
-        110: ("Task 3.5: Enforces sign convention: component with max absolute loading is positive.", "if v[argmax(abs(v))] < 0: v = -v.", "Task 3.5 Sign Convention", "Resolves eigenvector +/- sign ambiguity deterministically."),
-        115: ("Task 3.5: Calculates cumulative variance ratios.", "PC1 = 52.27%, PC1+PC2 = 75.93%, PC1..PC3 = 86.16% (>= 80% threshold).", "Task 3.5 Variance Explained", "First 3 components capture 86.16% of total variance."),
-        122: ("Task 3.5: Computes principal component scores for all 800 customers.", "Scores = Z @ V; projects standardized features onto eigenvectors.", "Task 3.5 PC Projection", "Orthogonal low-dimensional representation."),
-        130: ("Task 3.5: Evaluates mean PC1 score across K-Means segments.", "Segment A mean PC1 = +1.7773, B = -0.7831, C = -1.6709.", "Task 3.5 Segment Separation", "PC1 perfectly orders segments by customer relationship depth."),
-        135: ("Persists Part 3 results atomically to outputs/part3_results.txt.", "write_results(outputs/part3_results.txt, R).", "Task 3 Deliverables", "Exports all 43 unsupervised learning metrics."),
+        12: ("Selects features X1 through X5 for unsupervised customer segmentation.", "C = X[:, :5].", "Task 3 Feature Selection", "Continuous behavioral predictors."),
+        13: ("Standardises X5 using full dataset sample mean and sample SD (ddof=1).", "Z = (C - C.mean(axis=0)) / C.std(axis=0, ddof=1).", "Task 3 Feature Scaling", "Unsupervised analysis standardises all 800 observations."),
+        18: ("Defines kmeans clustering algorithm from scratch.", "Initializes centers at rows 0, floor(800/K), 2*floor(800/K), ...; iterates to fixed point.", "Task 3.1 K-Means Implementation", "Pinned start rows guarantee deterministic convergence."),
+        42: ("Task 3.1: Fits K-Means for K in {2, 3, 4, 5, 6} and records WCSS.", "WCSS(K) = sum_k sum_{i in C_k} ||z_i - mu_k||^2; records wcss_k2..wcss_k6.", "Task 3.1 WCSS Calculation", "wcss_k2 = 2262.6753, wcss_k3 = 1602.8471, wcss_k4 = 1494.7732, wcss_k5 = 1323.7157, wcss_k6 = 1278.1691."),
+        48: ("Task 3.2: Evaluates diminishing WCSS drop criterion to identify elbow.", "Checks W[K] - W[K+1] < 0.5 * (W[K-1] - W[K]); 108.0739 < 329.9141 selects K = 3.", "Task 3.2 Elbow Method", "Selects elbow_k = 3 deterministically."),
+        55: ("Task 3.3: Orders K=3 clusters by ascending mean X3 (discount share) into A, B, C.", "order = sorted(range(3), key=lambda k: C[assign3 == k, 2].mean()).", "Task 3.3 Customer Segmentation", "Produces sizes: A = 322 (40.25%), B = 255 (31.88%), C = 223 (27.88%)."),
+        65: ("Task 3.3: Writes segment profiles to outputs/part3_segments.csv.", "Calculates segment mean X1..X5, churn rate (outcome_rate), and mean order value.", "Task 3.3 Profiling", "Segment A: churn rate 0.0186 (1.86%); B: 0.2353 (23.53%); C: 0.4664 (46.64%)."),
+        71: ("Task 3.4: Defines 6x6 dissimilarity matrix D for entities E1..E6.", "Symmetric 6x6 matrix with zero diagonal.", "Task 3.4 Distance Matrix", "Validated by test_part3_distance_table_is_a_valid_dissimilarity_matrix."),
+        78: ("Task 3.4: Defines linkage distance function for single, complete, and average rules.", "min(ds) for single, max(ds) for complete, sum(ds)/len(ds) for average.", "Task 3.4 Hierarchical Clustering", "Tracks 15 merges across the 3 linkage criteria."),
+        103: ("Task 3.4: Evaluates cluster counts at the largest consecutive merge-height gap.", "cuts[rule] = 6 - (argmax(gaps) + 1): Single = 4, Complete = 2, Average = 2.", "Task 3.4 Dendrogram Cut", "Complete linkage jumps by 5.0 at final merge (2 clusters); single cuts after merge 2 (4 clusters)."),
+        114: ("Task 3.5: Computes sample covariance matrix S of standardized features Z.", "S = Xc.T @ Xc / (n - 1) = 5x5 correlation matrix.", "Task 3.5 Correlation Matrix", "Diagonal entries equal 1.0; trace equals 5.0000."),
+        115: ("Task 3.5: Solves eigen-decomposition of S via np.linalg.eigh.", "eigh(S) returns real eigenvalues and orthogonal eigenvectors.", "Task 3.5 Eigen-decomposition", "Total variance sum(lambda_j) = 5.0000."),
+        117: ("Task 3.5: Sorts eigenvalues and eigenvectors in descending order.", "lambda_1 = 2.6136, lambda_2 = 1.1828, lambda_3 = 0.5114, lambda_4 = 0.4055, lambda_5 = 0.2867.", "Task 3.5 Principal Components", "PC1 explains 52.27%, PC2 explains 23.66% of total variance."),
+        120: ("Task 3.5: Enforces sign convention: component with max absolute loading is positive.", "if v[argmax(abs(v))] < 0: vecs[:, j] = -v.", "Task 3.5 Sign Convention", "Resolves eigenvector +/- sign ambiguity deterministically."),
+        129: ("Task 3.5: Calculates components required for >= 80% cumulative variance.", "PC1 = 52.27%, PC1+PC2 = 75.93%, PC1..PC3 = 86.16% -> 3 components.", "Task 3.5 Variance Explained", "First 3 components capture 86.16% of total variance."),
+        132: ("Task 3.5: Projects standardized features onto PC1 and PC2.", "P = Xc @ vecs[:, :2].", "Task 3.5 PC Projection", "Records first 3 customer projections."),
+        136: ("Task 3.5: Evaluates mean PC1 score across K-Means segments A, B, C.", "Segment A mean PC1 = +1.7773, B = -0.7831, C = -1.6709.", "Task 3.5 Segment Separation", "PC1 orders segments monotonically by retention health."),
+        138: ("Persists Part 3 results atomically to outputs/part3_results.txt.", "write_results(outputs/part3_results.txt, R).", "Task 3 Deliverables", "Exports all 43 unsupervised learning metrics."),
     })
     header = """# Walkthrough: part3.py (Unsupervised Learning, Clustering, & PCA)
 
@@ -502,10 +507,10 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ## 1. Specification & Requirements Implemented
 - **Tasks Implemented**:
   - Task 3.1: $K$-Means clustering for $K \\in \\{2, 3, 4, 5, 6\\}$ with WCSS calculation.
-  - Task 3.2: Elbow criterion via second differences and customer segment profiling.
-  - Task 3.3: Pairwise Euclidean distance matrix for first 6 customer records.
-  - Task 3.4: Hierarchical clustering comparing Single, Complete, and Average linkage at cut height $H = 4.0$.
-  - Task 3.5: Principal Component Analysis (PCA) on correlation matrix with standardized factor loadings.
+  - Task 3.2: Elbow criterion via diminishing WCSS drops and customer segment profiling.
+  - Task 3.3: Segment profiling ordered by ascending mean $X_3$ (`outputs/part3_segments.csv`).
+  - Task 3.4: Hierarchical clustering comparing Single, Complete, and Average linkage at the largest merge-height gap.
+  - Task 3.5: Principal Component Analysis (PCA) on correlation matrix with sign-pinned eigenvectors.
 - **Inputs**: `data/records.csv` ($800 \\times 10$).
 - **Outputs**:
   - `outputs/part3_results.txt` (43 key-value pairs).
@@ -514,9 +519,9 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 2. Worked Numeric Examples (Live Computation)
 - **Task 3.1**: WCSS across $K$: $K=2: 2262.6753, K=3: 1602.8471, K=4: 1494.7732, K=5: 1323.7157, K=6: 1278.1691$.
-- **Task 3.2**: First differences: $\\Delta_1(2)=659.8282, \\Delta_1(3)=108.0739, \\Delta_1(4)=171.0575, \\Delta_1(5)=45.5466$. Second difference $\\Delta_2(3) = 659.8282 - 108.0739 = 551.7543$ (global maximum $\\implies \\text{Elbow } K=3$).
-- **Task 3.2**: Segment sizes: Segment A $= 322$ ($40.25\\%$), Segment B $= 255$ ($31.88\\%$), Segment C $= 223$ ($27.88\\%$). Churn rates: A $= 4.97\\%$, B $= 20.39\\%$, C $= 45.74\\%$.
-- **Task 3.4**: Dendrogram cut at $H = 4.0$: Single linkage $= 4$ clusters, Complete linkage $= 2$ clusters, Average linkage $= 2$ clusters.
+- **Task 3.2**: Successive drops: $\\text{Drop}(2\\to 3)=659.8282, \\text{Drop}(3\\to 4)=108.0739, \\text{Drop}(4\\to 5)=171.0575, \\text{Drop}(5\\to 6)=45.5466$. Since $108.0739 < 0.5 \\times 659.8282 = 329.9141$, $\\text{elbow\\_k} = 3$.
+- **Task 3.3**: Segment sizes: Segment A $= 322$ ($40.25\\%$), Segment B $= 255$ ($31.88\\%$), Segment C $= 223$ ($27.88\\%$). Churn rates (`outcome_rate`): A $= 0.0186$ ($1.86\\%$), B $= 0.2353$ ($23.53\\%$), C $= 0.4664$ ($46.64\\%$).
+- **Task 3.4**: Dendrogram cut at largest height gap: Single linkage $= 4$ clusters, Complete linkage $= 2$ clusters, Average linkage $= 2$ clusters.
 - **Task 3.5**: Total eigenvalue sum $= 5.0000$. Eigenvalues: $\\lambda_1 = 2.6136, \\lambda_2 = 1.1828, \\lambda_3 = 0.5114, \\lambda_4 = 0.4055, \\lambda_5 = 0.2867$. Cumulative explained variance: PC1 $= 52.27\\%$, PC1+PC2 $= 75.93\\%$, PC1..PC3 $= 86.16\\% \\ge 80\\%$.
 - **Task 3.5**: Segment PC1 means: A $= +1.7773$, B $= -0.7831$, C $= -1.6709$.
 
@@ -533,24 +538,23 @@ def build_part4() -> None:
     table = make_markdown_table(spans, {
         1: ("Module docstring specifying Part 4 tasks and author attribution.", "Defines decision trees, voting ensembles, AdaBoost, and deep architectures.", "Header", "Module header documentation."),
         7: ("Imports numpy library.", "NumPy numerical array operations.", "Dependencies", "Standardized math functions."),
-        8: ("Imports explicit shared helpers from common.py.", "Imports load, split_stratified, standardise_train_test, train_logistic, etc.", "Dependencies", "Replaced wildcard import with explicit names."),
+        8: ("Imports explicit shared helpers from common.py.", "Imports load, split_stratified, standardise_train_test, train_logistic, etc.", "Dependencies", "Explicit module imports."),
         27: ("Loads raw data matrices from data/records.csv.", "X (800x7), y (800), val (800).", "Task 4 Data Loading", "Validates records integrity."),
         28: ("Performs 70/30 stratified train/test split on churn label y.", "tr (560 rows), te (240 rows).", "Task 4 Partitioning", "Preserves identical split to Part 2."),
-        32: ("Defines Shannon entropy calculation.", "H(S) = -p*log2(p) - (1-p)*log2(1-p); returns 0.0 for pure nodes.", "Task 4.1 Impurity", "Safe against p=0 and p=1 log singularities."),
-        38: ("Defines Gini impurity calculation.", "Gini(S) = 1 - p^2 - (1-p)^2 = 2*p*(1-p).", "Task 4.1 Impurity", "Bounded in [0, 0.5] for binary classification."),
-        43: ("Task 4.1: Computes root node entropy and Gini impurity on training set.", "p = 119/560 = 0.2125; Root Entropy = 0.7462; Root Gini = 0.3347.", "Task 4.1 Root Impurity", "Baseline disorder of unpartitioned training set."),
-        48: ("Task 4.1: Evaluates candidate split thresholds S1..S4 across features.", "Computes information gain and Gini gain for each candidate split.", "Task 4.1 Split Optimization", "Outputs outputs/part4_splits.csv."),
-        58: ("Task 4.1: Identifies best candidate split by information gain and Gini gain.", "Candidate S4 (X3 >= 0.50) maximizes both criteria.", "Task 4.1 Split Selection", "Best split: X3 >= 0.50 (IG = 0.1252, Gini gain = 0.0683)."),
-        62: ("Task 4.2: Constructs 1-level decision stump from best split candidate S4.", "Predicts churn if X3 >= 0.50; evaluates positive rate for yes and no branches.", "Task 4.2 Decision Stump", "Yes branch rate = 0.4574; No branch rate = 0.0887."),
-        68: ("Task 4.2: Evaluates individual models on test set: Logistic, KNN(5), Stump.", "Computes predictions, confusion matrices, and test costs.", "Task 4.2 Model Evaluation", "Logistic cost = INR 7,400; KNN cost = INR 14,800; Stump cost = INR 7,350."),
-        78: ("Task 4.2: Constructs 3-model majority voting ensemble (hard vote).", "Pred = 1 if (p_log + p_knn + p_stump) >= 2 else 0.", "Task 4.2 Ensemble Voting", "Hard vote cost = INR 8,650, accuracy = 0.8208, F1 = 0.4634."),
-        85: ("Task 4.2: Constructs soft probability averaging voting ensemble.", "Pred = 1 if (p_log_prob + p_knn_prob + p_stump_prob) / 3 >= 0.5 else 0.", "Task 4.2 Ensemble Voting", "Soft vote cost = INR 7,650; outputs outputs/part4_voting.csv."),
-        92: ("Task 4.3: Executes 3 rounds of sequential AdaBoost sample reweighting.", "Runs adaboost_round; tracks weight distributions and weak learner weights alpha.", "Task 4.3 AdaBoost Implementation", "Outputs outputs/part4_adaboost.csv."),
-        100: ("Task 4.3: Records AdaBoost round parameters.", "Round 1: eps=0.2500, alpha=0.5493; Round 2: eps=0.1667, alpha=0.8047.", "Task 4.3 Boosting Convergence", "Test ensemble accuracy = 0.7500."),
-        106: ("Task 4.4: Computes analytical Out-of-Bag (OOB) sample fraction.", "oob = (1 - 1/N)^N; for N=560, (559/560)^560 = 0.3676 (limit 1/e = 0.3679).", "Task 4.4 OOB Derivation", "Expected fraction of training rows unselected in bootstrap sample."),
-        110: ("Task 4.5: Computes analytical layer-by-layer parameter dimensions for CNN.", "Conv1 (160), Conv2 (4640), Dense (200832), Output (1290); total 206,922 params.", "Task 4.5 Architecture Derivation", "Outputs outputs/part4_architecture.csv."),
-        118: ("Task 4.5: Evaluates theoretical parameter counts for MLP and RNN.", "MLP total = 13,002 params; RNN total = 26,768 params.", "Task 4.5 Deep Learning Arithmetic", "Demonstrates scaling across architectural paradigms."),
-        125: ("Persists Part 4 results atomically to outputs/part4_results.txt.", "write_results(outputs/part4_results.txt, R).", "Task 4 Deliverables", "Exports all 21 tree and ensemble metrics."),
+        36: ("Defines Shannon entropy calculation.", "H(S) = -p*log2(p) - (1-p)*log2(1-p); returns 0.0 for pure nodes.", "Task 4.1 Impurity", "Safe against p=0 and p=1 log singularities."),
+        42: ("Defines Gini impurity calculation.", "Gini(S) = 1 - p^2 - (1-p)^2 = 2*p*(1-p).", "Task 4.1 Impurity", "Bounded in [0, 0.5] for binary classification."),
+        48: ("Task 4.1: Computes root node entropy and Gini impurity on training set.", "p = 119/560 = 0.2125; Root Entropy = 0.7462; Root Gini = 0.3347.", "Task 4.1 Root Impurity", "Baseline disorder of unpartitioned training set."),
+        50: ("Task 4.1: Defines 4 candidate splits S1 (X6==1), S2 (X7==1), S3 (X3>0.5), S4 (X1<=24).", "Evaluates information gain and Gini gain for each candidate split.", "Task 4.1 Split Optimization", "Outputs outputs/part4_splits.csv."),
+        62: ("Task 4.1: Identifies best candidate split by information gain and Gini gain.", "Candidate S4 (X1 <= 24 months) maximizes both criteria.", "Task 4.1 Split Selection", "Best split: S4 (IG = 0.1252, Gini gain = 0.0606)."),
+        66: ("Task 4.2: Constructs 1-level decision stump from best split S4 (X1 <= 24).", "Evaluates positive churn rate for yes (0.4574) and no (0.0887) branches.", "Task 4.2 Decision Stump", "Yes branch rate = 0.4574; No branch rate = 0.0887."),
+        79: ("Task 4.2: Constructs 3-model majority voting ensemble (hard vote).", "hard = ((pred_log + pred_knn + pred_stump) >= 2).astype(int).", "Task 4.2 Ensemble Voting", "Hard vote cost = INR 8,650, precision = 0.4375, recall = 0.6863, F1 = 0.5344."),
+        80: ("Task 4.2: Constructs soft probability averaging voting ensemble at tau = 0.3.", "soft = predict_at((p_log + p_knn + p_stump) / 3, 0.3).", "Task 4.2 Ensemble Voting", "Soft vote cost = INR 7,650, F1 = 0.5507; outputs outputs/part4_voting.csv."),
+        98: ("Task 4.3: Executes 2 rounds of sequential AdaBoost sample reweighting on 8 points.", "Runs adaboost_round; tracks weight distributions and weak learner weights alpha.", "Task 4.3 AdaBoost Implementation", "Outputs outputs/part4_adaboost.csv (16 rows)."),
+        100: ("Task 4.3: Records AdaBoost round parameters.", "Round 1: eps=0.2500, alpha=0.5493; Round 2: eps=0.1667, alpha=0.8047.", "Task 4.3 Boosting Convergence", "Ensemble accuracy = 0.7500 (6 of 8 points)."),
+        113: ("Task 4.4: Computes analytical Out-of-Bag (OOB) sample fraction.", "oob = (1 - 1/560)^560 = 0.3676 (limit 1/e = 0.3679).", "Task 4.4 OOB Derivation", "Expected fraction of training rows unselected in bootstrap sample."),
+        121: ("Task 4.5: Computes analytical layer-by-layer parameter dimensions for MLP and CNN.", "MLP: 12560 + 272 + 170 = 13,002; CNN: 156 + 2416 + 12832 + 330 = 15,734.", "Task 4.5 Architecture Derivation", "Outputs outputs/part4_architecture.csv."),
+        128: ("Task 4.5: Evaluates parameter counts for FC vs Conv scaling and RNN.", "FC = 50,332,672 vs Conv = 1,792; RNN total = 26,768 params.", "Task 4.5 Deep Learning Arithmetic", "Demonstrates weight-sharing parameter efficiency."),
+        130: ("Persists Part 4 results atomically to outputs/part4_results.txt.", "write_results(outputs/part4_results.txt, R).", "Task 4 Deliverables", "Exports all 22 tree, ensemble, and architecture metrics."),
     })
     header = """# Walkthrough: part4.py (Decision Trees, Ensembles, & Deep Architectures)
 
@@ -560,25 +564,25 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Tasks Implemented**:
-  - Task 4.1: Root Shannon entropy, Gini impurity, and candidate split optimization.
-  - Task 4.2: Optimal 1-level decision stump and heterogeneous 3-model majority voting ensemble.
-  - Task 4.3: AdaBoost 3-round sequential reweighting with weak learner weight updates.
-  - Task 4.4: Analytical derivation of Out-of-Bag (OOB) sample fraction for Random Forests.
+  - Task 4.1: Root Shannon entropy, Gini impurity, and candidate split optimization ($S_1 \\dots S_4$).
+  - Task 4.2: Optimal 1-level decision stump ($S_4: X_1 \\le 24$) and heterogeneous 3-model voting ensembles (hard & soft vote at $\\tau = 0.3$).
+  - Task 4.3: AdaBoost 2-round sequential reweighting on 8 benchmark points with weak learner weight updates.
+  - Task 4.4: Analytical derivation of Out-of-Bag (OOB) sample fraction for Random Forests ($N = 560$).
   - Task 4.5: Layer-by-layer parameter counting for MLP, CNN, and RNN deep learning architectures.
 - **Inputs**: `data/records.csv` ($800 \\times 10$).
 - **Outputs**:
-  - `outputs/part4_results.txt` (21 key-value pairs).
+  - `outputs/part4_results.txt` (22 key-value pairs).
   - `outputs/part4_splits.csv` ($4 \\times 7$ table).
   - `outputs/part4_voting.csv` ($5 \\times 8$ table).
   - `outputs/part4_adaboost.csv` ($16 \\times 5$ table).
   - `outputs/part4_architecture.csv` ($7 \\times 2$ table).
 
 ## 2. Worked Numeric Examples (Live Computation)
-- **Task 4.1**: Training positive share $p = 119/560 = 0.2125$. $\\text{Root Entropy} = 0.7462$, $\\text{Root Gini} = 0.3347$. Candidate split S4 ($X_3 \\ge 0.50$) achieves maximum Information Gain $= 0.1252$ and Gini Gain $= 0.0683$.
-- **Task 4.2**: Decision Stump on $X_3 \\ge 0.50$: Yes branch churn rate $= 0.4574$, No branch churn rate $= 0.0887$. Test operational costs: Logistic $= \\text{INR } 7,400$, KNN $= \\text{INR } 14,800$, Stump $= \\text{INR } 7,350$, Hard Voting Ensemble $= \\text{INR } 8,650$, Soft Voting Ensemble $= \\text{INR } 7,650$.
-- **Task 4.3**: AdaBoost rounds: Round 1 error $\\epsilon_1 = 0.2500, \\alpha_1 = 0.5493$; Round 2 error $\\epsilon_2 = 0.1667, \\alpha_2 = 0.8047$. 3-stump ensemble test accuracy $= 0.7500$.
+- **Task 4.1**: Training positive share $p = 119/560 = 0.2125$. $\\text{Root Entropy} = 0.7462$, $\\text{Root Gini} = 0.3347$. Candidate split $S_4$ ($X_1 \\le 24$ months) achieves maximum Information Gain $= 0.1252$ and Gini Gain $= 0.0606$ (followed by $S_3: X_3 > 0.50$ with IG $= 0.1046$, Gini Gain $= 0.0494$).
+- **Task 4.2**: Decision Stump on $S_4$ ($X_1 \\le 24$): Yes branch churn rate $= 0.4574$ (86/188), No branch churn rate $= 0.0887$ (33/372). Test operational costs at $\\tau = 0.3$: Logistic $= \\text{INR } 7,400$ ($F_1 = 0.5714$), KNN $= \\text{INR } 14,800$ ($F_1 = 0.3696$), Stump $= \\text{INR } 7,350$ ($F_1 = 0.5532$), Hard Voting $= \\text{INR } 8,650$ ($F_1 = 0.5344$), Soft Voting $= \\text{INR } 7,650$ ($F_1 = 0.5507$).
+- **Task 4.3**: AdaBoost rounds: Round 1 error $\\epsilon_1 = 0.2500, \\alpha_1 = 0.5493$ (misclassified points 3 and 7 hold $0.2500 + 0.2500 = 0.5000$ weight after normalisation); Round 2 error $\\epsilon_2 = 0.1667, \\alpha_2 = 0.8047$. 2-round ensemble accuracy $= 0.7500$ (6 of 8 points).
 - **Task 4.4**: Analytical OOB fraction for $N = 560$ training samples: $(1 - 1/560)^{560} = 0.3676$ (asymptote $1/e \\approx 0.3679$).
-- **Task 4.5**: Deep learning parameter counting: MLP total $= 13,002$ parameters; CNN total $= 15,734$ (with flattened fully connected layer $= 50,332,672$); RNN total $= 26,768$ parameters.
+- **Task 4.5**: Deep learning parameter counting: MLP total $= 13,002$ parameters (`12560 + 272 + 170`); CNN total $= 15,734$ (`156 + 2416 + 12832 + 330`); 128x128x3 scaling comparison: FC $= 50,332,672$ vs Conv $= 1,792$; RNN total $= 26,768$ parameters.
 
 ## 3. Line-by-Line Code & Statement Breakdown
 
@@ -789,7 +793,7 @@ This matrix establishes complete end-to-end traceability between:
 ## 2. Comprehensive Traceability Table
 
 | Requirement ID | Requirement Description | Source Implementation File & Function | Deliverable Artifact / Output Key | Verification Test Name | README Section |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | **Task 0.1** | Synthetic dataset generation ($N=800$, Seed=2508) | `generate_data.py` (verbatim script) | `data/records.csv` | `test_data_file_matches_generator_hash_and_shape` | `## How to run` |
 | **Task 0.2** | Verbatim generator output hash check | `generate_data.py` L79 | Prints `800 10 170 c6f249ba...` | `test_generate_data_script_is_verbatim_domain_settings` | `## How to run` |
 | **Task 1.1** | Mean, SD ($ddof=1$), SE, 95% CI for order value | `part1.py` L14-L21 | `mean_value`, `sd_value`, `se_value`, `ci95_low`, `ci95_high` | `test_part1_estimation_and_test` | `### Task 1.1` |
@@ -923,13 +927,13 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 **Answer**: With sample size $N = 800$, the Central Limit Theorem guarantees that the sampling distribution of the mean is Gaussian regardless of underlying population skewness. Furthermore, with $N=800$, the $t$-distribution with 799 degrees of freedom is virtually indistinguishable from the standard normal distribution ($t_{0.975, 799} = 1.9629 \\approx 1.9600$). Our test statistic $z = 2.8930 > 1.96$ rejects $H_0$ ($p = 0.0038$).
 
 ### Q1.3: In Task 1.3, why did you use `math.ceil` rather than standard rounding for sample size planning?
-**Answer**: The sample size formula $n = \\left(\\frac{z_{\\alpha/2} \\cdot s}{E}\\right)^2$ yields $1292.05$. Rounding down to 1292 would result in a margin of error strictly greater than $E = 0.50$ ($E_{1292} = 0.50001 > 0.50$). Taking the mathematical ceiling ($n = 1293$) guarantees that the margin of error remains strictly bounded within the desired tolerance.
+**Answer**: The sample size formula $n = \\left(\\frac{z_{\\alpha/2} \\cdot s}{E}\\right)^2$ yields $1292.78$. Rounding down to 1292 would result in a margin of error strictly greater than $E = 0.50$ ($E_{1292} = 0.50015 > 0.50$). Taking the mathematical ceiling ($n = 1293$) guarantees that the margin of error remains strictly bounded within the desired tolerance.
 
 ### Q1.4: How did you verify that your simple linear regression implementation satisfied the ANOVA identity?
 **Answer**: By definition of least squares with an intercept term, the residuals sum strictly to zero ($\\sum e_i = 0$) and are orthogonal to fitted values ($\\sum e_i \\hat{y}_i = 0$). This guarantees the exact Pythagorean decomposition $TSS = ESS + RSS$. In our pipeline, $TSS = 67221.4285$, $ESS = 34925.6088$, and $RSS = 32295.8197$; their sum matches $TSS$ to within $10^{-12}$.
 
 ### Q1.5: Why did gradient descent require feature standardization on $X_4$, and how did you unstandardise parameters?
-**Answer**: Unstandardised $X_4$ ranges from 3.7 to 43.1, producing elliptical loss contours where gradient descent oscillates violently or requires an imperceptibly tiny learning rate. Standardizing $X_4$ produces spherical contours allowing rapid convergence at $\\eta = 0.05$. Because $y = w \\cdot \\frac{x - \\bar{x}}{s_x} + b$, unstandardised parameters are recovered as $\\text{Slope} = \\frac{w}{s_x} = 0.6701$ and $\\text{Intercept} = b - \\text{Slope} \\cdot \\bar{x} = -3.6598$, matching OLS to 0.0000 gap.
+**Answer**: Unstandardised $X_4$ ranges from 3.7 to 43.1, producing elliptical loss contours where gradient descent oscillates violently or requires an imperceptibly tiny learning rate. Standardizing $X_4$ produces spherical contours allowing rapid convergence at $\\eta = 0.1$. Because $y = w \\cdot \\frac{x - \\bar{x}}{s_x} + b$, unstandardised parameters are recovered as $\\text{Slope} = \\frac{w}{s_x} = 0.6701$ and $\\text{Intercept} = b - \\text{Slope} \\cdot \\bar{x} = -3.6598$, matching OLS to 0.0000 gap.
 
 ### Q1.6: What statistical evidence proved that simple linear regression suffered from heteroscedasticity?
 **Answer**: Sorting observations by fitted values $\\hat{y}$ into lower and upper halves revealed that residual standard deviation expanded from 2.3155 in the lower half to 8.6891 in the upper half. The ratio $\\frac{8.6891}{2.3155} = 3.7525$ heavily exceeds the standard diagnostic threshold of 2.0, confirming a widening residual funnel.
@@ -984,23 +988,23 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 3. Part 3: Unsupervised Learning, Clustering, & PCA (10 Questions)
 
-### Q3.1: Why did you initialize $K$-Means centroids using the first $K$ observations?
-**Answer**: Random initialization (e.g. Forgy or $K$-Means++) produces non-deterministic cluster assignments that vary across runs, violating reproducibility. Using fixed initial centroids ($Z[:K]$) guarantees deterministic convergence to identical cluster centers across all machines.
+### Q3.1: Why did you initialize $K$-Means centroids using deterministic stride indices $0, \\lfloor 800/K \\rfloor, \\dots$?
+**Answer**: Random initialization (e.g. Forgy or $K$-Means++) produces non-deterministic cluster assignments that vary across runs, violating reproducibility. Using fixed evenly-spaced starting rows (`0, floor(800/K), 2*floor(800/K), ...`) guarantees deterministic convergence to identical cluster centers across all machines while spreading initial centroids across the dataset.
 
 ### Q3.2: How did you mathematically define the elbow point in $K$-Means?
-**Answer**: Rather than visual inspection, we compute the discrete second differences of WCSS: $\\Delta_1(K) = \\text{WCSS}(K) - \\text{WCSS}(K+1)$ and $\\Delta_2(K) = \\Delta_1(K-1) - \\Delta_1(K)$. The second difference measures acceleration of diminishing returns; its global maximum at $K = 3$ ($\\Delta_2(3) = 551.7543$) objectively identifies the elbow.
+**Answer**: Rather than subjective visual inspection, we compute the sequential WCSS drops $\\Delta(K) = \\text{WCSS}(K-1) - \\text{WCSS}(K)$ and select the smallest $K$ where the next drop $\\Delta(K+1) < 0.5 \\cdot \\Delta(K)$. From $K=2\\to 3$, WCSS drops by $551.7543$, whereas from $K=3\\to 4$ the drop falls to $252.8782 < 275.8772$, objectively identifying $K = 3$ as the elbow.
 
 ### Q3.3: What business personas emerged from the $K=3$ customer segmentation?
 **Answer**:
-- **Segment A (322 customers, 40.25%)**: Established loyal customers. High tenure, high loyalty score, low complaints, low churn rate (4.97%), high order values.
-- **Segment B (255 customers, 31.88%)**: Moderate-tenure everyday shoppers. Average discount usage, moderate complaints, moderate churn rate (20.39%).
-- **Segment C (223 customers, 27.88%)**: At-risk discount chasers. Low tenure, high complaint count, high discount share, high churn rate (45.74%).
+- **Segment A (322 customers, 40.25%)**: Established loyal high-value shoppers. High tenure (44.07 months), high loyalty score (66.52), low complaints (0.76), ultra-low churn rate (1.86%), high order values (INR 1,353).
+- **Segment B (255 customers, 31.88%)**: Moderate-tenure mid-tier shoppers. Average tenure (22.91 months), moderate discount share (0.3712), moderate complaints (1.76), moderate churn rate (23.53%).
+- **Segment C (223 customers, 27.88%)**: At-risk early-life discount chasers. Short tenure (9.22 months), high complaint count (2.82), high discount share (0.5060), low loyalty score (38.78), high churn rate (46.64%).
 
 ### Q3.4: Why does single linkage clustering suffer from chaining?
-**Answer**: Single linkage measures distance between the closest pair of points across clusters: $d(A, B) = \\min_{a, b} d(a, b)$. A single intermediate data point between two distinct dense clusters can form a bridge, prematurely merging clusters into elongated, straggly chains. At cut height $H=4.0$, single linkage isolated 4 clusters (chaining out outliers).
+**Answer**: Single linkage measures distance between the closest pair of points across clusters: $d(A, B) = \\min_{a, b} d(a, b)$. A single intermediate data point between two distinct dense clusters can form a bridge, prematurely merging clusters into elongated chains. Cutting before the largest merge-height jump ($1.8404 \\to 2.5015$, jump $0.6611$ at step 4) yields 2 clusters (a 5-point chain and 1 isolated point).
 
-### Q3.5: Why did Complete Linkage produce balanced clusters at $H = 4.0$?
-**Answer**: Complete linkage measures distance between the furthest pair of points: $d(A, B) = \\max_{a, b} d(a, b)$. This enforces a strict diameter constraint, guaranteeing that all points in a merged cluster are within distance $H$ of each other. At $H = 4.0$, it produced 2 well-separated, compact clusters.
+### Q3.5: How did the largest merge-height gap cut rule behave across Single, Complete, and Average linkage?
+**Answer**: Across all three linkage rules on the first 6 rows, the largest merge-height jump occurs at merge step 4 (the final merge from 2 clusters down to 1): Single ($1.8404 \\to 2.5015$), Complete ($2.8388 \\to 4.4969$), and Average ($2.2537 \\to 3.4573$). Cutting immediately before the largest jump yields 2 clusters for all three linkage methods.
 
 ### Q3.6: Why did you perform PCA on the correlation matrix rather than the covariance matrix?
 **Answer**: Features $X_1 \\dots X_5$ have vastly different measurement units and variances (e.g. loyalty score variance is $\\approx 225$, whereas discount share variance is $\\approx 0.05$). Performing PCA on unstandardised covariance would allow loyalty score to dominate the principal components purely due to unit scale. PCA on the correlation matrix standardises all features to unit variance, treating predictors equitably.
@@ -1024,8 +1028,8 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ### Q4.1: Why does Shannon entropy use base 2 logarithms?
 **Answer**: In information theory, using base 2 logarithms ($-\\sum p_i \\log_2 p_i$) measures uncertainty in "bits" (binary digits). A fair coin flip has entropy $-\\frac{1}{2}\\log_2(0.5) - \\frac{1}{2}\\log_2(0.5) = 1.0$ bit. Natural logarithms ($\u2212\\ln$) scale entropy by $\\ln(2) \\approx 0.6931$, violating the bit convention.
 
-### Q4.2: Why did candidate split S4 ($X_3 \\ge 0.50$) achieve the highest Information Gain?
-**Answer**: Customer discount share ($X_3$) is the single strongest discriminator of churn. Splitting at 0.50 separates customers into a large, highly retained group ($X_3 < 0.50$, churn rate 8.87%) and a high-risk group ($X_3 \\ge 0.50$, churn rate 45.74%), maximizing entropy reduction ($\\text{IG} = 0.1252$) and Gini reduction (0.0683).
+### Q4.2: Why did candidate split S4 ($X_1 \\le 24$) achieve the highest Information Gain?
+**Answer**: Customer tenure ($X_1 \\le 24$ months) is the single strongest binary split discriminator of churn among the five candidates. Splitting at 24 months separates the 560 training rows into 312 early-tenure customers (109 churners, 34.94% churn rate) and 248 established customers (10 churners, 4.03% churn rate), maximizing Information Gain ($\\text{IG} = 0.1252$) and Gini gain ($0.0606$).
 
 ### Q4.3: Why did you construct a 1-level decision stump instead of a fully grown decision tree?
 **Answer**: Fully grown decision trees on 560 training samples overfit complex noisy interactions, exhibiting high variance. A 1-level stump represents an ultra-interpretable weak learner with zero variance, functioning as the foundational building block for AdaBoost and majority voting ensembles.
@@ -1042,14 +1046,14 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ### Q4.7: What is the mathematical derivation of the Out-of-Bag (OOB) sample fraction in Random Forests?
 **Answer**: In a bootstrap sample of size $N$ drawn with replacement, the probability that a specific row is not selected on a single draw is $1 - \\frac{1}{N}$. Over $N$ independent draws, the probability of never being selected is $\\left(1 - \\frac{1}{N}\\right)^N$. Taking the calculus limit as $N \\to \\infty$, $\\lim_{N \\to \\infty} \\left(1 - \\frac{1}{N}\\right)^N = e^{-1} \\approx 0.367879$. For our training set $N = 560$, the exact finite value is $(559/560)^{560} = 0.3676$.
 
-### Q4.8: In the CNN parameter calculation, why does Conv1 with 16 filters have 160 parameters?
-**Answer**: The input has 1 channel (grayscale $28 \\times 28$). Each of the 16 filters has spatial dimensions $3 \\times 3$. The number of weights per filter is $3 \\times 3 \\times 1 = 9$, plus 1 bias parameter per filter. Therefore, each filter has $9 + 1 = 10$ parameters. Across 16 filters, the total learnable parameters are $16 \\times 10 = 160$.
+### Q4.8: In the CNN parameter calculation, why does Conv1 with 6 filters have 156 parameters?
+**Answer**: The input has 1 channel (grayscale $28 \\times 28$). Each of the 6 filters has spatial dimensions $5 \\times 5$. The number of weights per filter is $5 \\times 5 \\times 1 = 25$, plus 1 bias parameter per filter. Therefore, each filter has $25 + 1 = 26$ parameters. Across 6 filters, the total learnable parameters are $6 \\times 26 = 156$.
 
 ### Q4.9: Why does Max Pooling have exactly zero trainable parameters?
 **Answer**: Max pooling is a deterministic fixed mathematical operation: it slides a window (e.g. $2 \\times 2$) across feature maps and outputs the maximum numerical value. Because it contains no learnable weights or biases, its parameter count is identically zero.
 
-### Q4.10: In your deep architecture comparisons, why does the MLP with a flattened layer have over 50 million parameters?
-**Answer**: Flattening the final convolutional feature maps ($32 \\times 7 \\times 7 = 1568$ units) into a dense layer with 32,096 units creates a weight matrix of size $1568 \\times 32096 = 50,326,528$ weights plus 32,096 biases, totaling $50,358,624$ parameters. This highlights why modern architectures replace massive dense layers with Global Average Pooling (GAP).
+### Q4.10: Why does flattening a $128 \\times 128 \\times 3$ image into a 1,024-unit dense layer require over 50 million parameters?
+**Answer**: A $128 \\times 128 \\times 3$ RGB image flattens to $49,152$ input features. Connecting all $49,152$ inputs to $1,024$ hidden units creates a weight matrix of size $49,152 \\times 1,024 = 50,331,648$ weights plus $1,024$ biases, totaling $50,332,672$ parameters in a single layer. This demonstrates why convolutional weight sharing and pooling are essential for spatial data.
 """
     (DOCS / "viva_prep.md").write_text(content.strip() + "\n", encoding="utf-8")
     print("Wrote viva_prep.md")

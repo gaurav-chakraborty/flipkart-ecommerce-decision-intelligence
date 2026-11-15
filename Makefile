@@ -18,8 +18,8 @@ extras:
 	$(PYTHON) robustness.py
 
 test:
-	$(PYTHON) tests/test_checks.py
-	pytest -q
+	$(PYTHON) tests/run_tests.py
+	$(PYTHON) -m pytest -q
 
 verify:
 	$(PYTHON) tools/verify_submission.py

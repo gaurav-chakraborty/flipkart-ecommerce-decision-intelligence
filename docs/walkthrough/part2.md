@@ -32,7 +32,7 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ## 3. Line-by-Line Code & Statement Breakdown
 
 | Lines | Exact Code | Plain English Description | Mathematical Formulation / Rationale | Requirement Satisfied | Edge Case Guarded / Failure Mode |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | L1-L6 | `"""Part 2: Classification and Evaluation (Tasks 2.1 - 2.8).  Author: Gaurav Chakraborty Student ID: iitmd_dsai_2508432 Course: Capstone Project — Flipkart E...` | Module docstring documenting Tasks 2.1-2.8 and author attribution. | Defines classification scope and tasks. | Header | Module header documentation. |
 | L7 | `import numpy as np` | Imports numpy library. | NumPy numerical array operations. | Dependencies | Standardized math functions. |
 | L8-L10 | `from common import (load, split_stratified, standardise_train_test, train_logistic, sigmoid, bce,                     confusion, metrics, predict_at, choose...` | Imports shared helpers from common.py. | Imports load, split_stratified, standardise_train_test, train_logistic, etc. | Dependencies | Shared primitives. |

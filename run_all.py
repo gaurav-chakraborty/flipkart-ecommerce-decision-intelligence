@@ -18,7 +18,8 @@ SCRIPTS = [
     "part4.py",
     "data_profile.py",
     "robustness.py",
-    "tests/test_checks.py",
+    "tests/run_tests.py",
+    "tools/verify_submission.py",
 ]
 
 

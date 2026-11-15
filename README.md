@@ -13,7 +13,7 @@ This repository answers the customer-analytics team's three open questions for F
 **Results at a glance**
 
 | Question | Answer | Evidence |
-|---|---|---|
+| --- | --- | --- |
 | Is the INR 800 average-order assumption right? | No. Sample mean INR 894 (95% interval INR 830 to INR 957), z = 2.8930 | Part 1 |
 | How many orders to estimate it within INR 50? | 1293 (800 available) | Part 1 |
 | Does the simple regression have a funnel? | Yes (residual spread ratio 3.7525); the log model removes it (1.0396) | Part 1 |
@@ -26,7 +26,7 @@ This repository answers the customer-analytics team's three open questions for F
 **Repository map**
 
 | Path | Purpose | Graded by the brief? |
-|---|---|---|
+| --- | --- | --- |
 | `README.md` | This file (all written answers, memo, limitations) | yes |
 | `requirements.txt` | `numpy==2.2.6` (the only external package used across all graded and extra Python scripts; all other imports are Python 3.10+ standard library) | yes |
 | `requirements-dev.txt`, `pyproject.toml` | Optional developer tooling (`pytest==9.1.1`, `ruff==0.16.2`) and package metadata | extra |
@@ -74,7 +74,7 @@ python -m http.server 8000 --directory web   # serve the interactive UI dashboar
 ### Pinned conventions used
 
 | Decision | Rule used |
-|---|---|
+| --- | --- |
 | Standard deviation / variance | Sample form (divide by n - 1) everywhere |
 | Train / test split | Rows of each class in file order; first ⌊7 × count / 10⌋ of each class go to training (560 / 240, positives 119 / 51); both sets keep file order |
 | Standardising | Training mean and sample SD only; the test rows and the CV folds reuse those numbers, nothing is recomputed |
@@ -90,7 +90,7 @@ python -m http.server 8000 --directory web   # serve the interactive UI dashboar
 ### Edge cases and how each is handled
 
 | Area | Edge case | Handling | Checked by |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Data | Missing, ragged, non-finite or out-of-range rows | The loader raises instead of continuing; the shipped file has 0 missing cells and 0 duplicate rows | `test_loader_rejects_corrupt_files`, `data_profile.txt` |
 | Data | Values pinned at generator bounds: 16 tenures at 1.0, 60 customers with 0 complaints, 10 discount shares at 0.01 and 2 at 0.99 | Kept as they are (they are legitimate clipped data, not errors); nothing is deleted or imputed | `data_profile.txt` |
 | Data | Logarithms need positive inputs | Loader requires value and X4 to be strictly positive (minimums 0.53 and 5.0) | `test_loader_rejects_corrupt_files` |
@@ -132,7 +132,7 @@ From `outputs/extras/data_profile.txt`: 800 rows, no missing or duplicate rows; 
 Key outputs (all 800 rows):
 
 | Quantity | Value |
-|---|---|
+| --- | --- |
 | n, mean, sample SD, standard error | 800, 8.9382, 9.1723, 0.3243 |
 | 95% interval | [8.3026, 9.5738] |
 | z for H0: μ = 8.0 | 2.8930 (reject: yes) |
@@ -158,7 +158,7 @@ Method notes: the closed-form line uses divisor n - 1 for both covariance and va
 Model and split: 560 training rows (119 positives) and 240 test rows (51 positives); logistic regression from zero start, η = 0.1, 1000 full-batch updates. Training loss after 0 / 1 / 10 / 100 / 1000 updates: 0.6931 / 0.6753 / 0.5685 / 0.3952 / 0.3704; test loss 0.3818 (a little above the training loss, with no sign of overfitting). The loss never rose from one update to the next, and 1000 updates end within 0.001 of the true minimum found independently by Newton's method.
 
 | Predictor (per training SD) | Weight | Odds ratio | 95% interval for the weight |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | X1 tenure | -0.5554 | 0.5739 | -0.9287 to -0.1820 |
 | X2 complaints | 0.5505 | 1.7341 | 0.2476 to 0.8533 |
 | X3 discount share | 0.9013 | 2.4629 | 0.5279 to 1.2748 |
@@ -166,7 +166,7 @@ Model and split: 560 training rows (119 positives) and 240 test rows (51 positiv
 | X5 loyalty | -0.2162 | 0.8056 | -0.5154 to 0.0830 |
 | X6 cash on delivery | 0.2348 | 1.2646 | -0.0025 to 0.4721 |
 | X7 Plus member | -0.0120 | 0.9881 | -0.2537 to 0.2297 |
-| bias | -2.0696 | | |
+| bias | -2.0696 | — | — |
 
 (The intervals are Wald intervals from `outputs/extras/robustness.txt`.)
 
@@ -179,7 +179,7 @@ Model and split: 560 training rows (119 positives) and 240 test rows (51 positiv
 Threshold sweep on the test rows (the ROC points; tp + fp + tn + fn = 240 in every row; at τ = 0.9 nobody is flagged, so precision is 0 / 0, set to 0 by rule, and only TPR and FPR are reported):
 
 | τ | tp | fp | tn | fn | TPR (recall) | FPR |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | 0.1000 | 48 | 88 | 101 | 3 | 0.9412 | 0.4656 |
 | 0.2000 | 43 | 64 | 125 | 8 | 0.8431 | 0.3386 |
 | 0.3000 | 38 | 44 | 145 | 13 | 0.7451 | 0.2328 |
@@ -193,7 +193,7 @@ Threshold sweep on the test rows (the ROC points; tp + fp + tn + fn = 240 in eve
 KNN cross-validation (5 folds on the training rows, no re-standardising; K = 1 and K = 3 tie at 0.4249 and K = 5 is best):
 
 | K | mean 5-fold F1 |
-|---|---|
+| --- | --- |
 | 1 | 0.4249 |
 | 3 | 0.4249 |
 | 5 | 0.4541 |
@@ -218,14 +218,14 @@ How robust is the recommendation? (`outputs/extras/robustness.txt`; this is supp
 K-means on the five standardised continuous predictors (all 800 rows; the outcome is used only to describe segments, never to form them). Pinned starting rows need 6, 7, 21, 15 and 27 assignment passes for K = 2, 3, 4, 5 and 6.
 
 | K | 2 | 3 | 4 | 5 | 6 |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | WCSS | 2262.6753 | 1602.8471 | 1494.7732 | 1323.7157 | 1278.1691 |
 
 - **R3.1** Successive drops: WCSS(2) - WCSS(3) = 659.8282; WCSS(3) - WCSS(4) = 108.0739; WCSS(4) - WCSS(5) = 171.0575; WCSS(5) - WCSS(6) = 45.5466. The elbow rule gives `elbow_k` = 3: the 3-to-4 drop (108.0739) is below half of the 2-to-3 drop (329.9141), so K = 3 is supported and used from here on. The drops do not shrink steadily (the 4-to-5 drop is larger than the 3-to-4 drop). That is because the pinned starting rows give one reproducible solution, not necessarily the global optimum for every K; other starting rows can reach a lower WCSS for K = 4 and K = 6. No cluster was empty for any K.
 - **R3.2** Segment profiles (original units; ordered by ascending mean X3 and named A, B, C):
 
 | Segment | Size | Mean X1 (tenure, months) | Mean X2 (complaints) | Mean X3 (discount share) | Mean X4 (avg order, INR 100s) | Mean X5 (loyalty) | Churn rate | Mean order value (INR 100s) |
-|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | A | 322 | 47.5028 | 1.9503 | 0.2250 | 12.5301 | 62.1584 | 0.0186 | 3.5976 |
 | B | 255 | 28.6071 | 6.0706 | 0.4534 | 28.7192 | 55.0082 | 0.2353 | 17.1248 |
 | C | 223 | 14.3892 | 4.2287 | 0.7118 | 16.5099 | 38.5215 | 0.4664 | 7.2883 |
@@ -237,7 +237,7 @@ K-means on the five standardised continuous predictors (all 800 rows; the outcom
 - **R3.3** At the cut, **single** linkage gives 4 clusters, {E1}, {E2, E3, E6}, {E4} and {E5}; **complete** linkage gives 2 clusters, {E1, E4, E5} and {E2, E3, E6}; average linkage also gives 2. Single linkage joins two groups through their closest pair, so its merge heights climb slowly (2.8, 2.9, 3.4) and the biggest gap falls earlier, between merges 2 and 3 (1.4); complete linkage uses the farthest pair, so its last merge leaps to 7.9, a gap of 5.0 that makes the two-group split obvious. The merge heights are the same for the first merge in all three rules (1.3) and diverge afterwards:
 
 | Linkage | Merge | Cluster A | Cluster B | Height |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | single | 1 | E3 | E6 | 1.3000 |
 | single | 2 | E2 | E3+E6 | 1.4000 |
 | single | 3 | E4 | E5 | 2.8000 |
@@ -263,7 +263,7 @@ Eigenvalues: 2.6136, 1.1828, 0.5114, 0.4055, 0.2867 (sum 5.0000, equal to the nu
 - **R4.1** The best split is **S4** (tenure at most 24 months) by both information gain (0.1252) and Gini gain (0.0606): it separates the classes most. 86 of its 188 short-tenure customers churn (45.7%), against 33 of the other 372 (8.9%), starting from a root entropy of 0.7462 and a root Gini of 0.3347. The next best, S3 (discount share above 0.5), gains 0.1046, while the two flag splits gain almost nothing (0.0110 and 0.0033). A tree grown until every leaf is pure would memorise noise (leaves of one or two customers), so it looks perfect on the training rows and generalises worse. One rule that stops it is a maximum depth (others: a minimum number of rows per leaf, a minimum gain, or pruning).
 
 | Split | Yes: n | Yes: positives | No: n | No: positives | Info gain | Gini gain |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | S1 | 235 | 64 | 325 | 55 | 0.0110 | 0.0052 |
 | S2 | 281 | 52 | 279 | 67 | 0.0033 | 0.0015 |
 | S3 | 209 | 87 | 351 | 32 | 0.1046 | 0.0494 |
@@ -272,7 +272,7 @@ Eigenvalues: 2.6136, 1.1828, 0.5114, 0.4055, 0.2867 (sum 5.0000, equal to the nu
 - **R4.2** I would ship the **logistic model**. At the 0.3 rule it has the best `f1` of the five (0.5714) and a `recall` of 0.7451, second only to the one-question stump's 0.7647 (which pays for it with more false alarms: F1 0.5532). The stump is a strong baseline because tenure alone carries much of the signal: it costs INR 7,350 against INR 7,400 for the logistic model at the same 0.3 rule. Soft voting reaches F1 0.5507 / recall 0.7451, hard voting 0.5344 / 0.6863 and KNN 0.3696 / 0.3333. Combining models did **not** help: the weak KNN drags the votes down and neither vote beats the logistic model alone. The logistic model's real edge is that its probability can be tuned: at τ = 0.15 it costs INR 6,050, below anything the 0.3 rules reach. Stump rates: 0.4574 for tenure at most 24 months, 0.0887 otherwise.
 
 | Model (test rows) | tp | fp | tn | fn | Precision | Recall | F1 |
-|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- |
 | logistic | 38 | 44 | 145 | 13 | 0.4634 | 0.7451 | 0.5714 |
 | knn | 17 | 24 | 165 | 34 | 0.4146 | 0.3333 | 0.3696 |
 | stump | 39 | 51 | 138 | 12 | 0.4333 | 0.7647 | 0.5532 |
@@ -282,7 +282,7 @@ Eigenvalues: 2.6136, 1.1828, 0.5114, 0.4055, 0.2867 (sum 5.0000, equal to the nu
 - **R4.3** After round 1 normalisation the two misclassified points (3 and 7) carry a total weight of **0.5000** (0.2500 each). That is a property of AdaBoost: after each reweighting, the points the last rule got wrong hold exactly half of the weight. Round 2 trusts h2 more because its weighted error (0.1667) is lower than h1's round-1 error (0.2500), giving α₂ = 0.8047 against α₁ = 0.5493; h2 gets the heavily weighted points 3 and 7 right. `ensemble_accuracy` is 0.7500 (6 of 8): the ensemble errs on points 1 and 5, where h2 is wrong and outvotes h1 by 0.2554, and two rounds do not beat either rule alone (each also gets 6 of 8), so more rounds would be needed.
 
 | Round | Point | Weight before | Unnormalised | Weight after |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | 1 | 1 | 0.1250 | 0.0722 | 0.0833 |
 | 1 | 2 | 0.1250 | 0.0722 | 0.0833 |
 | 1 | 3 | 0.1250 | 0.2165 | 0.2500 |
@@ -303,7 +303,7 @@ Eigenvalues: 2.6136, 1.1828, 0.5114, 0.4055, 0.2867 (sum 5.0000, equal to the nu
 - **R4.4** Model A, option 2 (CNN), 15,734 parameters in total (the fully connected 784 → 16 → 16 → 10 option has 13,002):
 
   | Layer | Output shape (H × W × D) | Parameters |
-  |---|---|---|
+  | --- | --- | --- |
   | Input | 28 × 28 × 1 | 0 |
   | Conv 5×5, 6 filters, stride 1, pad 2 | 28 × 28 × 6 | 156 |
   | ReLU | 28 × 28 × 6 | 0 |
@@ -318,7 +318,7 @@ Eigenvalues: 2.6136, 1.1828, 0.5114, 0.4055, 0.2867 (sum 5.0000, equal to the nu
   Parameter counts from `outputs/part4_architecture.csv`:
 
 | Layer | Parameters |
-|---|---|
+| --- | --- |
 | mlp_hidden1 | 12,560 |
 | mlp_hidden2 | 272 |
 | mlp_output | 170 |

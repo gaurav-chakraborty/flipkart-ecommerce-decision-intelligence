@@ -13,13 +13,13 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 **Answer**: With sample size $N = 800$, the Central Limit Theorem guarantees that the sampling distribution of the mean is Gaussian regardless of underlying population skewness. Furthermore, with $N=800$, the $t$-distribution with 799 degrees of freedom is virtually indistinguishable from the standard normal distribution ($t_{0.975, 799} = 1.9629 \approx 1.9600$). Our test statistic $z = 2.8930 > 1.96$ rejects $H_0$ ($p = 0.0038$).
 
 ### Q1.3: In Task 1.3, why did you use `math.ceil` rather than standard rounding for sample size planning?
-**Answer**: The sample size formula $n = \left(\frac{z_{\alpha/2} \cdot s}{E}\right)^2$ yields $1292.05$. Rounding down to 1292 would result in a margin of error strictly greater than $E = 0.50$ ($E_{1292} = 0.50001 > 0.50$). Taking the mathematical ceiling ($n = 1293$) guarantees that the margin of error remains strictly bounded within the desired tolerance.
+**Answer**: The sample size formula $n = \left(\frac{z_{\alpha/2} \cdot s}{E}\right)^2$ yields $1292.78$. Rounding down to 1292 would result in a margin of error strictly greater than $E = 0.50$ ($E_{1292} = 0.50015 > 0.50$). Taking the mathematical ceiling ($n = 1293$) guarantees that the margin of error remains strictly bounded within the desired tolerance.
 
 ### Q1.4: How did you verify that your simple linear regression implementation satisfied the ANOVA identity?
 **Answer**: By definition of least squares with an intercept term, the residuals sum strictly to zero ($\sum e_i = 0$) and are orthogonal to fitted values ($\sum e_i \hat{y}_i = 0$). This guarantees the exact Pythagorean decomposition $TSS = ESS + RSS$. In our pipeline, $TSS = 67221.4285$, $ESS = 34925.6088$, and $RSS = 32295.8197$; their sum matches $TSS$ to within $10^{-12}$.
 
 ### Q1.5: Why did gradient descent require feature standardization on $X_4$, and how did you unstandardise parameters?
-**Answer**: Unstandardised $X_4$ ranges from 3.7 to 43.1, producing elliptical loss contours where gradient descent oscillates violently or requires an imperceptibly tiny learning rate. Standardizing $X_4$ produces spherical contours allowing rapid convergence at $\eta = 0.05$. Because $y = w \cdot \frac{x - \bar{x}}{s_x} + b$, unstandardised parameters are recovered as $\text{Slope} = \frac{w}{s_x} = 0.6701$ and $\text{Intercept} = b - \text{Slope} \cdot \bar{x} = -3.6598$, matching OLS to 0.0000 gap.
+**Answer**: Unstandardised $X_4$ ranges from 3.7 to 43.1, producing elliptical loss contours where gradient descent oscillates violently or requires an imperceptibly tiny learning rate. Standardizing $X_4$ produces spherical contours allowing rapid convergence at $\eta = 0.1$. Because $y = w \cdot \frac{x - \bar{x}}{s_x} + b$, unstandardised parameters are recovered as $\text{Slope} = \frac{w}{s_x} = 0.6701$ and $\text{Intercept} = b - \text{Slope} \cdot \bar{x} = -3.6598$, matching OLS to 0.0000 gap.
 
 ### Q1.6: What statistical evidence proved that simple linear regression suffered from heteroscedasticity?
 **Answer**: Sorting observations by fitted values $\hat{y}$ into lower and upper halves revealed that residual standard deviation expanded from 2.3155 in the lower half to 8.6891 in the upper half. The ratio $\frac{8.6891}{2.3155} = 3.7525$ heavily exceeds the standard diagnostic threshold of 2.0, confirming a widening residual funnel.
@@ -74,23 +74,23 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 3. Part 3: Unsupervised Learning, Clustering, & PCA (10 Questions)
 
-### Q3.1: Why did you initialize $K$-Means centroids using the first $K$ observations?
-**Answer**: Random initialization (e.g. Forgy or $K$-Means++) produces non-deterministic cluster assignments that vary across runs, violating reproducibility. Using fixed initial centroids ($Z[:K]$) guarantees deterministic convergence to identical cluster centers across all machines.
+### Q3.1: Why did you initialize $K$-Means centroids using deterministic stride indices $0, \lfloor 800/K \rfloor, \dots$?
+**Answer**: Random initialization (e.g. Forgy or $K$-Means++) produces non-deterministic cluster assignments that vary across runs, violating reproducibility. Using fixed evenly-spaced starting rows (`0, floor(800/K), 2*floor(800/K), ...`) guarantees deterministic convergence to identical cluster centers across all machines while spreading initial centroids across the dataset.
 
 ### Q3.2: How did you mathematically define the elbow point in $K$-Means?
-**Answer**: Rather than visual inspection, we compute the discrete second differences of WCSS: $\Delta_1(K) = \text{WCSS}(K) - \text{WCSS}(K+1)$ and $\Delta_2(K) = \Delta_1(K-1) - \Delta_1(K)$. The second difference measures acceleration of diminishing returns; its global maximum at $K = 3$ ($\Delta_2(3) = 551.7543$) objectively identifies the elbow.
+**Answer**: Rather than subjective visual inspection, we compute the sequential WCSS drops $\Delta(K) = \text{WCSS}(K-1) - \text{WCSS}(K)$ and select the smallest $K$ where the next drop $\Delta(K+1) < 0.5 \cdot \Delta(K)$. From $K=2\to 3$, WCSS drops by $551.7543$, whereas from $K=3\to 4$ the drop falls to $252.8782 < 275.8772$, objectively identifying $K = 3$ as the elbow.
 
 ### Q3.3: What business personas emerged from the $K=3$ customer segmentation?
 **Answer**:
-- **Segment A (322 customers, 40.25%)**: Established loyal customers. High tenure, high loyalty score, low complaints, low churn rate (4.97%), high order values.
-- **Segment B (255 customers, 31.88%)**: Moderate-tenure everyday shoppers. Average discount usage, moderate complaints, moderate churn rate (20.39%).
-- **Segment C (223 customers, 27.88%)**: At-risk discount chasers. Low tenure, high complaint count, high discount share, high churn rate (45.74%).
+- **Segment A (322 customers, 40.25%)**: Established loyal high-value shoppers. High tenure (44.07 months), high loyalty score (66.52), low complaints (0.76), ultra-low churn rate (1.86%), high order values (INR 1,353).
+- **Segment B (255 customers, 31.88%)**: Moderate-tenure mid-tier shoppers. Average tenure (22.91 months), moderate discount share (0.3712), moderate complaints (1.76), moderate churn rate (23.53%).
+- **Segment C (223 customers, 27.88%)**: At-risk early-life discount chasers. Short tenure (9.22 months), high complaint count (2.82), high discount share (0.5060), low loyalty score (38.78), high churn rate (46.64%).
 
 ### Q3.4: Why does single linkage clustering suffer from chaining?
-**Answer**: Single linkage measures distance between the closest pair of points across clusters: $d(A, B) = \min_{a, b} d(a, b)$. A single intermediate data point between two distinct dense clusters can form a bridge, prematurely merging clusters into elongated, straggly chains. At cut height $H=4.0$, single linkage isolated 4 clusters (chaining out outliers).
+**Answer**: Single linkage measures distance between the closest pair of points across clusters: $d(A, B) = \min_{a, b} d(a, b)$. A single intermediate data point between two distinct dense clusters can form a bridge, prematurely merging clusters into elongated chains. Cutting before the largest merge-height jump ($1.8404 \to 2.5015$, jump $0.6611$ at step 4) yields 2 clusters (a 5-point chain and 1 isolated point).
 
-### Q3.5: Why did Complete Linkage produce balanced clusters at $H = 4.0$?
-**Answer**: Complete linkage measures distance between the furthest pair of points: $d(A, B) = \max_{a, b} d(a, b)$. This enforces a strict diameter constraint, guaranteeing that all points in a merged cluster are within distance $H$ of each other. At $H = 4.0$, it produced 2 well-separated, compact clusters.
+### Q3.5: How did the largest merge-height gap cut rule behave across Single, Complete, and Average linkage?
+**Answer**: Across all three linkage rules on the first 6 rows, the largest merge-height jump occurs at merge step 4 (the final merge from 2 clusters down to 1): Single ($1.8404 \to 2.5015$), Complete ($2.8388 \to 4.4969$), and Average ($2.2537 \to 3.4573$). Cutting immediately before the largest jump yields 2 clusters for all three linkage methods.
 
 ### Q3.6: Why did you perform PCA on the correlation matrix rather than the covariance matrix?
 **Answer**: Features $X_1 \dots X_5$ have vastly different measurement units and variances (e.g. loyalty score variance is $\approx 225$, whereas discount share variance is $\approx 0.05$). Performing PCA on unstandardised covariance would allow loyalty score to dominate the principal components purely due to unit scale. PCA on the correlation matrix standardises all features to unit variance, treating predictors equitably.
@@ -114,8 +114,8 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ### Q4.1: Why does Shannon entropy use base 2 logarithms?
 **Answer**: In information theory, using base 2 logarithms ($-\sum p_i \log_2 p_i$) measures uncertainty in "bits" (binary digits). A fair coin flip has entropy $-\frac{1}{2}\log_2(0.5) - \frac{1}{2}\log_2(0.5) = 1.0$ bit. Natural logarithms ($−\ln$) scale entropy by $\ln(2) \approx 0.6931$, violating the bit convention.
 
-### Q4.2: Why did candidate split S4 ($X_3 \ge 0.50$) achieve the highest Information Gain?
-**Answer**: Customer discount share ($X_3$) is the single strongest discriminator of churn. Splitting at 0.50 separates customers into a large, highly retained group ($X_3 < 0.50$, churn rate 8.87%) and a high-risk group ($X_3 \ge 0.50$, churn rate 45.74%), maximizing entropy reduction ($\text{IG} = 0.1252$) and Gini reduction (0.0683).
+### Q4.2: Why did candidate split S4 ($X_1 \le 24$) achieve the highest Information Gain?
+**Answer**: Customer tenure ($X_1 \le 24$ months) is the single strongest binary split discriminator of churn among the five candidates. Splitting at 24 months separates the 560 training rows into 312 early-tenure customers (109 churners, 34.94% churn rate) and 248 established customers (10 churners, 4.03% churn rate), maximizing Information Gain ($\text{IG} = 0.1252$) and Gini gain ($0.0606$).
 
 ### Q4.3: Why did you construct a 1-level decision stump instead of a fully grown decision tree?
 **Answer**: Fully grown decision trees on 560 training samples overfit complex noisy interactions, exhibiting high variance. A 1-level stump represents an ultra-interpretable weak learner with zero variance, functioning as the foundational building block for AdaBoost and majority voting ensembles.
@@ -132,11 +132,11 @@ Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 ### Q4.7: What is the mathematical derivation of the Out-of-Bag (OOB) sample fraction in Random Forests?
 **Answer**: In a bootstrap sample of size $N$ drawn with replacement, the probability that a specific row is not selected on a single draw is $1 - \frac{1}{N}$. Over $N$ independent draws, the probability of never being selected is $\left(1 - \frac{1}{N}\right)^N$. Taking the calculus limit as $N \to \infty$, $\lim_{N \to \infty} \left(1 - \frac{1}{N}\right)^N = e^{-1} \approx 0.367879$. For our training set $N = 560$, the exact finite value is $(559/560)^{560} = 0.3676$.
 
-### Q4.8: In the CNN parameter calculation, why does Conv1 with 16 filters have 160 parameters?
-**Answer**: The input has 1 channel (grayscale $28 \times 28$). Each of the 16 filters has spatial dimensions $3 \times 3$. The number of weights per filter is $3 \times 3 \times 1 = 9$, plus 1 bias parameter per filter. Therefore, each filter has $9 + 1 = 10$ parameters. Across 16 filters, the total learnable parameters are $16 \times 10 = 160$.
+### Q4.8: In the CNN parameter calculation, why does Conv1 with 6 filters have 156 parameters?
+**Answer**: The input has 1 channel (grayscale $28 \times 28$). Each of the 6 filters has spatial dimensions $5 \times 5$. The number of weights per filter is $5 \times 5 \times 1 = 25$, plus 1 bias parameter per filter. Therefore, each filter has $25 + 1 = 26$ parameters. Across 6 filters, the total learnable parameters are $6 \times 26 = 156$.
 
 ### Q4.9: Why does Max Pooling have exactly zero trainable parameters?
 **Answer**: Max pooling is a deterministic fixed mathematical operation: it slides a window (e.g. $2 \times 2$) across feature maps and outputs the maximum numerical value. Because it contains no learnable weights or biases, its parameter count is identically zero.
 
-### Q4.10: In your deep architecture comparisons, why does the MLP with a flattened layer have over 50 million parameters?
-**Answer**: Flattening the final convolutional feature maps ($32 \times 7 \times 7 = 1568$ units) into a dense layer with 32,096 units creates a weight matrix of size $1568 \times 32096 = 50,326,528$ weights plus 32,096 biases, totaling $50,358,624$ parameters. This highlights why modern architectures replace massive dense layers with Global Average Pooling (GAP).
+### Q4.10: Why does flattening a $128 \times 128 \times 3$ image into a 1,024-unit dense layer require over 50 million parameters?
+**Answer**: A $128 \times 128 \times 3$ RGB image flattens to $49,152$ input features. Connecting all $49,152$ inputs to $1,024$ hidden units creates a weight matrix of size $49,152 \times 1,024 = 50,331,648$ weights plus $1,024$ biases, totaling $50,332,672$ parameters in a single layer. This demonstrates why convolutional weight sharing and pooling are essential for spatial data.

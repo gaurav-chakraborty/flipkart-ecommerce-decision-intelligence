@@ -671,6 +671,8 @@ def test_part4_adaboost_by_independent_hand_calculation():
 @register_test
 def test_part4_oob_and_architecture_arithmetic():
     assert close(P4["oob_fraction"], (1 - 1 / 560) ** 560) and abs(float(P4["oob_fraction"]) - math.exp(-1)) < 2e-3   # ~ 1/e
+    p4_src = open("part4.py", "r", encoding="utf-8").read()
+    assert "(1 - 1 / 560) ** 560" in p4_src, "part4.py must use exact N=560 in OOB formula"
     hdr, rows = read_csv("outputs/part4_architecture.csv")
     assert hdr == ["layer", "parameters"] and [r[0] for r in rows] == ["mlp_hidden1", "mlp_hidden2", "mlp_output", "cnn_conv1", "cnn_conv2", "cnn_dense1", "cnn_dense2"]
     p = {r[0]: int(r[1]) for r in rows}

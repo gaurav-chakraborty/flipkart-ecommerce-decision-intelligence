@@ -44,12 +44,23 @@ def test_no_empty_cells_or_placeholders():
         assert "TBD" not in content, f"TBD placeholder found in {name}"
         assert "PLACEHOLDER" not in content, f"PLACEHOLDER found in {name}"
 
-        # Check table rows for empty cells | |
+        # Check table rows for empty cells | | and MD060 space padding around pipes
         for line in content.splitlines():
-            if line.startswith("|") and not line.startswith("|---"):
+            if line.startswith("|") and not re.match(r"^\|\s*---", line):
                 cells = [c.strip() for c in re.split(r"(?<!\\)\|", line)[1:-1]]
                 for idx, c in enumerate(cells):
                     assert c != "", f"Empty table cell in {name} line: {line}"
+            if line.strip().startswith("|") and line.strip().endswith("|"):
+                raw_cells = re.split(r"(?<!\\)\|", line.strip())[1:-1]
+                for c in raw_cells:
+                    assert c.startswith(" ") and c.endswith(" "), f"MD060 pipe space missing in {name}: {line}"
+
+    readme_text = (ROOT / "README.md").read_text(encoding="utf-8")
+    for line in readme_text.splitlines():
+        if line.strip().startswith("|") and line.strip().endswith("|"):
+            raw_cells = re.split(r"(?<!\\)\|", line.strip())[1:-1]
+            for c in raw_cells:
+                assert c.startswith(" ") and c.endswith(" "), f"MD060 pipe space missing in README.md: {line}"
 
 
 def test_line_by_line_coverage_and_exact_code():

@@ -59,7 +59,7 @@ Per the university brief, all deliverables are implemented strictly from scratch
 1. **Part 1 (Statistical Estimation & Regression)**:
    - Reads `data/records.csv` columns `order_value_inr_hundreds` and predictor `X4`.
    - Computes statistical inference (mean, SD, SE, 95% CI, two-sided z-test against null mean INR 800).
-   - Fits OLS simple regression, gradient descent verification, heteroscedasticity funnel diagnosis, log-log transformation, and multiple linear regression on $X_1 \dots X_7$.
+   - Fits OLS simple regression, gradient descent verification, heteroscedasticity funnel diagnosis, log-log transformation, and multiple linear regression on $\ln(X_4)$ and $X_1, X_2, X_3, X_5, X_6, X_7$.
 2. **Part 2 (Classification, ROC, & Asymmetric Cost Optimization)**:
    - Splits dataset into 70% train (560 rows) and 30% test (240 rows) using stratified sampling preserving class ratio (21.25% churn).
    - Standardises features strictly using training set statistics.
@@ -68,17 +68,17 @@ Per the university brief, all deliverables are implemented strictly from scratch
    - Evaluates operational costs ($C_{\text{FA}} = \text{INR } 50, C_{\text{Miss}} = \text{INR } 400$) and selects cost-optimal threshold $\tau^* = 0.15$.
 3. **Part 3 (Customer Segmentation & PCA)**:
    - Takes features $X_1 \dots X_5$ across all 800 customers.
-   - Performs K-Means clustering for $K \in \{2, 3, 4, 5, 6\}$ with deterministic initial centroids.
-   - Identifies elbow at $K = 3$ using second differences of within-cluster sum of squares (WCSS).
-   - Constructs hierarchical agglomerative clustering comparing Single, Complete, and Average linkage dendrogram cuts at height $H = 4.0$.
+   - Performs K-Means clustering for $K \in \{2, 3, 4, 5, 6\}$ with deterministic initial centroids (rows $0, \lfloor 800/K \rfloor, \dots$).
+   - Identifies elbow at $K = 3$ using the brief's diminishing-drop rule ($\text{Drop}(3\to 4) < 0.5 \cdot \text{Drop}(2\to 3)$).
+   - Constructs hierarchical agglomerative clustering comparing Single, Complete, and Average linkage dendrogram cuts at the largest consecutive merge-height gap.
    - Executes Principal Component Analysis (PCA) on the $5 \times 5$ correlation matrix, enforcing positive maximum loading sign convention.
 4. **Part 4 (Decision Trees, Ensembles, & Deep Architectures)**:
-   - Evaluates Shannon entropy and Gini impurity for root and all split candidates on $X_1 \dots X_7$.
-   - Extracts optimal 1-level decision stump on $X_3 \ge 0.50$.
+   - Evaluates Shannon entropy and Gini impurity for root and candidate splits $S_1 \dots S_4$ on $X_1 \dots X_7$.
+   - Extracts optimal 1-level decision stump on $S_4$ ($X_1 \le 24$ months, IG $= 0.1252$, Gini gain $= 0.0606$).
    - Builds heterogeneous voting ensemble combining Logistic Regression, KNN ($K=5$), and Decision Stump.
-   - Executes 3 rounds of sequential AdaBoost sample reweighting.
-   - Derives analytical Out-of-Bag (OOB) sample bounds for Random Forests.
-   - Computes layer-by-layer analytical parameter dimensions for MLP, CNN, and RNN architectures.
+   - Executes 2 rounds of sequential AdaBoost sample reweighting on the 8-point benchmark dataset.
+   - Derives analytical Out-of-Bag (OOB) sample bounds for Random Forests ($(1 - 1/560)^{560} = 0.3676$).
+   - Computes layer-by-layer analytical parameter dimensions for MLP (13,002), CNN (15,734), and RNN (26,768) architectures.
 
 ## 4. How to Read the Line-by-Line Walkthroughs
 
