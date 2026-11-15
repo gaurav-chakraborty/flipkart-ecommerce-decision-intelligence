@@ -10,7 +10,7 @@ This repository answers the customer-analytics team's three open questions for F
 
 > **Interactive UI Dashboard (`web/index.html`):** Please check the interactive **Flipkart E-Commerce Decision Intelligence UI** included in `web/index.html` (`web/index.html`, `web/styles.css`, `web/app.js`, and `vercel.json`). It provides an executive and technical interface across all four Parts: a live retention-coupon threshold & INR cost simulator, ROC and 5-fold KNN cross-validation explorers, K-means segment profiles and PCA spectral biplots, step-by-step AdaBoost reweighting tables, neural-network parameter calculators, robustness audit panels, and viva defense Q&A. You can open `web/index.html` directly in any browser or serve it locally with `python -m http.server 8000 --directory web`.
 
-**Results at a glance**
+### Results at a glance
 
 | Question | Answer | Evidence |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ This repository answers the customer-analytics team's three open questions for F
 | What is the purest one-question split? | Tenure at most 24 months (information gain 0.1252) | Part 4 |
 | How big would the later image / text models be? | CNN 15,734 parameters (MLP 13,002); RNN 26,768 | Part 4 |
 
-**Repository map**
+### Repository map
 
 | Path | Purpose | Graded by the brief? |
 | --- | --- | --- |
@@ -46,7 +46,7 @@ The extra files are additional evidence for the written answers; no graded numbe
 
 From a clean clone, in this order (every script is run from the repository root):
 
-```
+```bash
 pip install -r requirements.txt
 python generate_data.py          # prints: 800 10 170 c6f249ba693f1ebeed318d6d5e18de23
 python part1.py
@@ -59,7 +59,7 @@ If `pip` refuses a system-wide install (the "externally managed environment" mes
 
 Optional, not required by the brief (including the interactive UI dashboard):
 
-```
+```bash
 python tests/run_tests.py        # runs all 61 verification checks (56 core + 5 walkthrough/UI checks)
 python tests/test_checks.py      # runs the 56 core & mutant-hardened checks standalone
 python tests/test_walkthrough.py # runs the 5 walkthrough & UI parity checks standalone
@@ -230,10 +230,10 @@ K-means on the five standardised continuous predictors (all 800 rows; the outcom
 | B | 255 | 28.6071 | 6.0706 | 0.4534 | 28.7192 | 55.0082 | 0.2353 | 17.1248 |
 | C | 223 | 14.3892 | 4.2287 | 0.7118 | 16.5099 | 38.5215 | 0.4664 | 7.2883 |
 
-  - **A, "steady loyalists"** (322 customers): long tenure (47.5 months), few complaints (1.95), low discount share (0.225), high loyalty (62.2), churn rate 0.0186 (6 of 322). Action: keep contact light and spend no coupons here (the model's alert would almost never fire); protect the relationship with loyalty perks and low-effort service.
-  - **B, "high-value, complaint-heavy"** (255): the biggest spenders (average past order 28.7, mean order value 17.12) and the most complaints (6.07), churn 0.2353. Action: service recovery first, with proactive complaint resolution and a priority-support route, because these customers are worth the most and are unhappy.
-  - **C, "bargain-focused newcomers"** (223): the shortest tenure (14.4 months), discount share 0.712, loyalty 38.5, churn 0.4664. Action: onboarding and targeted retention offers, using the model's alert at τ = 0.15 to decide who receives a coupon.
-  - The segment with the highest `outcome_rate` is **C at 0.4664**. (For comparison, the generator describes three hidden groups of about 40%, 35% and 25%; the K = 3 shares are 40.3%, 31.9% and 27.9%.)
+- **Segment A, "steady loyalists"** (322 customers): long tenure (47.5 months), few complaints (1.95), low discount share (0.225), high loyalty (62.2), churn rate 0.0186 (6 of 322). Action: keep contact light and spend no coupons here (the model's alert would almost never fire); protect the relationship with loyalty perks and low-effort service.
+- **Segment B, "high-value, complaint-heavy"** (255): the biggest spenders (average past order 28.7, mean order value 17.12) and the most complaints (6.07), churn 0.2353. Action: service recovery first, with proactive complaint resolution and a priority-support route, because these customers are worth the most and are unhappy.
+- **Segment C, "bargain-focused newcomers"** (223): the shortest tenure (14.4 months), discount share 0.712, loyalty 38.5, churn 0.4664. Action: onboarding and targeted retention offers, using the model's alert at τ = 0.15 to decide who receives a coupon.
+- **Highest outcome rate:** Segment **C at 0.4664**. (For comparison, the generator describes three hidden groups of about 40%, 35% and 25%; the K = 3 shares are 40.3%, 31.9% and 27.9%.)
 - **R3.3** At the cut, **single** linkage gives 4 clusters, {E1}, {E2, E3, E6}, {E4} and {E5}; **complete** linkage gives 2 clusters, {E1, E4, E5} and {E2, E3, E6}; average linkage also gives 2. Single linkage joins two groups through their closest pair, so its merge heights climb slowly (2.8, 2.9, 3.4) and the biggest gap falls earlier, between merges 2 and 3 (1.4); complete linkage uses the farthest pair, so its last merge leaps to 7.9, a gap of 5.0 that makes the two-group split obvious. The merge heights are the same for the first merge in all three rules (1.3) and diverge afterwards:
 
 | Linkage | Merge | Cluster A | Cluster B | Height |
