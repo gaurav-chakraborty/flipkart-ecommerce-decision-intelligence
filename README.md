@@ -6,6 +6,8 @@ Author: Gaurav Chakraborty
 **Student ID:** iitmd_dsai_2508432  
 **Course:** Capstone Project — Flipkart E-Commerce Decision Intelligence  
 
+https://flipkart-ecommerce-decision-intelli.vercel.app/
+
 This repository answers the customer-analytics team's three open questions for Flipkart: whether the average-order-value planning assumption still holds, which customers will churn (no purchase in the next 90 days), and what kinds of shoppers the base contains. All data comes from `generate_data.py`; nothing here reflects Flipkart's real records, products, policies or performance. Money is in Indian Rupees (INR); one unit of the order-value columns is INR 100. Everything runs offline on Python 3.10+ with NumPy only, in under two seconds in total.
 
 > **Interactive UI Dashboard (`web/index.html`):** Please check the interactive **Flipkart E-Commerce Decision Intelligence UI** included in `web/index.html` (`web/index.html`, `web/styles.css`, `web/app.js`, and `vercel.json`). It provides an executive and technical interface across all four Parts: a live retention-coupon threshold & INR cost simulator, ROC and 5-fold KNN cross-validation explorers, K-means segment profiles and PCA spectral biplots, step-by-step AdaBoost reweighting tables, neural-network parameter calculators, robustness audit panels, and viva defense Q&A. You can open `web/index.html` directly in any browser or serve it locally with `python -m http.server 8000 --directory web`.
