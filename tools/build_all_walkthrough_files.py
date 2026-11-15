@@ -2,7 +2,7 @@
 
 Author: Gaurav Chakraborty
 Student ID: iitmd_dsai_2508432
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 """
 from __future__ import annotations
 
@@ -127,7 +127,7 @@ def build_overview() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Executive Summary & Domain Context
 
@@ -252,7 +252,7 @@ def build_generate_data() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Purpose**: Produces 800 synthetic customer records representing the Flipkart e-commerce domain.
@@ -307,7 +307,7 @@ def build_common() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Purpose**: Provides shared mathematical, statistical, algorithmic, and file persistence primitives.
@@ -363,7 +363,7 @@ def build_part1() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Tasks Implemented**:
@@ -432,7 +432,7 @@ def build_part2() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Tasks Implemented**:
@@ -497,7 +497,7 @@ def build_part3() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Tasks Implemented**:
@@ -556,7 +556,7 @@ def build_part4() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Tasks Implemented**:
@@ -593,7 +593,7 @@ def build_tests() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Overview of the Verification Strategy
 
@@ -688,7 +688,7 @@ def build_extras() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Overview of Supplementary Analyses
 
@@ -774,7 +774,7 @@ def build_traceability() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Traceability Scope
 
@@ -835,7 +835,7 @@ def build_glossary() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Statistical Inference & Regression Terminology
 
@@ -912,7 +912,7 @@ def build_viva_prep() -> None:
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Part 1: Statistical Estimation & Regression (10 Questions)
 

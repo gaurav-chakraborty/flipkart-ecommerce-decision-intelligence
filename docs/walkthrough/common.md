@@ -2,7 +2,7 @@
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Purpose**: Provides shared mathematical, statistical, algorithmic, and file persistence primitives.
@@ -20,7 +20,7 @@ Course: Capstone Project — Flipkart E-commerce Decision Intelligence
 
 | Lines | Exact Code | Plain English Description | Mathematical Formulation / Rationale | Requirement Satisfied | Edge Case Guarded / Failure Mode |
 |---|---|---|---|---|---|
-| L1-L13 | `"""Shared helpers for the Flipkart E-commerce capstone.  Author: Gaurav Chakraborty Student ID: iitmd_dsai_2508432 Course: Capstone Project — Flipkart E-com...` | Module docstring documenting edge case guards and author attribution. | Defines system invariants and edge case rules. | Architecture Overview | Importing this module never executes scripts. |
+| L1-L13 | `"""Shared helpers for the Flipkart E-Commerce capstone.  Author: Gaurav Chakraborty Student ID: iitmd_dsai_2508432 Course: Capstone Project — Flipkart E-Com...` | Module docstring documenting edge case guards and author attribution. | Defines system invariants and edge case rules. | Architecture Overview | Importing this module never executes scripts. |
 | L14 | `from __future__ import annotations` | Imports required Python modules and symbols. | Standard library and NumPy interface. | Environment setup and dependencies | ModuleNotFoundError if third-party dependencies are unpinned. |
 | L16 | `import csv` | Imports required Python modules and symbols. | Standard library and NumPy interface. | Environment setup and dependencies | ModuleNotFoundError if third-party dependencies are unpinned. |
 | L17 | `import math` | Defines repository root directory Path constant. | ROOT = Path(__file__).resolve().parent. | Path Resolution | Ensures working-directory independence across all runs. |

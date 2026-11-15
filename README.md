@@ -1,12 +1,14 @@
 Domain: E-commerce
 Author: Gaurav Chakraborty
 
-# Flipkart E-commerce Decision Intelligence (synthetic data)
+# Flipkart E-Commerce Decision Intelligence (synthetic data)
 
 **Student ID:** iitmd_dsai_2508432  
-**Course:** Capstone Project — Flipkart E-commerce Decision Intelligence  
+**Course:** Capstone Project — Flipkart E-Commerce Decision Intelligence  
 
 This repository answers the customer-analytics team's three open questions for Flipkart: whether the average-order-value planning assumption still holds, which customers will churn (no purchase in the next 90 days), and what kinds of shoppers the base contains. All data comes from `generate_data.py`; nothing here reflects Flipkart's real records, products, policies or performance. Money is in Indian Rupees (INR); one unit of the order-value columns is INR 100. Everything runs offline on Python 3.10+ with NumPy only, in under two seconds in total.
+
+> **Interactive UI Dashboard (`web/index.html`):** Please check the interactive **Flipkart E-Commerce Decision Intelligence UI** included in `web/index.html` (`web/index.html`, `web/styles.css`, `web/app.js`, and `vercel.json`). It provides an executive and technical interface across all four Parts: a live retention-coupon threshold & INR cost simulator, ROC and 5-fold KNN cross-validation explorers, K-means segment profiles and PCA spectral biplots, step-by-step AdaBoost reweighting tables, neural-network parameter calculators, robustness audit panels, and viva defense Q&A. You can open `web/index.html` directly in any browser or serve it locally with `python -m http.server 8000 --directory web`.
 
 **Results at a glance**
 
@@ -26,18 +28,19 @@ This repository answers the customer-analytics team's three open questions for F
 | Path | Purpose | Graded by the brief? |
 |---|---|---|
 | `README.md` | This file (all written answers, memo, limitations) | yes |
-| `requirements.txt` | `numpy==2.2.6` | yes |
+| `requirements.txt` | `numpy==2.2.6` (the only external package used across all graded and extra Python scripts; all other imports are Python 3.10+ standard library) | yes |
+| `requirements-dev.txt`, `pyproject.toml` | Optional developer tooling (`pytest==9.1.1`, `ruff==0.16.2`) and package metadata | extra |
 | `generate_data.py`, `data/records.csv` | Provided generator (verbatim) and its output | yes |
 | `common.py` | Shared helpers with documented edge cases (importing runs nothing) | supports Parts 1 to 4 |
 | `part1.py` ... `part4.py` | One script per Part | yes |
 | `outputs/part*_results.txt`, `outputs/*.csv` | Every results file and CSV named in the brief | yes |
-| `tests/test_checks.py`, `tests/run_tests.py` | 56 independent checks (edge cases, cross-checks, format) | extra |
-| `docs/walkthrough/` | Line-by-line walkthrough, traceability matrix, glossary, viva prep | extra |
-| `web/`, `vercel.json` | Interactive executive dashboard for Vercel static deployment | extra |
+| `tests/test_checks.py`, `tests/test_walkthrough.py`, `tests/run_tests.py` | 61 independent verification checks (56 core/edge-case/mutant checks + 5 walkthrough/UI parity checks; runs on standard library + NumPy without requiring pytest) | extra |
+| `docs/walkthrough/` | Line-by-line walkthrough (12 files), traceability matrix, glossary, viva prep | extra |
+| `web/`, `vercel.json` | Interactive E-Commerce Decision Intelligence UI dashboard (`web/index.html`, `web/styles.css`, `web/app.js`) | extra |
 | `data_profile.py`, `robustness.py` | Data-quality profile and robustness analysis | extra |
 | `outputs/extras/data_profile.txt`, `outputs/extras/robustness.txt` | Output of the two extra scripts | extra |
 
-The extra files are additional evidence for the written answers; no graded number depends on them. `part2_results.txt` also carries three extra keys (`cost_tau_test_flagged`, `cost_tau_test_missed`, `cost_tau_test_recall`) beyond those the brief names.
+The extra files are additional evidence for the written answers; no graded number depends on them. `part2_results.txt` also carries three extra keys (`cost_tau_test_flagged`, `cost_tau_test_missed`, `cost_tau_test_recall`) and `part4_results.txt` carries five extra cost keys (`cost_test_logistic`, `cost_test_knn`, `cost_test_stump`, `cost_test_hard_vote`, `cost_test_soft_vote`) beyond those the brief names.
 
 ## How to run
 
@@ -54,12 +57,16 @@ python part4.py
 
 If `pip` refuses a system-wide install (the "externally managed environment" message on recent Linux distributions), create a virtual environment first (`python -m venv .venv`, activate it, then run the commands above); nothing else changes.
 
-Optional, not required by the brief:
+Optional, not required by the brief (including the interactive UI dashboard):
 
 ```
-python tests/test_checks.py      # 56 checks (or python tests/run_tests.py / pytest -q)
+python tests/run_tests.py        # runs all 61 verification checks (56 core + 5 walkthrough/UI checks)
+python tests/test_checks.py      # runs the 56 core & mutant-hardened checks standalone
+python tests/test_walkthrough.py # runs the 5 walkthrough & UI parity checks standalone
+python tools/verify_submission.py # verifies all submission guidelines and file invariants
 python data_profile.py           # writes outputs/extras/data_profile.txt
 python robustness.py             # writes outputs/extras/robustness.txt
+python -m http.server 8000 --directory web   # serve the interactive UI dashboard locally (or open web/index.html directly)
 ```
 
 `common.py` holds shared code (data loading and validation, stratified split, scaler, logistic regression, KNN, metrics, AdaBoost round, tie rules). Part 4 re-fits the Part 2 logistic model and re-selects K with the same code, so it uses the same 560/240 split and the same models. Each script (including the two extras) creates `outputs/` or `outputs/extras/` if it is missing and rewrites its files; two consecutive runs give byte-identical files.

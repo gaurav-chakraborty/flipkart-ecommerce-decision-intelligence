@@ -1,8 +1,8 @@
-"""Shared helpers for the Flipkart E-commerce capstone.
+"""Shared helpers for the Flipkart E-Commerce capstone.
 
 Author: Gaurav Chakraborty
 Student ID: iitmd_dsai_2508432
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 Importing this module never runs a Part. Every helper documents the edge case it guards:
   * zero denominators in rate metrics return 0.0 (the brief's rule),

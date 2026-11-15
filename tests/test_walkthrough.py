@@ -1,14 +1,15 @@
-"""Automated verification of walkthrough documents in docs/walkthrough/.
+"""Automated verification of walkthrough documents in docs/walkthrough/ and UI parity.
 
 Author: Gaurav Chakraborty
 Student ID: iitmd_dsai_2508432
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 """
 from __future__ import annotations
 
 import re
+import sys
+import traceback
 from pathlib import Path
-import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs" / "walkthrough"
@@ -42,7 +43,7 @@ def test_no_empty_cells_or_placeholders():
         assert "TODO" not in content, f"TODO placeholder found in {name}"
         assert "TBD" not in content, f"TBD placeholder found in {name}"
         assert "PLACEHOLDER" not in content, f"PLACEHOLDER found in {name}"
-        
+
         # Check table rows for empty cells | |
         for line in content.splitlines():
             if line.startswith("|") and not line.startswith("|---"):
@@ -82,7 +83,7 @@ def test_line_by_line_coverage_and_exact_code():
 
 def test_traceability_matrix_covers_all_tasks():
     content = (DOCS / "traceability.md").read_text(encoding="utf-8")
-    
+
     # Check all Tasks
     for i in range(1, 8):
         assert f"Task 1.{i}" in content, f"Task 1.{i} missing from traceability.md"
@@ -111,6 +112,8 @@ def test_web_dashboard_numbers_and_invariants_match_outputs():
     js = (ROOT / "web" / "app.js").read_text(encoding="utf-8")
     combined = html + "\n" + js
 
+    assert "Flipkart E-Commerce Decision Intelligence" in html, "Expected exact E-Commerce title in web/index.html"
+
     # Verify exact CSV numbers from outputs/ are present in the web frontend
     for csv_name in (
         "part2_thresholds.csv",
@@ -128,3 +131,29 @@ def test_web_dashboard_numbers_and_invariants_match_outputs():
                 if re.fullmatch(r"-?\d+\.\d{4}", cell):
                     assert cell in combined, f"Exact float {cell} from {csv_name} missing in web frontend"
 
+
+WALKTHROUGH_TESTS = [
+    test_all_12_walkthrough_documents_exist,
+    test_no_empty_cells_or_placeholders,
+    test_line_by_line_coverage_and_exact_code,
+    test_traceability_matrix_covers_all_tasks,
+    test_web_dashboard_numbers_and_invariants_match_outputs,
+]
+
+
+def main() -> int:
+    failed = 0
+    for fn in WALKTHROUGH_TESTS:
+        try:
+            fn()
+            print(f"PASS  {fn.__name__}")
+        except Exception:
+            failed += 1
+            print(f"FAIL  {fn.__name__}")
+            traceback.print_exc()
+    print(f"\n{len(WALKTHROUGH_TESTS)} walkthrough tests, {len(WALKTHROUGH_TESTS) - failed} passed, {failed} failed")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

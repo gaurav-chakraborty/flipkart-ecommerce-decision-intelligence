@@ -2,7 +2,7 @@
 
 Author: Gaurav Chakraborty
 Student ID: iitmd_dsai_2508432
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 """
 import numpy as np
 from common import (

@@ -2,7 +2,7 @@
 
 Author: Gaurav Chakraborty  
 Student ID: iitmd_dsai_2508432  
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 ## 1. Specification & Requirements Implemented
 - **Purpose**: Produces 800 synthetic customer records representing the Flipkart e-commerce domain.

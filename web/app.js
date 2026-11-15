@@ -1,7 +1,7 @@
 /* ==========================================================================
-   Flipkart E-commerce Decision Intelligence — Graduate Research Client Logic
+   Flipkart E-Commerce Decision Intelligence — Graduate Research Client Logic
    Author: Gaurav Chakraborty (iitmd_dsai_2508432)
-   Course: Capstone Project — Flipkart E-commerce Decision Intelligence (IIT Mandi)
+   Course: Capstone Project — Flipkart E-Commerce Decision Intelligence (IIT Mandi)
    ========================================================================== */
 
 (function () {

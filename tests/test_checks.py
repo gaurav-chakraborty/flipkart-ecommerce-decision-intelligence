@@ -2,7 +2,7 @@
 
 Author: Gaurav Chakraborty
 Student ID: iitmd_dsai_2508432
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 Plain asserts, no test framework needed.  Two kinds of checks:
   (1) edge cases of the helper functions (zero denominators, ties, overflow, bad inputs, leakage);

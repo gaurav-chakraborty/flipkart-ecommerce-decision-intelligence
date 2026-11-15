@@ -2,7 +2,7 @@
 
 Author: Gaurav Chakraborty
 Student ID: iitmd_dsai_2508432
-Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+Course: Capstone Project — Flipkart E-Commerce Decision Intelligence
 
 Writes outputs/extras/data_profile.txt.  Shows that the file is clean and documents the edge cases
 the generator creates (clipping at bounds, tied values, class imbalance)."""
