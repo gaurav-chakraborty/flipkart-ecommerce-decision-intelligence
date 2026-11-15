@@ -92,3 +92,39 @@ def test_traceability_matrix_covers_all_tasks():
         assert f"Task 3.{i}" in content, f"Task 3.{i} missing from traceability.md"
     for i in range(1, 6):
         assert f"Task 4.{i}" in content, f"Task 4.{i} missing from traceability.md"
+
+
+def test_web_dashboard_numbers_and_invariants_match_outputs():
+    web_files = [
+        ROOT / "vercel.json",
+        ROOT / "web" / "index.html",
+        ROOT / "web" / "styles.css",
+        ROOT / "web" / "app.js",
+    ]
+    for wf in web_files:
+        assert wf.exists(), f"Missing web dashboard file: {wf}"
+        text = wf.read_text(encoding="utf-8")
+        assert "$" not in text, f"Forbidden dollar sign found in {wf}"
+        assert not re.search(r"https?://", text), f"Forbidden URL found in {wf}"
+
+    html = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
+    js = (ROOT / "web" / "app.js").read_text(encoding="utf-8")
+    combined = html + "\n" + js
+
+    # Verify exact CSV numbers from outputs/ are present in the web frontend
+    for csv_name in (
+        "part2_thresholds.csv",
+        "part2_knn_cv.csv",
+        "part3_segments.csv",
+        "part3_hierarchical.csv",
+        "part4_splits.csv",
+        "part4_voting.csv",
+        "part4_adaboost.csv",
+        "part4_architecture.csv",
+    ):
+        lines = (ROOT / "outputs" / csv_name).read_text(encoding="utf-8").splitlines()[1:]
+        for line in lines:
+            for cell in line.split(","):
+                if re.fullmatch(r"-?\d+\.\d{4}", cell):
+                    assert cell in combined, f"Exact float {cell} from {csv_name} missing in web frontend"
+

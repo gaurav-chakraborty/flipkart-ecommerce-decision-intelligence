@@ -1,56 +1,81 @@
 /* ==========================================================================
-   Flipkart E-commerce Decision Intelligence — Dashboard Stylesheet
+   Flipkart E-commerce Decision Intelligence — Graduate Research Dashboard
    Author: Gaurav Chakraborty (iitmd_dsai_2508432)
-   Course: Capstone Project — Flipkart E-commerce Decision Intelligence
+   Course: Capstone Project — Flipkart E-commerce Decision Intelligence (IIT Mandi)
    ========================================================================== */
 
+@property --fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 :root {
-  /* Light and Dark mode raw tokens */
-  --bg-canvas-light: #f4f6fb;
-  --bg-canvas-dark: #0b0f19;
+  /* Academic Slate-Indigo & Warm Gold Palette — Light and Dark Raw Tokens */
+  --bg-canvas-light: #f1f5f9;
+  --bg-canvas-dark: #090d16;
 
   --bg-surface-light: #ffffff;
-  --bg-surface-dark: #131b2e;
+  --bg-surface-dark: #111827;
 
-  --bg-elevated-light: #eef2ff;
-  --bg-elevated-dark: #1e2942;
+  --bg-elevated-light: #f8fafc;
+  --bg-elevated-dark: #1e293b;
+
+  --bg-tint-light: #eef2ff;
+  --bg-tint-dark: #172554;
 
   --text-primary-light: #0f172a;
-  --text-primary-dark: #f1f5f9;
+  --text-primary-dark: #f8fafc;
 
-  --text-secondary-light: #475569;
-  --text-secondary-dark: #94a3b8;
+  --text-secondary-light: #334155;
+  --text-secondary-dark: #cbd5e1;
 
-  --border-subtle-light: #cbd5e1;
-  --border-subtle-dark: #26334d;
+  --text-muted-light: #475569;
+  --text-muted-dark: #94a3b8;
+
+  /* Minimum 3:1 UI component boundary contrast tokens (WCAG 1.4.11) */
+  --border-subtle-light: #94a3b8;
+  --border-subtle-dark: #334155;
+
+  --border-strong-light: #64748b;
+  --border-strong-dark: #475569;
 
   --brand-primary-light: #1d4ed8;
   --brand-primary-dark: #60a5fa;
 
-  --brand-accent-light: #f59e0b;
+  --brand-accent-light: #b45309;
   --brand-accent-dark: #fbbf24;
 
-  --status-pass-light: #059669;
+  --status-pass-light: #047857;
   --status-pass-dark: #34d399;
 
-  --status-warn-light: #d97706;
+  --status-warn-light: #b45309;
   --status-warn-dark: #fbbf24;
 
-  --status-danger-light: #dc2626;
+  --status-danger-light: #b91c1c;
   --status-danger-dark: #f87171;
 
   --scrollbar-track-light: #e2e8f0;
-  --scrollbar-track-dark: #131b2e;
-  --scrollbar-thumb-light: #64748b;
-  --scrollbar-thumb-dark: #475569;
+  --scrollbar-track-dark: #0f172a;
+  --scrollbar-thumb-light: #475569;
+  --scrollbar-thumb-dark: #64748b;
 
-  /* Default fallback tokens for older browsers */
+  /* Default fallback tokens */
   --bg-canvas: var(--bg-canvas-light);
   --bg-surface: var(--bg-surface-light);
   --bg-elevated: var(--bg-elevated-light);
+  --bg-tint: var(--bg-tint-light);
   --text-primary: var(--text-primary-light);
   --text-secondary: var(--text-secondary-light);
+  --text-muted: var(--text-muted-light);
   --border-subtle: var(--border-subtle-light);
+  --border-strong: var(--border-strong-light);
   --brand-primary: var(--brand-primary-light);
   --brand-accent: var(--brand-accent-light);
   --status-pass: var(--status-pass-light);
@@ -64,9 +89,12 @@
     --bg-canvas: var(--bg-canvas-dark);
     --bg-surface: var(--bg-surface-dark);
     --bg-elevated: var(--bg-elevated-dark);
+    --bg-tint: var(--bg-tint-dark);
     --text-primary: var(--text-primary-dark);
     --text-secondary: var(--text-secondary-dark);
+    --text-muted: var(--text-muted-dark);
     --border-subtle: var(--border-subtle-dark);
+    --border-strong: var(--border-strong-dark);
     --brand-primary: var(--brand-primary-dark);
     --brand-accent: var(--brand-accent-dark);
     --status-pass: var(--status-pass-dark);
@@ -81,9 +109,12 @@
     --bg-canvas: light-dark(var(--bg-canvas-light), var(--bg-canvas-dark));
     --bg-surface: light-dark(var(--bg-surface-light), var(--bg-surface-dark));
     --bg-elevated: light-dark(var(--bg-elevated-light), var(--bg-elevated-dark));
+    --bg-tint: light-dark(var(--bg-tint-light), var(--bg-tint-dark));
     --text-primary: light-dark(var(--text-primary-light), var(--text-primary-dark));
     --text-secondary: light-dark(var(--text-secondary-light), var(--text-secondary-dark));
+    --text-muted: light-dark(var(--text-muted-light), var(--text-muted-dark));
     --border-subtle: light-dark(var(--border-subtle-light), var(--border-subtle-dark));
+    --border-strong: light-dark(var(--border-strong-light), var(--border-strong-dark));
     --brand-primary: light-dark(var(--brand-primary-light), var(--brand-primary-dark));
     --brand-accent: light-dark(var(--brand-accent-light), var(--brand-accent-dark));
     --status-pass: light-dark(var(--status-pass-light), var(--status-pass-dark));
@@ -93,27 +124,31 @@
     --scrollbar-thumb: light-dark(var(--scrollbar-thumb-light), var(--scrollbar-thumb-dark));
   }
 
-  /* Viewport-wide native UI adaptation */
   color-scheme: light dark;
   accent-color: var(--brand-primary);
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-/* Explicit theme override support via data-theme attribute */
+/* Explicit user-selected theme overrides */
 html[data-theme="light"] {
   color-scheme: light;
   --bg-canvas: var(--bg-canvas-light);
   --bg-surface: var(--bg-surface-light);
   --bg-elevated: var(--bg-elevated-light);
+  --bg-tint: var(--bg-tint-light);
   --text-primary: var(--text-primary-light);
   --text-secondary: var(--text-secondary-light);
+  --text-muted: var(--text-muted-light);
   --border-subtle: var(--border-subtle-light);
+  --border-strong: var(--border-strong-light);
   --brand-primary: var(--brand-primary-light);
   --brand-accent: var(--brand-accent-light);
   --status-pass: var(--status-pass-light);
   --status-warn: var(--status-warn-light);
   --status-danger: var(--status-danger-light);
+  --scrollbar-track: var(--scrollbar-track-light);
+  --scrollbar-thumb: var(--scrollbar-thumb-light);
 }
 
 html[data-theme="dark"] {
@@ -121,17 +156,40 @@ html[data-theme="dark"] {
   --bg-canvas: var(--bg-canvas-dark);
   --bg-surface: var(--bg-surface-dark);
   --bg-elevated: var(--bg-elevated-dark);
+  --bg-tint: var(--bg-tint-dark);
   --text-primary: var(--text-primary-dark);
   --text-secondary: var(--text-secondary-dark);
+  --text-muted: var(--text-muted-dark);
   --border-subtle: var(--border-subtle-dark);
+  --border-strong: var(--border-strong-dark);
   --brand-primary: var(--brand-primary-dark);
   --brand-accent: var(--brand-accent-dark);
   --status-pass: var(--status-pass-dark);
   --status-warn: var(--status-warn-dark);
   --status-danger: var(--status-danger-dark);
+  --scrollbar-track: var(--scrollbar-track-dark);
+  --scrollbar-thumb: var(--scrollbar-thumb-dark);
 }
 
-/* Legacy scrollbar fallback for older engines */
+/* Forced Colors Mode support (modern-web-guidance: color) */
+@media (forced-colors: active) {
+  :root {
+    --bg-canvas: Canvas;
+    --bg-surface: Canvas;
+    --bg-elevated: Canvas;
+    --bg-tint: Canvas;
+    --text-primary: CanvasText;
+    --text-secondary: CanvasText;
+    --text-muted: GrayText;
+    --border-subtle: CanvasText;
+    --border-strong: CanvasText;
+    --brand-primary: Highlight;
+    --brand-accent: Highlight;
+    --status-pass: Highlight;
+  }
+}
+
+/* Legacy scrollbar fallback */
 @supports not (scrollbar-color: auto) {
   ::-webkit-scrollbar {
     width: 10px;
@@ -142,6 +200,49 @@ html[data-theme="dark"] {
   }
   ::-webkit-scrollbar-track {
     background: var(--scrollbar-track);
+  }
+}
+
+/* Range Slider Fallback for engines without accent-color (modern-web-guidance: brand-consistent-forms) */
+@supports not (accent-color: auto) {
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right, var(--brand-primary) var(--progress, 0%), var(--border-subtle) var(--progress, 0%));
+    border-radius: 4px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    cursor: pointer;
+    margin-top: -4px;
+  }
+  input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: var(--border-subtle);
+    border-radius: 4px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-progress {
+    background-color: var(--brand-primary);
+    height: 8px;
+    border-radius: 4px;
   }
 }
 
@@ -157,9 +258,21 @@ body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.55;
+  line-height: 1.6;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  accent-color: var(--brand-primary);
+}
+
+code,
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  background-color: var(--bg-elevated);
+  padding-block: 0.12rem;
+  padding-inline: 0.38rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
 }
 
 canvas,
@@ -168,49 +281,61 @@ svg {
   max-inline-size: 100%;
 }
 
-/* Header & Identity Banner */
+/* ==========================================================================
+   Academic Header & Provenance Banner
+   ========================================================================== */
 .site-header {
   background-color: var(--bg-surface);
   border-block-end: 1px solid var(--border-subtle);
-  padding-block: 1.25rem;
+  padding-block: 1.35rem;
   padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
 .header-inner {
-  max-inline-size: 1360px;
+  max-inline-size: 1400px;
   margin-inline: auto;
   display: flex;
   flex-wrap: wrap;
   align-items: safe center;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 1.25rem;
 }
 
 .brand-block {
   min-inline-size: 0;
-  flex: 1 1 420px;
+  flex: 1 1 520px;
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: safe center;
+  gap: 0.5rem;
+  margin-block-end: 0.45rem;
 }
 
 .domain-pill {
   display: inline-flex;
   align-items: safe center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   padding-block: 0.2rem;
-  padding-inline: 0.65rem;
+  padding-inline: 0.7rem;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  background-color: var(--bg-elevated);
+  background-color: var(--bg-tint);
   color: var(--brand-primary);
   border: 1px solid var(--border-subtle);
 }
 
 .site-title {
-  margin-block: 0.35rem 0.2rem;
-  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+  margin-block: 0.2rem 0.35rem;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .author-meta {
@@ -224,129 +349,223 @@ svg {
 }
 
 .header-controls {
-  margin-inline-start: auto;
   display: flex;
   flex-wrap: wrap;
-  flex-wrap: balance;
   align-items: safe center;
   gap: 0.6rem;
 }
 
 .badge-chip {
-  padding-block: 0.3rem;
-  padding-inline: 0.7rem;
+  display: inline-flex;
+  align-items: safe center;
+  gap: 0.35rem;
+  padding-block: 0.32rem;
+  padding-inline: 0.75rem;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 600;
   background-color: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
 }
 
 .badge-chip.pass {
+  border-color: var(--status-pass);
   color: var(--status-pass);
+}
+
+.theme-control {
+  display: inline-flex;
+  align-items: safe center;
+  gap: 0.45rem;
 }
 
 .theme-select {
   padding-block: 0.35rem;
-  padding-inline: 0.65rem;
+  padding-inline: 0.7rem;
   border-radius: 6px;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-strong);
   background-color: var(--bg-surface);
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-/* Navigation Bar */
+/* ==========================================================================
+   Single-Row Scrollable Tablist with Edge Fade Masks (modern-web-guidance: tabs)
+   ========================================================================== */
 .nav-bar {
   background-color: var(--bg-surface);
   border-block-end: 1px solid var(--border-subtle);
-  padding-block: 0.5rem;
   padding-inline: clamp(1rem, 4vw, 3rem);
   position: sticky;
   inset-block-start: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
-.nav-list {
-  max-inline-size: 1360px;
+.nav-list.scroller {
+  max-inline-size: 1400px;
   margin-inline: auto;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
   margin-block: 0;
-  list-style: none;
   display: flex;
-  flex-wrap: wrap;
-  flex-wrap: balance;
-  gap: 0.45rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: inline proximity;
+  scroll-padding-inline: 3rem;
+  gap: 0.25rem;
+  --fade-size: 3rem;
+  --fade-dir: right;
+  --fade-start-pos: 0;
+  --fade-end-pos: 100%;
+  mask:
+    linear-gradient(black, black) no-clip subtract,
+    linear-gradient(to var(--fade-dir), black, transparent) var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
+    linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos) 0 / var(--fade-end) 100% no-repeat no-clip;
+  animation: reveal-fade-start linear both, hide-fade-end linear both;
+  animation-timeline: scroll(self inline);
+  animation-range: 0 var(--fade-size), calc(100% - var(--fade-size)) 100%;
 }
 
-.nav-btn {
+.nav-list.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-list.scroller:dir(rtl) {
+  --fade-dir: left;
+  --fade-start-pos: 100%;
+  --fade-end-pos: 0;
+}
+
+@keyframes reveal-fade-start {
+  to {
+    --fade-start: var(--fade-size);
+  }
+}
+
+@keyframes hide-fade-end {
+  from {
+    --fade-end: var(--fade-size);
+  }
+}
+
+/* Fallback for browsers without scroll-driven animations */
+@supports not (animation-timeline: scroll()) {
+  .nav-list.scroller {
+    transition: --fade-start 0.2s, --fade-end 0.2s;
+  }
+  .nav-list.scroller.more-start {
+    --fade-start: var(--fade-size);
+  }
+  .nav-list.scroller.more-end {
+    --fade-end: var(--fade-size);
+  }
+}
+
+/* Tab Buttons: Never change box dimensions on selection (modern-web-guidance: tabs) */
+[role="tab"].nav-btn {
+  position: relative;
+  flex: none;
+  scroll-snap-align: start;
   appearance: none;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
-  padding-block: 0.48rem;
-  padding-inline: 0.9rem;
-  border-radius: 6px;
-  font-size: 0.88rem;
+  padding-block: 0.85rem;
+  padding-inline: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
-.nav-btn:hover {
-  background-color: var(--bg-elevated);
+[role="tab"].nav-btn:hover {
   color: var(--text-primary);
+  background-color: var(--bg-elevated);
 }
 
-.nav-btn[aria-selected="true"] {
-  background-color: var(--brand-primary);
-  color: #ffffff;
+[role="tab"].nav-btn:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: -2px;
 }
 
-html[data-theme="dark"] .nav-btn[aria-selected="true"] {
-  color: #0b0f19;
+/* MANDATORY: Shape indicator (border on ::after) so selection never relies on color alone */
+[role="tab"].nav-btn[aria-selected="true"] {
+  color: var(--brand-primary);
+  background-color: var(--bg-tint);
 }
 
-/* Main Workspace Container */
+[role="tab"].nav-btn[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  border-block-end: 3px solid var(--brand-primary);
+}
+
+/* ==========================================================================
+   Main Workspace & Tab Panels
+   IMPORTANT: Do not put padding/border/margin/background on [role="tabpanel"]
+   itself because hidden="until-found" only hides contents. Style .panel-inner!
+   ========================================================================== */
 .main-container {
   inline-size: 100%;
-  max-inline-size: 1360px;
+  max-inline-size: 1400px;
   margin-inline: auto;
-  padding-block: 1.75rem;
-  padding-inline: clamp(1rem, 4vw, 3rem);
+  display: grid;
+  grid-template-columns: 100%;
 }
 
 .tab-panel {
-  display: none;
+  grid-area: 1 / 1;
+  min-inline-size: 0;
 }
 
-.tab-panel.active {
-  display: block;
+.panel-inner {
+  padding-block: 2rem;
+  padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
 .section-header {
-  margin-block-end: 1.5rem;
+  margin-block-end: 1.75rem;
+  border-block-end: 1px solid var(--border-subtle);
+  padding-block-end: 1rem;
+}
+
+.section-kicker {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand-primary);
+  margin-block-end: 0.25rem;
 }
 
 .section-header h2 {
-  margin-block: 0 0.35rem;
-  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  margin-block: 0 0.4rem;
+  font-size: clamp(1.35rem, 2.1vw, 1.75rem);
+  letter-spacing: -0.015em;
 }
 
 .section-header p {
   margin: 0;
   color: var(--text-secondary);
+  max-inline-size: 85ch;
 }
 
-/* Metric Card Grid using Subgrid for Ragged-Edge Alignment */
+/* ==========================================================================
+   KPI Subgrid Cards (modern-web-guidance: css-layout)
+   ========================================================================== */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   grid-auto-rows: auto;
-  gap: 1rem;
-  margin-block-end: 1.75rem;
+  gap: 1.1rem;
+  margin-block-end: 1.85rem;
 }
 
 .kpi-card {
@@ -356,62 +575,134 @@ html[data-theme="dark"] .nav-btn[aria-selected="true"] {
   grid-template-rows: subgrid;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
+  border-block-start: 3px solid var(--brand-primary);
   border-radius: 10px;
-  padding-block: 1.1rem;
-  padding-inline: 1.25rem;
-  gap: 0.35rem;
+  padding-block: 1.15rem;
+  padding-inline: 1.3rem;
+  gap: 0.4rem;
+}
+
+.kpi-card.accent {
+  border-block-start-color: var(--brand-accent);
+}
+
+.kpi-card.pass {
+  border-block-start-color: var(--status-pass);
 }
 
 .kpi-label {
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.035em;
   color: var(--text-secondary);
 }
 
 .kpi-value {
-  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+  font-size: clamp(1.5rem, 2.2vw, 1.95rem);
   font-weight: 800;
-  color: var(--brand-primary);
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
+  line-height: 1.2;
 }
 
 .kpi-sub {
-  font-size: 0.83rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
-/* Two-Column Content Panels */
+/* ==========================================================================
+   Content Panels & Academic Callout Boxes
+   ========================================================================== */
 .panel-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
   gap: 1.5rem;
-  margin-block-end: 1.75rem;
+  margin-block-end: 1.85rem;
 }
 
 .card-panel {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 10px;
-  padding-block: 1.25rem;
-  padding-inline: 1.35rem;
+  padding-block: 1.35rem;
+  padding-inline: 1.45rem;
   min-inline-size: 0;
 }
 
 .card-panel h3 {
-  margin-block: 0 0.75rem;
-  font-size: 1.1rem;
+  margin-block: 0 0.5rem;
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
 }
 
-/* Interactive Controls & Sliders */
+.card-panel p {
+  margin-block: 0 0.9rem;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+.memo-box {
+  background-color: var(--bg-surface);
+  border-inline-start: 4px solid var(--brand-primary);
+  border-block: 1px solid var(--border-subtle);
+  border-inline-end: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-block-end: 1.85rem;
+}
+
+.memo-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: safe center;
+  gap: 0.75rem;
+  margin-block-end: 0.85rem;
+  padding-block-end: 0.65rem;
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.memo-header h3 {
+  margin: 0;
+  font-size: 1.18rem;
+}
+
+.memo-box p {
+  margin-block: 0 0.85rem;
+  font-size: 0.95rem;
+}
+
+.memo-box p:last-child {
+  margin-block-end: 0;
+}
+
+.formula-banner {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding-block: 0.85rem;
+  padding-inline: 1.1rem;
+  margin-block-end: 1.25rem;
+  font-size: 0.9rem;
+}
+
+.formula-banner strong {
+  color: var(--brand-primary);
+}
+
+/* ==========================================================================
+   Interactive Controls & Buttons
+   ========================================================================== */
 .control-group {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.9rem;
   margin-block-end: 1.25rem;
-  padding: 1rem;
+  padding: 1.1rem;
   background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
 }
 
@@ -426,48 +717,75 @@ html[data-theme="dark"] .nav-btn[aria-selected="true"] {
 .slider-row label {
   font-size: 0.9rem;
   font-weight: 600;
-  flex: 1 1 200px;
+  flex: 1 1 210px;
 }
 
 .slider-row input[type="range"] {
-  flex: 2 1 220px;
+  flex: 2 1 200px;
   cursor: pointer;
 }
 
 .slider-val {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 700;
-  font-size: 0.95rem;
-  min-inline-size: 4.5rem;
+  font-size: 0.92rem;
+  min-inline-size: 7.5rem;
   text-align: end;
   color: var(--brand-primary);
 }
 
-/* Responsive Data Tables (following modern-web-guidance: responsive-table) */
+.action-btn {
+  appearance: none;
+  border: 1px solid var(--brand-primary);
+  background-color: var(--bg-tint);
+  color: var(--brand-primary);
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  border-radius: 6px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--brand-primary);
+  color: var(--bg-surface);
+}
+
+/* ==========================================================================
+   Responsive Data Tables (modern-web-guidance: responsive-table)
+   ========================================================================== */
 .table-wrapper {
   overflow: auto;
   max-inline-size: 100%;
-  max-block-size: min(500px, 80vh);
+  max-block-size: min(540px, 80vh);
   container-type: inline-size;
   scrollbar-gutter: stable;
   overscroll-behavior: contain;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background-color: var(--bg-surface);
+  margin-block-end: 1.5rem;
+}
+
+.table-wrapper:last-child {
+  margin-block-end: 0;
 }
 
 table {
   inline-size: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 0.9rem;
+  font-size: 0.89rem;
   font-variant-numeric: tabular-nums;
 }
 
 caption {
-  padding-block: 0.65rem;
+  padding-block: 0.7rem;
   padding-inline: 1rem;
   font-weight: 700;
+  font-size: 0.92rem;
   text-align: start;
   color: var(--text-primary);
   background-color: var(--bg-elevated);
@@ -477,7 +795,7 @@ caption {
 thead {
   position: sticky;
   inset-block-start: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 th,
@@ -492,18 +810,44 @@ thead th {
   background-color: var(--bg-elevated);
   color: var(--text-primary);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 tbody th {
   position: sticky;
   inset-inline-start: 0;
+  z-index: 1;
   background-color: var(--bg-surface);
+  font-weight: 700;
+}
+
+tbody tr.highlight-row th,
+tbody tr.highlight-row td {
+  background-color: var(--bg-tint);
   font-weight: 700;
 }
 
 tbody tr:hover td,
 tbody tr:hover th {
   background-color: var(--bg-elevated);
+}
+
+.status-tag {
+  display: inline-block;
+  padding-block: 0.12rem;
+  padding-inline: 0.48rem;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border: 1px solid currentColor;
+}
+
+.status-tag.pass {
+  color: var(--status-pass);
+}
+
+.status-tag.warn {
+  color: var(--status-warn);
 }
 
 /* Container Query Stacked Table Transformation for Narrow Containers */
@@ -540,43 +884,36 @@ tbody tr:hover th {
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(3)::before {
     content: var(--label-3, "Col 3") ": ";
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(4)::before {
     content: var(--label-4, "Col 4") ": ";
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(5)::before {
     content: var(--label-5, "Col 5") ": ";
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(6)::before {
     content: var(--label-6, "Col 6") ": ";
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(7)::before {
     content: var(--label-7, "Col 7") ": ";
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(8)::before {
     content: var(--label-8, "Col 8") ": ";
     font-weight: 600;
     color: var(--text-secondary);
   }
-
   td:nth-child(9)::before {
     content: var(--label-9, "Col 9") ": ";
     font-weight: 600;
@@ -584,77 +921,102 @@ tbody tr:hover th {
   }
 }
 
-/* Executive Memo Callout */
-.memo-box {
-  background-color: var(--bg-surface);
-  border-inline-start: 4px solid var(--brand-primary);
-  border-block: 1px solid var(--border-subtle);
-  border-inline-end: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 1.35rem;
-  margin-block-end: 1.75rem;
-}
-
-.memo-box h3 {
-  margin-block: 0 0.6rem;
-}
-
-.memo-box p {
-  margin-block: 0 0.85rem;
-}
-
-.memo-box p:last-child {
-  margin-block-end: 0;
-}
-
-/* Search & Viva Cards */
+/* ==========================================================================
+   Viva Voce Filter Bar & Cards
+   ========================================================================== */
 .search-bar {
   display: flex;
   flex-wrap: wrap;
+  align-items: safe center;
   gap: 0.75rem;
-  margin-block-end: 1.25rem;
+  margin-block-end: 1rem;
 }
 
 .search-input {
-  flex: 1 1 280px;
-  padding-block: 0.6rem;
-  padding-inline: 0.9rem;
+  flex: 1 1 320px;
+  padding-block: 0.65rem;
+  padding-inline: 0.95rem;
   border-radius: 6px;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-strong);
   background-color: var(--bg-surface);
   color: var(--text-primary);
   font-size: 0.95rem;
 }
 
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-block-end: 1.35rem;
+}
+
+.filter-pill {
+  appearance: none;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  padding-block: 0.38rem;
+  padding-inline: 0.8rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-pill[aria-pressed="true"] {
+  background-color: var(--bg-tint);
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
 .qa-list {
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
+  margin-block-end: 2rem;
 }
 
 .qa-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
+  border-inline-start: 4px solid var(--brand-primary);
   border-radius: 8px;
-  padding: 1rem 1.2rem;
+  padding: 1.15rem 1.35rem;
+}
+
+.qa-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--brand-primary);
+  margin-block-end: 0.35rem;
 }
 
 .qa-card h4 {
-  margin-block: 0 0.45rem;
-  color: var(--brand-primary);
-  font-size: 1rem;
+  margin-block: 0 0.5rem;
+  color: var(--text-primary);
+  font-size: 1.02rem;
 }
 
 .qa-card p {
   margin: 0;
   font-size: 0.92rem;
+  color: var(--text-secondary);
 }
 
-/* Chart Container */
+/* ==========================================================================
+   Chart Canvas Containers
+   ========================================================================== */
 .chart-box {
   background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  padding: 0.85rem;
-  margin-block-top: 0.75rem;
+  padding: 0.9rem;
+  margin-block-top: 0.65rem;
 }
 
 canvas {
@@ -663,21 +1025,24 @@ canvas {
   block-size: auto;
 }
 
-/* Footer */
+/* ==========================================================================
+   Academic Footer
+   ========================================================================== */
 .site-footer {
   background-color: var(--bg-surface);
   border-block-start: 1px solid var(--border-subtle);
-  padding-block: 1.25rem;
+  padding-block: 1.35rem;
   padding-inline: clamp(1rem, 4vw, 3rem);
   font-size: 0.85rem;
   color: var(--text-secondary);
 }
 
 .footer-inner {
-  max-inline-size: 1360px;
+  max-inline-size: 1400px;
   margin-inline: auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: safe center;
   gap: 0.75rem;
 }

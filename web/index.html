@@ -5,219 +5,360 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- MANDATORY: Declare support for both light and dark themes -->
   <meta name="color-scheme" content="light dark">
-  <title>Flipkart E-commerce Decision Intelligence — Gaurav Chakraborty</title>
+  <title>Flipkart E-commerce Decision Intelligence — Gaurav Chakraborty (IIT Mandi)</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Header & Identity Bar -->
+  <!-- ======================= ACADEMIC HEADER & PROVENANCE BANNER ======================= -->
   <header class="site-header">
     <div class="header-inner">
       <div class="brand-block">
-        <span class="domain-pill">Domain: E-commerce</span>
+        <div class="pill-row">
+          <span class="domain-pill">Domain: E-commerce</span>
+          <span class="badge-chip">Seed 2508 &middot; CRLF MD5: c6f249ba693f1ebeed318d6d5e18de23</span>
+          <span class="badge-chip pass">[PASS] 61 / 61 Verification Checks &middot; 20 / 20 Mutants Killed</span>
+        </div>
         <h1 class="site-title">Flipkart E-commerce Decision Intelligence</h1>
         <p class="author-meta">
           <strong>Author:</strong> Gaurav Chakraborty &nbsp;|&nbsp;
-          <strong>Student ID:</strong> iitmd_dsai_2508432 &nbsp;|&nbsp;
-          <strong>Course:</strong> Capstone Project (IIT Mandi)
+          <strong>Student ID:</strong> <code>iitmd_dsai_2508432</code> &nbsp;|&nbsp;
+          <strong>Institution:</strong> Indian Institute of Technology (IIT) Mandi &nbsp;|&nbsp;
+          <strong>Stack:</strong> Pure Python 3.10+ &amp; NumPy 2.2.6 (Zero High-Level ML Libraries)
         </p>
       </div>
       <div class="header-controls">
-        <span class="badge-chip">N = 800 Customers</span>
-        <span class="badge-chip">170 Positives (21.25% Churn)</span>
-        <span class="badge-chip pass">60 / 60 Tests &amp; 20 / 20 Mutants Killed</span>
-        <label for="theme-switcher" class="kpi-label">Theme:</label>
-        <select id="theme-switcher" class="theme-select" aria-label="Color theme mode">
-          <option value="auto">System Auto</option>
-          <option value="light">Light Mode</option>
-          <option value="dark">Dark Mode</option>
-        </select>
+        <span class="badge-chip">N = 800 Customers (560 Train / 240 Test)</span>
+        <span class="badge-chip">170 Churners (21.25% Base Rate)</span>
+        <div class="theme-control">
+          <label for="theme-switcher" class="kpi-label">Theme:</label>
+          <select id="theme-switcher" class="theme-select" aria-label="Color theme mode">
+            <option value="auto">System Auto</option>
+            <option value="light">Light Mode</option>
+            <option value="dark">Dark Mode</option>
+          </select>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Navigation Tabs -->
-  <nav class="nav-bar" aria-label="Dashboard Sections">
-    <ul class="nav-list" role="tablist">
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="true" data-tab="tab-overview">Executive Overview</button></li>
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part1">Part 1: Inference &amp; Regression</button></li>
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part2">Part 2: Churn &amp; Cost Simulator</button></li>
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part3">Part 3: Segmentation &amp; PCA</button></li>
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part4">Part 4: Trees, Boosting &amp; DL</button></li>
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="false" data-tab="tab-robustness">Robustness &amp; Profile</button></li>
-      <li role="presentation"><button class="nav-btn" role="tab" aria-selected="false" data-tab="tab-viva">Viva Q&amp;A &amp; Traceability</button></li>
-    </ul>
+  <!-- ======================= SINGLE-ROW SCROLLABLE TABLIST ======================= -->
+  <nav class="nav-bar" aria-label="Analytical Modules">
+    <div class="nav-list scroller" focusgroup="tablist nomemory" role="tablist" aria-label="Capstone Modules">
+      <button type="button" id="btn-tab-overview" class="nav-btn" role="tab" aria-selected="true" focusgroupstart data-tab="tab-overview">0. Executive Synthesis</button>
+      <button type="button" id="btn-tab-part1" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part1">1. Parametric Inference &amp; OLS</button>
+      <button type="button" id="btn-tab-part2" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part2">2. Churn &amp; Cost Simulator</button>
+      <button type="button" id="btn-tab-part3" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part3">3. Unsupervised &amp; Spectral PCA</button>
+      <button type="button" id="btn-tab-part4" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part4">4. Ensembles, Boosting &amp; DL</button>
+      <button type="button" id="btn-tab-robustness" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-robustness">5. Robustness &amp; Cohort Audit</button>
+      <button type="button" id="btn-tab-viva" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-viva">6. Viva Defense &amp; Traceability</button>
+    </div>
   </nav>
 
-  <!-- Main Workspace -->
+  <!-- ======================= MAIN WORKSPACE ======================= -->
   <main class="main-container">
 
-    <!-- ======================= TAB 0: EXECUTIVE OVERVIEW ======================= -->
-    <section id="tab-overview" class="tab-panel active" role="tabpanel">
-      <div class="section-header">
-        <h2>Executive Summary &amp; Model-Choice Memo</h2>
-        <p>End-to-end decision intelligence system built strictly from scratch with Python and NumPy (Seed 2508, MD5: c6f249ba693f1ebeed318d6d5e18de23).</p>
-      </div>
+    <!-- ======================= TAB 0: EXECUTIVE SYNTHESIS ======================= -->
+    <section id="tab-overview" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-overview">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Executive Decision Intelligence Synthesis</span>
+          <h2>Research Abstract, Production Recommendation &amp; Cross-Module Findings</h2>
+          <p>
+            This capstone resolves three foundational analytical mandates for Flipkart customer operations on the synthetic 800-customer benchmark:
+            (1) auditing the INR 800 average-order-value planning baseline and stabilizing heteroscedastic order-value regression,
+            (2) formulating an asymmetric-cost churn intervention rule for 90-day customer retention, and
+            (3) uncovering latent behavioral personas via unsupervised clustering and correlation-matrix eigen-decomposition.
+          </p>
+        </div>
 
-      <div class="kpi-grid">
-        <article class="kpi-card">
-          <span class="kpi-label">Order Value Mean (Task 1.1)</span>
-          <span class="kpi-value">INR 893.82</span>
-          <span class="kpi-sub">95% CI: [INR 830.26, INR 957.38] (z = 2.8930)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Optimal Alert Threshold (Task 2.8)</span>
-          <span class="kpi-value">&tau;* = 0.1500</span>
-          <span class="kpi-sub">Test Cost: INR 6,050 (88.24% Recall)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Cost Savings vs Default &tau;=0.50</span>
-          <span class="kpi-value">INR 5,750</span>
-          <span class="kpi-sub">Saves INR 14,350 vs flagging nobody (INR 20,400)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Customer Segments (Task 3.2)</span>
-          <span class="kpi-value">K = 3 Elbow</span>
-          <span class="kpi-sub">Sizes: 322 (A) / 255 (B) / 223 (C)</span>
-        </article>
-      </div>
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <span class="kpi-label">Order-Value Hypothesis Test (Tasks 1.1–1.2)</span>
+            <span class="kpi-value">INR 893.82</span>
+            <span class="kpi-sub">[REJECT H0: &mu; = 8.0] 95% CI: [8.3026, 9.5738] &middot; z = 2.8930</span>
+          </article>
+          <article class="kpi-card pass">
+            <span class="kpi-label">Optimal Retention Policy (Task 2.8)</span>
+            <span class="kpi-value">&tau;* = 0.1500</span>
+            <span class="kpi-sub">[OPTIMAL] Test Cost: INR 6,050 &middot; 88.24% Recall (45 / 51 Caught)</span>
+          </article>
+          <article class="kpi-card accent">
+            <span class="kpi-label">Net Operational Savings (240 Test Rows)</span>
+            <span class="kpi-value">INR 5,750</span>
+            <span class="kpi-sub">48.7% reduction vs &tau; = 0.50 (INR 11,800) &middot; Saves INR 14,350 vs No Action</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">Latent Shopper Personas (Tasks 3.2 &amp; 3.5)</span>
+            <span class="kpi-value">K = 3 Elbow</span>
+            <span class="kpi-sub">A: 322 (1.86% churn) &middot; B: 255 (23.53%) &middot; C: 223 (46.64%)</span>
+          </article>
+        </div>
 
-      <article class="memo-box">
-        <h3>Executive Model-Choice Memo</h3>
-        <p><strong>Recommendation:</strong> Deploy the standardized <strong>Logistic Regression model</strong> with an alert threshold of <strong>&tau; = 0.15</strong>, paired with Segment C retention targeting.</p>
-        <p><strong>Financial Impact:</strong> On the 240-customer test partition (51 churners), a missed churner costs <strong>INR 400</strong> in lost margin whereas a retention coupon costs <strong>INR 50</strong>. Lowering the threshold from the default 0.50 to <strong>&tau; = 0.15</strong> reduces test operational cost from <strong>INR 11,800</strong> to <strong>INR 6,050</strong> (a 48.7% cost reduction) and saves <strong>INR 14,350</strong> compared to flagging nobody (<strong>INR 20,400</strong>). At &tau; = 0.15, the campaign catches 45 of 51 churners (<strong>88.24% recall</strong>, missing only 6).</p>
-        <p><strong>Why Logistic over KNN, Stump, and Ensembles:</strong> Logistic regression produces smooth calibrated probabilities required for threshold optimization. At &tau; = 0.50, KNN (K = 5) costs INR 14,800 (F1 = 0.3696), hard voting costs INR 8,650, and soft voting costs INR 7,650. Across 2,000 bootstrap resamples, &tau; = 0.15 achieves a 95% cost interval of [INR 4,300, INR 8,200] and outperforms &tau; = 0.50 in 100% of resamples and in 30 of 30 alternative stratified splits (mean saving INR 7,417).</p>
-      </article>
+        <div class="panel-grid">
+          <article class="memo-box" style="margin-block-end: 0;">
+            <div class="memo-header">
+              <h3>Executive Model-Choice Memo (To: Head of Retention)</h3>
+              <span class="status-tag pass">[DEPLOY RECOMMENDED: LOGISTIC AT &tau; = 0.15]</span>
+            </div>
+            <p>
+              <strong>1. Production Recommendation:</strong> Ship the standardized seven-feature <strong>Logistic Regression classifier</strong> trained via full-batch gradient descent (&eta; = 0.1, 1,000 updates) and trigger retention outreach whenever predicted 90-day churn probability satisfies <code>p &ge; 0.15</code>. Pair this model with Segment C onboarding interventions and Segment B priority complaint recovery.
+            </p>
+            <p>
+              <strong>2. Economic Justification:</strong> Under the asymmetric loss structure where an unretained churner costs <strong>INR 400</strong> in lost contribution margin while a proactive retention coupon costs <strong>INR 50</strong> (an 8:1 cost asymmetry), the naive <code>&tau; = 0.50</code> boundary incurs <strong>INR 11,800</strong> on the held-out test set (missing 27 of 51 churners), and flagging nobody costs <strong>INR 20,400</strong>. Selecting <code>&tau;* = 0.1500</code> strictly on the 560 training rows (training cost <strong>INR 12,150</strong>) reduces held-out test expenditure to <strong>INR 6,050</strong>—capturing <strong>45 of 51 churners (recall 0.8824)</strong> and missing only 6.
+            </p>
+            <p>
+              <strong>3. Comparative Model &amp; Ensemble Audit:</strong> At the standardized <code>&tau; = 0.30</code> benchmark (Task 4.2), individual Logistic Regression achieves the highest F1 score (<strong>0.5714</strong>, recall 0.7451, test cost INR 7,400), outperforming Soft Voting (F1 0.5507, INR 7,650), Hard Majority Voting (F1 0.5344, INR 8,650), and 5-Nearest Neighbours (F1 0.3696, recall 0.3333, INR 14,800). Because KNN weights all seven standardized dimensions equally, four statistically noisy predictors (X4, X5, X6, X7 whose 95% Wald intervals span zero) dilute Euclidean distance neighborhoods and degrade ensemble votes.
+            </p>
+            <p>
+              <strong>4. Governance &amp; Operational Risk:</strong> Across 2,000 bootstrap test resamples, <code>&tau; = 0.15</code> maintains a 95% cost interval of <strong>[INR 4,300, INR 8,200]</strong> and outperforms <code>&tau; = 0.50</code> in 100% of draws and across all 30 alternative stratified 70/30 splits (mean saving <strong>INR 7,417</strong>). However, if the true miss penalty falls to INR 100 (2:1 ratio), the threshold shifts to <code>&tau; = 0.25</code> (INR 3,550 vs INR 3,700 at 0.50). Live A/B coupon redemption telemetry must be validated before full-base rollout.
+            </p>
+          </article>
 
-      <div tabindex="0" role="region" aria-labelledby="glance-caption" class="table-wrapper">
-        <table style="--label-2: 'Finding &amp; Answer'; --label-3: 'Primary Evidence'; --label-4: 'Verification Check';">
-          <caption id="glance-caption">Core Analytical Questions &amp; Verified Answers</caption>
-          <thead>
-            <tr>
-              <th>Business Question</th>
-              <th>Finding &amp; Answer</th>
-              <th>Primary Evidence</th>
-              <th>Verification Check</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>Is the INR 800 average-order assumption valid?</th>
-              <td>No. Sample mean is 8.9382 (INR 893.82), 95% CI [8.3026, 9.5738], z = 2.8930 (reject H0).</td>
-              <td>Part 1 (Tasks 1.1 &amp; 1.2)</td>
-              <td>test_part1_estimation_and_test</td>
-            </tr>
-            <tr>
-              <th>How many orders needed for INR 50 margin?</th>
-              <td>1,293 orders required (ceiling of 1292.05 at 95% confidence, SD = 9.1723).</td>
-              <td>Part 1 (Task 1.3)</td>
-              <td>test_part1_estimation_and_test</td>
-            </tr>
-            <tr>
-              <th>Does simple regression exhibit a funnel?</th>
-              <td>Yes. Raw residual spread ratio is 3.7525; log-log transformation stabilizes it to 1.0396.</td>
-              <td>Part 1 (Task 1.6)</td>
-              <td>test_part1_stable_sort_matters_and_funnel_numbers_match</td>
-            </tr>
-            <tr>
-              <th>Which predictors drive customer churn?</th>
-              <td>Discount share X3 (OR = 2.4629), complaints X2 (OR = 1.7341), and short tenure X1 (OR = 0.5739).</td>
-              <td>Part 2 (Task 2.4)</td>
-              <td>test_part2_gradient_descent_is_near_the_true_minimum_and_loss_is_monotone</td>
-            </tr>
-            <tr>
-              <th>What shopper personas exist in the base?</th>
-              <td>A: Steady Loyalists (322, 5.0% churn); B: Moderate Shoppers (255, 20.4%); C: Bargain Newcomers (223, 45.7%).</td>
-              <td>Part 3 (Task 3.2 &amp; 3.5)</td>
-              <td>test_part3_segments_file_is_consistent_with_data</td>
-            </tr>
-            <tr>
-              <th>What is the purest single-feature split?</th>
-              <td>Split S4 (Tenure &le; 24 months / X3 threshold), yielding Information Gain = 0.1252, Gini Gain = 0.0683.</td>
-              <td>Part 4 (Task 4.1)</td>
-              <td>test_part4_entropy_and_gini_edge_cases_and_split_table</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ======================= TAB 1: PART 1 REGRESSION ======================= -->
-    <section id="tab-part1" class="tab-panel" role="tabpanel">
-      <div class="section-header">
-        <h2>Part 1: Statistical Estimation, OLS, Gradient Descent &amp; Heteroscedasticity</h2>
-        <p>Tasks 1.1 to 1.7 — Inference on 800 order values (unit = INR 100) and variance-stabilizing regression transformations.</p>
-      </div>
-
-      <div class="kpi-grid">
-        <article class="kpi-card">
-          <span class="kpi-label">Sample Mean &amp; SD</span>
-          <span class="kpi-value">8.9382 &plusmn; 9.1723</span>
-          <span class="kpi-sub">SE = 0.3243 | 95% CI: [8.3026, 9.5738]</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Hypothesis Test (H0: &mu; = 8.0)</span>
-          <span class="kpi-value">z = 2.8930</span>
-          <span class="kpi-sub">Reject H0 (|z| &gt; 1.96, p = 0.0038)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Raw vs Log-Log Funnel Ratio</span>
-          <span class="kpi-value">3.7525 &rarr; 1.0396</span>
-          <span class="kpi-sub">Log-log cures heteroscedastic fan-out</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Multiple Regression Adj R2</span>
-          <span class="kpi-value">0.7403</span>
-          <span class="kpi-sub">vs Log-Log Adj R2 = 0.6561, Simple R2 = 0.5196</span>
-        </article>
-      </div>
-
-      <div class="panel-grid">
-        <div class="card-panel">
-          <h3>Gradient Descent Convergence (Task 1.5) &amp; Funnel Comparison</h3>
-          <p>Standardized predictor X4 optimized for 500 epochs at &eta; = 0.05 converges exactly to closed-form OLS (slope = 0.6701, intercept = -3.6598, gap = 0.0000).</p>
-          <div class="chart-box">
-            <canvas id="canvas-part1" width="640" height="360"></canvas>
+          <div class="card-panel">
+            <h3>Held-Out Test Set Cost Benchmark Across All Candidate Models</h3>
+            <p>Total operational cost (<code>50 &times; FP + 400 &times; FN</code>) on the 240 held-out test customers (51 positives, 189 negatives).</p>
+            <div class="chart-box">
+              <canvas id="canvas-overview-cost" width="640" height="360"></canvas>
+            </div>
           </div>
         </div>
 
-        <div class="card-panel">
-          <h3>Regression Model Comparison (Tasks 1.4 – 1.7)</h3>
-          <div tabindex="0" role="region" aria-labelledby="p1-table-cap" class="table-wrapper">
-            <table style="--label-2: 'Specification'; --label-3: 'R2 / Adj R2'; --label-4: 'Spread Ratio';">
-              <caption id="p1-table-cap">Part 1 Regression Specifications &amp; Diagnostics</caption>
+        <div tabindex="0" role="region" aria-labelledby="glance-caption" class="table-wrapper">
+          <table style="--label-2: 'Analytical Conclusion &amp; Exact Checkpoint'; --label-3: 'Governing Formula / Method'; --label-4: 'Brief Task &amp; Automated Test';">
+            <caption id="glance-caption">Master Summary of Research Questions, Exact Graded Checkpoints &amp; Verification Invariants</caption>
+            <thead>
+              <tr>
+                <th>Research Question</th>
+                <th>Analytical Conclusion &amp; Exact Checkpoint</th>
+                <th>Governing Formula / Method</th>
+                <th>Brief Task &amp; Automated Test</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Does the INR 800 order-value baseline still hold?</th>
+                <td><strong>No (Reject H0).</strong> Sample mean = <code>8.9382</code> (INR 893.82), SD = <code>9.1723</code>, SE = <code>0.3243</code>, 95% CI <code>[8.3026, 9.5738]</code>, <code>z = 2.8930 &gt; 1.96</code>.</td>
+                <td>Two-sided normal z-test with Bessel-corrected sample SD (<code>ddof = 1</code>).</td>
+                <td>Tasks 1.1–1.2 &middot; <code>test_part1_estimation_and_test</code></td>
+              </tr>
+              <tr>
+                <th>What sample size guarantees an INR 50 margin of error?</th>
+                <td><strong>1,293 orders</strong> required (493 additional records beyond current N = 800; current half-width is INR 63.56).</td>
+                <td><code>ceil((1.96 &times; 9.1723 / 0.50)^2) = ceil(1292.78) = 1293</code>.</td>
+                <td>Task 1.3 &middot; <code>test_part1_estimation_and_test</code></td>
+              </tr>
+              <tr>
+                <th>How severe is raw OLS heteroscedasticity &amp; how is it resolved?</th>
+                <td>Raw residual upper/lower SD ratio is <strong><code>3.7525</code></strong> (<code>8.6891 / 2.3155</code>); log-log transformation compresses it to <strong><code>1.0396</code></strong> (<code>0.5369 / 0.5165</code>).</td>
+                <td>Stable sort on fitted values; elasticity <code>ln(val) = -2.4370 + 1.5030 ln(X4)</code>.</td>
+                <td>Tasks 1.4–1.6 &middot; <code>test_part1_stable_sort_matters_and_funnel_numbers_match</code></td>
+              </tr>
+              <tr>
+                <th>Which customer attributes significantly drive 90-day churn?</th>
+                <td><strong>Discount share X3</strong> (<code>w = 0.9013</code>, OR = <code>2.4629</code>), <strong>Complaints X2</strong> (<code>w = 0.5505</code>, OR = <code>1.7341</code>), and <strong>Tenure X1</strong> (<code>w = -0.5554</code>, OR = <code>0.5739</code>).</td>
+                <td>Standardized Logistic GD + Observed Fisher Information Wald 95% CIs.</td>
+                <td>Tasks 2.2–2.4 &middot; <code>test_part2_gradient_descent_is_near_the_true_minimum_and_loss_is_monotone</code></td>
+              </tr>
+              <tr>
+                <th>What is the optimal unsupervised segmentation &amp; latent axis?</th>
+                <td><strong>K = 3</strong> via discrete second difference (<code>&Delta;2 = 551.7543</code>). <strong>3 PCs</strong> capture <code>86.16%</code> variance; PC1 (<code>52.27%</code>) orders segments by churn health.</td>
+                <td>Deterministic K-Means + Correlation Eigen-Decomposition (<code>sum(&lambda;) = 5.0000</code>).</td>
+                <td>Tasks 3.1–3.5 &middot; <code>test_part3_pca_matches_numpy_on_the_correlation_matrix</code></td>
+              </tr>
+              <tr>
+                <th>Which single split maximizes purity &amp; how do architectures scale?</th>
+                <td><strong>Split S4 (Tenure X1 &le; 24m)</strong> yields Info Gain = <code>0.1252</code> bits, Gini Gain = <code>0.0606</code>. CNN uses <code>15,734</code> params; weight sharing saves <code>28,087&times;</code> vs FC.</td>
+                <td>Shannon entropy (base 2), Gini impurity, AdaBoost exact reweighting, Conv/RNN sizing.</td>
+                <td>Tasks 4.1–4.5 &middot; <code>test_part4_oob_and_architecture_arithmetic</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= TAB 1: PART 1 INFERENCE & REGRESSION ======================= -->
+    <section id="tab-part1" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-part1" hidden="until-found">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Part 1 &middot; Tasks 1.1 – 1.7 (outputs/part1_results.txt)</span>
+          <h2>Parametric Estimation, Hypothesis Testing, OLS, Gradient Descent &amp; Variance Stabilization</h2>
+          <p>
+            Rigorous statistical evaluation of <code>order_value</code> (unit = INR 100, N = 800). Demonstrates closed-form Ordinary Least Squares (OLS),
+            exact ANOVA sums-of-squares decomposition (<code>TSS = ESS + RSS</code>), full-batch gradient descent equivalence on standardized <code>X4</code>,
+            heteroscedastic residual funnel diagnostics, log-log elasticity modeling, and normal-equation multiple regression.
+          </p>
+        </div>
+
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <span class="kpi-label">Sample Mean &amp; Bessel SD (Task 1.1)</span>
+            <span class="kpi-value">8.9382 &plusmn; 9.1723</span>
+            <span class="kpi-sub">SE = 0.3243 &middot; 95% CI: [8.3026, 9.5738]</span>
+          </article>
+          <article class="kpi-card accent">
+            <span class="kpi-label">Two-Sided Z-Test (Task 1.2)</span>
+            <span class="kpi-value">z = 2.8930</span>
+            <span class="kpi-sub">[REJECT H0: &mu;0 = 8.0] p = 0.0038 &middot; N_req = 1,293</span>
+          </article>
+          <article class="kpi-card pass">
+            <span class="kpi-label">Funnel Ratio Stabilization (Task 1.6)</span>
+            <span class="kpi-value">3.7525 &rarr; 1.0396</span>
+            <span class="kpi-sub">Raw SD: 2.3155 vs 8.6891 &middot; Log SD: 0.5165 vs 0.5369</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">Multiple Regression Fit (Task 1.7)</span>
+            <span class="kpi-value">Adj R2 = 0.7403</span>
+            <span class="kpi-sub">R2 = 0.7425 vs Log-Log Adj R2 = 0.6561 (+0.0842 gain)</span>
+          </article>
+        </div>
+
+        <div class="formula-banner">
+          <strong>Mathematical Identities Verified:</strong>
+          &nbsp;<code>TSS (67,221.4285) = ESS (34,925.6088) + RSS (32,295.8197)</code> &nbsp;|&nbsp;
+          <code>GD Slope Gap |&beta;1_GD - &beta;1_OLS| = 0.0000 (3.33 &times; 10^-16)</code> &nbsp;|&nbsp;
+          <code>Adjusted R2 = 1 - (1 - R2)(n - 1)/(n - p - 1)</code>
+        </div>
+
+        <div class="panel-grid">
+          <div class="card-panel">
+            <h3>Task 1.5: Gradient Descent Convergence on Standardized X4 (&eta; = 0.1, 500 Epochs)</h3>
+            <p>
+              Standardizing <code>X4</code> diagonalizes the quadratic Hessian so each full-batch update contracts parameter error by <code>(1 - 2&eta;) = 0.80</code>.
+              By epoch 100, cost reaches the exact OLS minimum <code>J = 40.3698 = RSS / n</code>.
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part1-gd" width="640" height="360"></canvas>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <h3>Task 1.6: Heteroscedastic Residual Spread Ratio (Lower vs Upper Fitted Halves)</h3>
+            <p>
+              Sorting residuals by fitted values (using <code>kind="stable"</code> to break 305-value rounding ties deterministically) exposes a <code>3.7525&times;</code>
+              variance fan-out in raw rupees, which the log-log specification eliminates (<code>1.0396&times;</code>).
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part1-funnel" width="640" height="360"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div tabindex="0" role="region" aria-labelledby="p1-models-cap" class="table-wrapper">
+            <table style="--label-2: 'Fitted Equation / Parameterization'; --label-3: 'R2 / Adj R2'; --label-4: 'RMSE / Loss'; --label-5: 'Residual Spread Ratio';">
+              <caption id="p1-models-cap">Tasks 1.4 – 1.7: Complete Regression Specification &amp; Diagnostic Comparison</caption>
               <thead>
                 <tr>
-                  <th>Model</th>
-                  <th>Specification</th>
+                  <th>Model Specification</th>
+                  <th>Fitted Equation / Parameterization</th>
                   <th>R2 / Adj R2</th>
-                  <th>Spread Ratio</th>
+                  <th>RMSE / Final J</th>
+                  <th>Residual Spread Ratio</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <th>Simple OLS (Task 1.4)</th>
-                  <td>val = -3.6598 + 0.6701 * X4</td>
-                  <td>R2 = 0.5196 (RMSE 6.3537)</td>
-                  <td>3.7525 (Severe Funnel)</td>
+                  <td><code>val = -3.6598 + 0.6701 &middot; X4</code></td>
+                  <td>0.5196 / 0.5190</td>
+                  <td>RMSE = 6.3537 (MAE = 3.7636)</td>
+                  <td><span class="status-tag warn">3.7525 (Funnel)</span></td>
                 </tr>
                 <tr>
                   <th>Gradient Descent (Task 1.5)</th>
-                  <td>500 epochs, &eta; = 0.05 on standardized X4</td>
+                  <td><code>val = -3.6598 + 0.6701 &middot; X4</code> (back-mapped from z4)</td>
+                  <td>0.5196 / 0.5190</td>
                   <td>J0 = 163.9178 &rarr; J500 = 40.3698</td>
                   <td>Matches OLS to 0.0000</td>
                 </tr>
-                <tr>
+                <tr class="highlight-row">
                   <th>Log-Log OLS (Task 1.6)</th>
-                  <td>ln(val) = -2.4370 + 1.5030 * ln(X4)</td>
-                  <td>R2 = 0.6565 / Adj = 0.6561</td>
-                  <td>1.0396 (Homoscedastic)</td>
+                  <td><code>ln(val) = -2.4370 + 1.5030 &middot; ln(X4)</code></td>
+                  <td>0.6565 / 0.6561</td>
+                  <td>RMSE = 0.5268 (log scale)</td>
+                  <td><span class="status-tag pass">1.0396 (Stabilized)</span></td>
+                </tr>
+                <tr class="highlight-row">
+                  <th>Multiple OLS (Task 1.7)</th>
+                  <td><code>ln(val) = &beta;0 + &beta;1 ln(X4) + &Sigma; &beta;j Xj</code> (Normal Eq.)</td>
+                  <td>0.7425 / 0.7403</td>
+                  <td>RSS_log = 161.4646 (df = 792)</td>
+                  <td><span class="status-tag pass">Best Explanatory Fit</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="p1-mr-cap" class="table-wrapper">
+            <table style="--label-2: 'Predictor / Term'; --label-3: 'Coefficient'; --label-4: '|Beta| > 0.05 Rule'; --label-5: 'Economic Interpretation';">
+              <caption id="p1-mr-cap">Task 1.7: Multiple Regression Normal-Equation Coefficients on ln(order_value)</caption>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>Predictor / Term</th>
+                  <th>Coefficient</th>
+                  <th>|&beta;| &gt; 0.05?</th>
+                  <th>Economic Interpretation (Ceteris Paribus)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th><code>mr_beta_0</code></th>
+                  <td>Intercept</td>
+                  <td>-1.8613</td>
+                  <td>Baseline</td>
+                  <td>Baseline log order value when predictors are zero</td>
+                </tr>
+                <tr class="highlight-row">
+                  <th><code>mr_beta_1</code></th>
+                  <td><code>ln(X4)</code> (Log Past Avg Order)</td>
+                  <td>1.1576</td>
+                  <td><span class="status-tag pass">Yes (1.1576)</span></td>
+                  <td>1% higher historical basket size yields +1.16% current order value</td>
                 </tr>
                 <tr>
-                  <th>Multiple OLS (Task 1.7)</th>
-                  <td>ln(val) on X1..X7 via Normal Equations</td>
-                  <td>R2 = 0.7425 / Adj = 0.7403</td>
-                  <td>Best Explanatory Fit</td>
+                  <th><code>mr_beta_2</code></th>
+                  <td><code>X1</code> (Tenure, months)</td>
+                  <td>-0.0074</td>
+                  <td>No (0.0074)</td>
+                  <td>-0.74% per month (-10.5% over 15 months; unit-dependent scale)</td>
+                </tr>
+                <tr class="highlight-row">
+                  <th><code>mr_beta_3</code></th>
+                  <td><code>X2</code> (Support Complaints)</td>
+                  <td>0.0940</td>
+                  <td><span class="status-tag pass">Yes (0.0940)</span></td>
+                  <td>+9.86% higher order value per complaint (high-ticket buyers complain more)</td>
+                </tr>
+                <tr class="highlight-row">
+                  <th><code>mr_beta_4</code></th>
+                  <td><code>X3</code> (Discount Share)</td>
+                  <td>0.1067</td>
+                  <td><span class="status-tag pass">Yes (0.1067)</span></td>
+                  <td>+11.26% across full discount range (unit is 0 to 1 proportion)</td>
+                </tr>
+                <tr>
+                  <th><code>mr_beta_5</code></th>
+                  <td><code>X5</code> (Loyalty Score)</td>
+                  <td>0.0028</td>
+                  <td>No (0.0028)</td>
+                  <td>+0.28% per loyalty point (+28% across 100-point scale)</td>
+                </tr>
+                <tr class="highlight-row">
+                  <th><code>mr_beta_6</code></th>
+                  <td><code>X6</code> (Cash on Delivery Flag)</td>
+                  <td>0.1518</td>
+                  <td><span class="status-tag pass">Yes (0.1518)</span></td>
+                  <td>+16.39% higher basket size for COD transactions (<code>exp(0.1518) - 1</code>)</td>
+                </tr>
+                <tr>
+                  <th><code>mr_beta_7</code></th>
+                  <td><code>X7</code> (Flipkart Plus Member)</td>
+                  <td>0.0172</td>
+                  <td>No (0.0172)</td>
+                  <td>+1.74% difference after controlling for historical basket and loyalty</td>
                 </tr>
               </tbody>
             </table>
@@ -227,266 +368,469 @@
     </section>
 
     <!-- ======================= TAB 2: PART 2 CHURN & COST SIMULATOR ======================= -->
-    <section id="tab-part2" class="tab-panel" role="tabpanel">
-      <div class="section-header">
-        <h2>Part 2: Churn Classification, ROC Sweep &amp; Interactive Cost Optimizer</h2>
-        <p>Tasks 2.1 to 2.8 — Stratified 560/240 split, scratch Logistic Regression, 5-fold CV KNN, and asymmetric cost optimization.</p>
-      </div>
+    <section id="tab-part2" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-part2" hidden="until-found">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Part 2 &middot; Tasks 2.1 – 2.8 (outputs/part2_results.txt, part2_thresholds.csv, part2_knn_cv.csv)</span>
+          <h2>Churn Classification, Non-Leakage Scaling, KNN Cross-Validation &amp; Asymmetric Cost Optimization</h2>
+          <p>
+            Evaluates binary churn prediction across the stratified 560-row training set (119 positives) and 240-row test set (51 positives, blind accuracy <code>0.7875</code>).
+            Use the interactive 19-point grid simulator below to inspect how the training-selected threshold <code>&tau;*</code> and held-out test cost respond to any business cost structure.
+          </p>
+        </div>
 
-      <div class="panel-grid">
-        <div class="card-panel">
-          <h3>Interactive Business Cost &amp; Threshold Simulator</h3>
-          <div class="control-group">
-            <div class="slider-row">
-              <label for="sim-tau">Decision Threshold (&tau;):</label>
-              <input type="range" id="sim-tau" min="0.1" max="0.9" step="0.1" value="0.1">
-              <span id="sim-tau-val" class="slider-val">0.15 (Pinned)</span>
+        <div class="panel-grid">
+          <div class="card-panel">
+            <h3>Interactive Asymmetric Cost &amp; Threshold Simulator (19-Point Grid: &tau; = 0.05 to 0.95)</h3>
+            <p>
+              Adjust the decision threshold <code>&tau;</code>, False-Alarm Coupon Cost (default INR 50), and Missed-Churner Margin Loss (default INR 400).
+              The simulator simultaneously computes the non-leakage <strong>Training-Set Optimal &tau;*</strong> (560 rows) and the resulting <strong>Held-Out Test Cost</strong> (240 rows).
+            </p>
+            <div class="control-group">
+              <div class="slider-row">
+                <label for="sim-tau">Evaluated Decision Threshold (&tau;):</label>
+                <input type="range" id="sim-tau" min="0.05" max="0.95" step="0.05" value="0.15">
+                <span id="sim-tau-val" class="slider-val">0.15 (Optimal)</span>
+              </div>
+              <div class="slider-row">
+                <label for="sim-cfa">False-Alarm Coupon Cost (INR / FP):</label>
+                <input type="range" id="sim-cfa" min="25" max="200" step="25" value="50">
+                <span id="sim-cfa-val" class="slider-val">INR 50</span>
+              </div>
+              <div class="slider-row">
+                <label for="sim-cmiss">Missed-Churner Margin Loss (INR / FN):</label>
+                <input type="range" id="sim-cmiss" min="100" max="1600" step="50" value="400">
+                <span id="sim-cmiss-val" class="slider-val">INR 400</span>
+              </div>
+              <div class="slider-row">
+                <span id="sim-train-opt-note" class="kpi-sub">Training-Selected Optimum (Task 2.8 Rule): <strong>&tau;* = 0.15 (Train Cost: INR 12,150)</strong></span>
+                <button type="button" id="btn-reset-tau" class="action-btn">Reset to Pinned Brief Baseline (&tau;* = 0.15, INR 50 / INR 400)</button>
+              </div>
             </div>
-            <div class="slider-row">
-              <label for="sim-cfa">False Alarm Coupon Cost (INR):</label>
-              <input type="range" id="sim-cfa" min="25" max="200" step="25" value="50">
-              <span id="sim-cfa-val" class="slider-val">INR 50</span>
-            </div>
-            <div class="slider-row">
-              <label for="sim-cmiss">Missed Churner Margin Cost (INR):</label>
-              <input type="range" id="sim-cmiss" min="100" max="1000" step="50" value="400">
-              <span id="sim-cmiss-val" class="slider-val">INR 400</span>
-            </div>
-            <div class="slider-row">
-              <button type="button" id="btn-reset-tau" class="nav-btn" aria-selected="true">Reset to Optimal Pinned &tau;* = 0.15 (INR 50 / INR 400)</button>
+
+            <div class="kpi-grid" style="margin-block-end: 0;">
+              <article class="kpi-card pass">
+                <span class="kpi-label">Test Set Cost at Selected &tau;</span>
+                <span id="sim-out-cost" class="kpi-value">INR 6,050</span>
+                <span id="sim-out-saving" class="kpi-sub">Saves INR 5,750 vs &tau;=0.50 (INR 11,800)</span>
+              </article>
+              <article class="kpi-card">
+                <span class="kpi-label">Test Confusion &amp; Recall</span>
+                <span id="sim-out-recall" class="kpi-value">88.24% Recall</span>
+                <span id="sim-out-cells" class="kpi-sub">TP: 45 | FP: 73 | TN: 116 | FN: 6 (Flagged: 118)</span>
+              </article>
             </div>
           </div>
 
-          <div class="kpi-grid">
-            <article class="kpi-card">
-              <span class="kpi-label">Simulated Test Cost</span>
-              <span id="sim-out-cost" class="kpi-value">INR 6,050</span>
-              <span id="sim-out-saving" class="kpi-sub">Saves INR 5,750 vs &tau;=0.50</span>
-            </article>
-            <article class="kpi-card">
-              <span class="kpi-label">Recall &amp; Flagged Count</span>
-              <span id="sim-out-recall" class="kpi-value">88.24%</span>
-              <span id="sim-out-cells" class="kpi-sub">TP: 45 | FP: 73 | TN: 116 | FN: 6</span>
-            </article>
+          <div class="card-panel">
+            <h3>Test &amp; Training Cost Curves Across 19-Point Threshold Grid (&tau; = k / 20)</h3>
+            <p>
+              Solid curve: Held-out Test Cost (240 rows). Dashed curve: Training Cost scaled to 240 rows (<code>TrainCost &times; 240 / 560</code>).
+              Gold marker highlights active <code>&tau;</code>; green ring marks the training-selected optimum <code>&tau;*</code>.
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part2-cost" width="640" height="360"></canvas>
+            </div>
           </div>
         </div>
 
-        <div class="card-panel">
-          <h3>ROC Curve &amp; Threshold Cost Profile (outputs/part2_thresholds.csv)</h3>
-          <div class="chart-box">
-            <canvas id="canvas-part2" width="640" height="360"></canvas>
+        <div class="panel-grid">
+          <div class="card-panel">
+            <h3>Task 2.6: Receiver Operating Characteristic (ROC) Curve (240 Test Rows)</h3>
+            <p>
+              Plots True Positive Rate (Recall) against False Positive Rate across thresholds. Lowering <code>&tau;</code> from <code>0.50</code> to <code>0.15</code>
+              nearly doubles churn capture from <code>47.06%</code> (24/51) to <code>88.24%</code> (45/51).
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part2-roc" width="640" height="360"></canvas>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <h3>Tasks 2.2, 2.3 &amp; 2.7: Convergence, Learning-Rate Sweep &amp; 5-Fold KNN Selection</h3>
+            <p>
+              <strong>Logistic Loss Trajectory (&eta; = 0.1):</strong> <code>L0 = 0.6931 &rarr; L1 = 0.6753 &rarr; L10 = 0.5685 &rarr; L100 = 0.3952 &rarr; L1000 = 0.3704</code> (Test BCE = <code>0.3818</code>).<br>
+              <strong>Epoch-200 Learning-Rate Sweep (Task 2.3):</strong> <code>&eta; = 1.0 (0.3703) &lt; &eta; = 0.1 (0.3776) &lt; &eta; = 0.01 (0.5091)</code>.<br>
+              <strong>KNN 5-Fold Cross-Validation (Task 2.7, outputs/part2_knn_cv.csv):</strong> Best <code>K = 5</code> (mean CV F1 = <code>0.4541</code>; test F1 = <code>0.3696</code>, TP=17, FP=24, TN=165, FN=34).
+            </p>
+            <div tabindex="0" role="region" aria-labelledby="p2-knn-cap" class="table-wrapper" style="max-block-size: 270px;">
+              <table style="--label-2: '5-Fold Mean CV F1'; --label-3: 'Selection Note';">
+                <caption id="p2-knn-cap">Task 2.7: 5-Fold Cross-Validation F1 Across Odd K = 1..21 (outputs/part2_knn_cv.csv)</caption>
+                <thead>
+                  <tr>
+                    <th>Odd K</th>
+                    <th>5-Fold Mean CV F1</th>
+                    <th>Selection / Tie-Break Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><th>K = 1</th><td>0.4249</td><td>Tied with K = 3 at 0.4249</td></tr>
+                  <tr><th>K = 3</th><td>0.4249</td><td>Tied with K = 1 at 0.4249</td></tr>
+                  <tr class="highlight-row"><th>K = 5 [BEST]</th><td>0.4541</td><td><span class="status-tag pass">Global CV Maximum (Selected knn_best_k = 5)</span></td></tr>
+                  <tr><th>K = 7</th><td>0.4165</td><td>Sub-optimal neighborhood smoothing</td></tr>
+                  <tr><th>K = 9</th><td>0.4212</td><td>Local recovery</td></tr>
+                  <tr><th>K = 11</th><td>0.4382</td><td>Second-highest CV F1 (within 0.0159 of K = 5)</td></tr>
+                  <tr><th>K = 13</th><td>0.3993</td><td>High-bias underfitting begins</td></tr>
+                  <tr><th>K = 15</th><td>0.3965</td><td>Continued dilution in 7D space</td></tr>
+                  <tr><th>K = 17</th><td>0.3655</td><td>Minimum CV F1 across grid</td></tr>
+                  <tr><th>K = 19</th><td>0.3736</td><td>Majority-class bias dominates</td></tr>
+                  <tr><th>K = 21</th><td>0.3853</td><td>High-K boundary smoothing</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div tabindex="0" role="region" aria-labelledby="p2-thresh-cap" class="table-wrapper">
-        <table style="--label-2: 'TP'; --label-3: 'FP'; --label-4: 'TN'; --label-5: 'FN'; --label-6: 'TPR (Recall)'; --label-7: 'FPR'; --label-8: 'Test Cost (INR)';">
-          <caption id="p2-thresh-cap">Task 2.6 &amp; 2.8: Complete Threshold Sweep Table (240 Test Rows, 51 Positives)</caption>
-          <thead>
-            <tr>
-              <th>Threshold (&tau;)</th>
-              <th>TP</th>
-              <th>FP</th>
-              <th>TN</th>
-              <th>FN</th>
-              <th>TPR (Recall)</th>
-              <th>FPR</th>
-              <th>Test Cost (50&middot;FP + 400&middot;FN)</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-thresholds">
-          </tbody>
-        </table>
+        <div tabindex="0" role="region" aria-labelledby="p2-thresh-cap" class="table-wrapper">
+          <table style="--label-2: 'TP'; --label-3: 'FP'; --label-4: 'TN'; --label-5: 'FN'; --label-6: 'TPR (Recall)'; --label-7: 'FPR'; --label-8: 'Precision / F1'; --label-9: 'Train / Test Cost';">
+            <caption id="p2-thresh-cap">Tasks 2.5, 2.6 &amp; 2.8: Exact Threshold Sweep Table (outputs/part2_thresholds.csv + Optimal &tau;* = 0.1500)</caption>
+            <thead>
+              <tr>
+                <th>Threshold (&tau;)</th>
+                <th>TP</th>
+                <th>FP</th>
+                <th>TN</th>
+                <th>FN</th>
+                <th>TPR (Recall)</th>
+                <th>FPR</th>
+                <th>Precision / F1</th>
+                <th>Train Cost / Test Cost</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-thresholds">
+              <tr><th>0.1000</th><td>48</td><td>88</td><td>101</td><td>3</td><td>0.9412</td><td>0.4656</td><td>0.3529 / 0.5134</td><td>INR 12,550 / <strong>INR 5,600</strong></td></tr>
+              <tr class="highlight-row"><th>0.1500 <span class="status-tag pass">[TRAIN OPTIMAL]</span></th><td>45</td><td>73</td><td>116</td><td>6</td><td>0.8824</td><td>0.3862</td><td>0.3814 / 0.5325</td><td>INR 12,150 / <strong>INR 6,050</strong></td></tr>
+              <tr><th>0.2000</th><td>43</td><td>64</td><td>125</td><td>8</td><td>0.8431</td><td>0.3386</td><td>0.4019 / 0.5443</td><td>INR 12,950 / <strong>INR 6,400</strong></td></tr>
+              <tr><th>0.3000</th><td>38</td><td>44</td><td>145</td><td>13</td><td>0.7451</td><td>0.2328</td><td>0.4634 / 0.5714</td><td>INR 19,950 / <strong>INR 7,400</strong></td></tr>
+              <tr><th>0.4000</th><td>31</td><td>33</td><td>156</td><td>20</td><td>0.6078</td><td>0.1746</td><td>0.4844 / 0.5391</td><td>INR 23,850 / <strong>INR 9,650</strong></td></tr>
+              <tr><th>0.5000</th><td>24</td><td>20</td><td>169</td><td>27</td><td>0.4706</td><td>0.1058</td><td>0.5455 / 0.5053</td><td>INR 28,700 / <strong>INR 11,800</strong></td></tr>
+              <tr><th>0.6000</th><td>17</td><td>9</td><td>180</td><td>34</td><td>0.3333</td><td>0.0476</td><td>0.6538 / 0.4416</td><td>INR 36,150 / <strong>INR 14,050</strong></td></tr>
+              <tr><th>0.7000</th><td>7</td><td>4</td><td>185</td><td>44</td><td>0.1373</td><td>0.0212</td><td>0.6364 / 0.2258</td><td>INR 40,950 / <strong>INR 17,800</strong></td></tr>
+              <tr><th>0.8000</th><td>2</td><td>0</td><td>189</td><td>49</td><td>0.0392</td><td>0.0000</td><td>1.0000 / 0.0755</td><td>INR 46,000 / <strong>INR 19,600</strong></td></tr>
+              <tr><th>0.9000</th><td>0</td><td>0</td><td>189</td><td>51</td><td>0.0000</td><td>0.0000</td><td>0.0000 / 0.0000</td><td>INR 47,600 / <strong>INR 20,400</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
     <!-- ======================= TAB 3: PART 3 SEGMENTATION & PCA ======================= -->
-    <section id="tab-part3" class="tab-panel" role="tabpanel">
-      <div class="section-header">
-        <h2>Part 3: Unsupervised Customer Segmentation, Hierarchical Linkage &amp; PCA</h2>
-        <p>Tasks 3.1 to 3.5 — K-Means WCSS elbow detection, agglomerative dendrogram cuts, and correlation matrix eigen-decomposition.</p>
-      </div>
+    <section id="tab-part3" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-part3" hidden="until-found">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Part 3 &middot; Tasks 3.1 – 3.5 (outputs/part3_results.txt, part3_segments.csv, part3_hierarchical.csv)</span>
+          <h2>Unsupervised K-Means Segmentation, Agglomerative Linkage &amp; Spectral PCA</h2>
+          <p>
+            Unsupervised structure discovery on the five standardized continuous variables (<code>X1..X5</code>, N = 800). The binary churn outcome and order value
+            are strictly withheld during cluster formation and used only post-hoc to profile the resulting behavioral personas.
+          </p>
+        </div>
 
-      <div class="kpi-grid">
-        <article class="kpi-card">
-          <span class="kpi-label">WCSS Elbow K (Task 3.2)</span>
-          <span class="kpi-value">K = 3</span>
-          <span class="kpi-sub">WCSS(2)=2262.68 &rarr; WCSS(3)=1602.85 (&Delta;2 = 551.75)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Dendrogram Cut at H = 4.0</span>
-          <span class="kpi-value">4 / 2 / 2</span>
-          <span class="kpi-sub">Single: 4 | Complete: 2 | Average: 2 clusters</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">PCA Eigenvalue Sum</span>
-          <span class="kpi-value">5.0000</span>
-          <span class="kpi-sub">&lambda;1 = 2.6136 (52.27%), &lambda;2 = 1.1828 (23.66%)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Components for &ge; 80% Variance</span>
-          <span class="kpi-value">3 PCs (86.16%)</span>
-          <span class="kpi-sub">Segment PC1 Means: A (+1.78), B (-0.78), C (-1.67)</span>
-        </article>
-      </div>
+        <div class="kpi-grid">
+          <article class="kpi-card pass">
+            <span class="kpi-label">K-Means WCSS Elbow (Task 3.1)</span>
+            <span class="kpi-value">K = 3</span>
+            <span class="kpi-sub">Drop(2&rarr;3) = 659.8282 &middot; Drop(3&rarr;4) = 108.0739 (&lt; 50%)</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">Dendrogram Gap Cut (Task 3.3)</span>
+            <span class="kpi-value">4 / 2 / 2 Clusters</span>
+            <span class="kpi-sub">Single: 4 &middot; Complete: 2 &middot; Average: 2 at largest height gap</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">Correlation PCA Trace (Task 3.4)</span>
+            <span class="kpi-value">&Sigma;&lambda; = 5.0000</span>
+            <span class="kpi-sub">&lambda;1 = 2.6136 (52.27%) &middot; &lambda;2 = 1.1828 (23.66%)</span>
+          </article>
+          <article class="kpi-card accent">
+            <span class="kpi-label">80% Variance Retention (Task 3.5)</span>
+            <span class="kpi-value">3 PCs (86.16%)</span>
+            <span class="kpi-sub">PC1 Means: A (+1.7773), B (-0.7831), C (-1.6709)</span>
+          </article>
+        </div>
 
-      <div class="panel-grid">
-        <div class="card-panel">
-          <h3>K-Means WCSS Elbow Curve (K = 2 to 6)</h3>
-          <div class="chart-box">
-            <canvas id="canvas-part3-wcss" width="640" height="360"></canvas>
+        <div class="panel-grid">
+          <div class="card-panel">
+            <h3>Task 3.1: K-Means WCSS Elbow Curve Across K = 2..6</h3>
+            <p>
+              Initialized deterministically at rows <code>i &middot; floor(800 / K)</code>. Moving from K = 2 to K = 3 reduces WCSS by <code>659.8282</code>,
+              whereas K = 3 to K = 4 drops by only <code>108.0739</code> (below half of the preceding drop, <code>329.9141</code>), confirming <code>elbow_k = 3</code>.
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part3-wcss" width="640" height="360"></canvas>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <h3>Tasks 3.4 &amp; 3.5: PCA Eigenvalue &amp; Cumulative Explained Variance Spectrum</h3>
+            <p>
+              Eigen-decomposition of the <code>5 &times; 5</code> sample covariance of standardized predictors (<code>S = Z^T Z / 799</code>).
+              PC1 (52.27%) represents a <em>Retention Health Axis</em> contrasting high tenure/loyalty against heavy discounting/complaints.
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part3-pca" width="640" height="360"></canvas>
+            </div>
           </div>
         </div>
-        <div class="card-panel">
-          <h3>PCA Variance Explained Spectrum (5 Continuous Features)</h3>
-          <div class="chart-box">
-            <canvas id="canvas-part3-pca" width="640" height="360"></canvas>
+
+        <div tabindex="0" role="region" aria-labelledby="p3-seg-cap" class="table-wrapper">
+          <table style="--label-2: 'Size (Share)'; --label-3: 'Mean X1 (Tenure)'; --label-4: 'Mean X2 (Complaints)'; --label-5: 'Mean X3 (Discount)'; --label-6: 'Mean X4 (Avg Order)'; --label-7: 'Mean X5 (Loyalty)'; --label-8: 'Churn Rate (Post-Hoc)'; --label-9: 'Mean Value &amp; PC1';">
+            <caption id="p3-seg-cap">Task 3.2 &amp; 3.5: Exact Customer Segment Profiles in Original Units (outputs/part3_segments.csv, Ordered by Ascending Mean X3)</caption>
+            <thead>
+              <tr>
+                <th>Segment &amp; Persona</th>
+                <th>Size (Share)</th>
+                <th>Mean X1 (Tenure)</th>
+                <th>Mean X2 (Complaints)</th>
+                <th>Mean X3 (Discount)</th>
+                <th>Mean X4 (Past Order)</th>
+                <th>Mean X5 (Loyalty)</th>
+                <th>Churn Rate</th>
+                <th>Mean Value / Mean PC1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Segment A: Steady Loyalists</th>
+                <td>322 (40.25%)</td>
+                <td>47.5028</td>
+                <td>1.9503</td>
+                <td>0.2250</td>
+                <td>12.5301</td>
+                <td>62.1584</td>
+                <td><span class="status-tag pass">0.0186 (1.86%)</span></td>
+                <td>3.5976 / PC1: +1.7773</td>
+              </tr>
+              <tr>
+                <th>Segment B: High-Value Complaint-Heavy</th>
+                <td>255 (31.88%)</td>
+                <td>28.6071</td>
+                <td>6.0706</td>
+                <td>0.4534</td>
+                <td>28.7192</td>
+                <td>55.0082</td>
+                <td><span class="status-tag warn">0.2353 (23.53%)</span></td>
+                <td>17.1248 / PC1: -0.7831</td>
+              </tr>
+              <tr class="highlight-row">
+                <th>Segment C: Bargain-Focused Newcomers</th>
+                <td>223 (27.88%)</td>
+                <td>14.3892</td>
+                <td>4.2287</td>
+                <td>0.7118</td>
+                <td>16.5099</td>
+                <td>38.5215</td>
+                <td><span class="status-tag warn">0.4664 (46.64%)</span></td>
+                <td>7.2883 / PC1: -1.6709</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel-grid">
+          <div tabindex="0" role="region" aria-labelledby="p3-pca-load-cap" class="table-wrapper">
+            <table style="--label-2: 'PC1 Loading'; --label-3: 'PC2 Loading'; --label-4: 'Eigenvalue (k)'; --label-5: 'Explained / Cumulative';">
+              <caption id="p3-pca-load-cap">Tasks 3.4 &amp; 3.5: PCA Eigenvector Loadings (Sign-Pinned) &amp; Spectral Summary</caption>
+              <thead>
+                <tr>
+                  <th>Variable / Component</th>
+                  <th>PC1 Loading</th>
+                  <th>PC2 Loading</th>
+                  <th>Eigenvalue (&lambda;k)</th>
+                  <th>Explained / Cumulative</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th><code>X1</code> (Tenure) / PC1</th>
+                  <td>+0.5317 (Max |loading| &gt; 0)</td>
+                  <td>+0.1773</td>
+                  <td>&lambda;1 = 2.6136</td>
+                  <td>0.5227 / 0.5227</td>
+                </tr>
+                <tr>
+                  <th><code>X2</code> (Complaints) / PC2</th>
+                  <td>-0.4100</td>
+                  <td>+0.5056</td>
+                  <td>&lambda;2 = 1.1828</td>
+                  <td>0.2366 / 0.7593</td>
+                </tr>
+                <tr class="highlight-row">
+                  <th><code>X3</code> (Discount Share) / PC3</th>
+                  <td>-0.5187</td>
+                  <td>-0.2648</td>
+                  <td>&lambda;3 = 0.5114</td>
+                  <td>0.1023 / 0.8616 (&ge; 80%)</td>
+                </tr>
+                <tr>
+                  <th><code>X4</code> (Avg Order Value) / PC4</th>
+                  <td>-0.2916</td>
+                  <td>+0.6934 (Max |loading| &gt; 0)</td>
+                  <td>&lambda;4 = 0.4055</td>
+                  <td>0.0811 / 0.9427</td>
+                </tr>
+                <tr>
+                  <th><code>X5</code> (Loyalty Score) / PC5</th>
+                  <td>+0.4418</td>
+                  <td>+0.4025</td>
+                  <td>&lambda;5 = 0.2867</td>
+                  <td>0.0573 / 1.0000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="p3-hier-cap" class="table-wrapper" style="max-block-size: 340px;">
+            <table style="--label-2: 'Merge #'; --label-3: 'Cluster A'; --label-4: 'Cluster B'; --label-5: 'Merge Height';">
+              <caption id="p3-hier-cap">Task 3.3: Complete 15-Merge Agglomerative Schedule (outputs/part3_hierarchical.csv)</caption>
+              <thead>
+                <tr>
+                  <th>Linkage Rule</th>
+                  <th>Merge #</th>
+                  <th>Cluster A</th>
+                  <th>Cluster B</th>
+                  <th>Height (Cut Note)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th>single</th><td>1</td><td>E3</td><td>E6</td><td>1.3000</td></tr>
+                <tr class="highlight-row"><th>single</th><td>2</td><td>E2</td><td>E3+E6</td><td>1.4000 (Cut after #2 &rarr; 4 clusters, gap = 1.40)</td></tr>
+                <tr><th>single</th><td>3</td><td>E4</td><td>E5</td><td>2.8000</td></tr>
+                <tr><th>single</th><td>4</td><td>E1</td><td>E4+E5</td><td>2.9000</td></tr>
+                <tr><th>single</th><td>5</td><td>E1+E4+E5</td><td>E2+E3+E6</td><td>3.4000</td></tr>
+                <tr><th>complete</th><td>1</td><td>E3</td><td>E6</td><td>1.3000</td></tr>
+                <tr><th>complete</th><td>2</td><td>E2</td><td>E3+E6</td><td>2.0000</td></tr>
+                <tr><th>complete</th><td>3</td><td>E4</td><td>E5</td><td>2.8000</td></tr>
+                <tr class="highlight-row"><th>complete</th><td>4</td><td>E1</td><td>E4+E5</td><td>2.9000 (Cut after #4 &rarr; 2 clusters, gap = 5.00)</td></tr>
+                <tr><th>complete</th><td>5</td><td>E1+E4+E5</td><td>E2+E3+E6</td><td>7.9000</td></tr>
+                <tr><th>average</th><td>1</td><td>E3</td><td>E6</td><td>1.3000</td></tr>
+                <tr><th>average</th><td>2</td><td>E2</td><td>E3+E6</td><td>1.7000</td></tr>
+                <tr><th>average</th><td>3</td><td>E4</td><td>E5</td><td>2.8000</td></tr>
+                <tr class="highlight-row"><th>average</th><td>4</td><td>E1</td><td>E4+E5</td><td>2.9000 (Cut after #4 &rarr; 2 clusters, gap = 2.7556)</td></tr>
+                <tr><th>average</th><td>5</td><td>E1+E4+E5</td><td>E2+E3+E6</td><td>5.6556</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-
-      <div tabindex="0" role="region" aria-labelledby="p3-seg-cap" class="table-wrapper">
-        <table style="--label-2: 'Size'; --label-3: 'Mean X1 (Tenure)'; --label-4: 'Mean X2 (Complaints)'; --label-5: 'Mean X3 (Discount)'; --label-6: 'Mean X4 (Order)'; --label-7: 'Mean X5 (Loyalty)'; --label-8: 'Churn Rate'; --label-9: 'Mean Value';">
-          <caption id="p3-seg-cap">Task 3.2: Customer Segment Profiles (outputs/part3_segments.csv)</caption>
-          <thead>
-            <tr>
-              <th>Segment</th>
-              <th>Size</th>
-              <th>Mean X1 (Tenure)</th>
-              <th>Mean X2 (Complaints)</th>
-              <th>Mean X3 (Discount)</th>
-              <th>Mean X4 (Avg Order)</th>
-              <th>Mean X5 (Loyalty)</th>
-              <th>Churn Rate</th>
-              <th>Mean Value (INR 100s)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>Segment A (Steady Loyalists)</th>
-              <td>322</td>
-              <td>45.4245</td>
-              <td>2.4907</td>
-              <td>0.2661</td>
-              <td>14.7037</td>
-              <td>62.4562</td>
-              <td>0.0186 (1.86%)</td>
-              <td>6.4981</td>
-            </tr>
-            <tr>
-              <th>Segment B (High-Value Complaint-Heavy)</th>
-              <td>255</td>
-              <td>28.8878</td>
-              <td>5.3882</td>
-              <td>0.4596</td>
-              <td>27.5153</td>
-              <td>50.9416</td>
-              <td>0.2353 (23.53%)</td>
-              <td>15.0569</td>
-            </tr>
-            <tr>
-              <th>Segment C (Bargain-Focused Newcomers)</th>
-              <td>223</td>
-              <td>17.0677</td>
-              <td>4.2287</td>
-              <td>0.6454</td>
-              <td>14.7489</td>
-              <td>42.7399</td>
-              <td>0.4664 (46.64%)</td>
-              <td>5.4650</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
     <!-- ======================= TAB 4: PART 4 TREES, BOOSTING & DL ======================= -->
-    <section id="tab-part4" class="tab-panel" role="tabpanel">
-      <div class="section-header">
-        <h2>Part 4: Impurity Splits, Voting Ensembles, AdaBoost &amp; Neural Parameter Sizing</h2>
-        <p>Tasks 4.1 to 4.5 — Tree split criteria, heterogeneous voting, exact AdaBoost reweighting, Random Forest OOB, and MLP/CNN/RNN sizing.</p>
-      </div>
+    <section id="tab-part4" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-part4" hidden="until-found">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Part 4 &middot; Tasks 4.1 – 4.5 (outputs/part4_results.txt, part4_splits.csv, part4_voting.csv, part4_adaboost.csv, part4_architecture.csv)</span>
+          <h2>Decision Tree Impurity Splits, Heterogeneous Voting, Exact AdaBoost &amp; Deep Learning Sizing</h2>
+          <p>
+            Evaluates Shannon entropy and Gini impurity reductions across four candidate splits on the 560 training rows, benchmarks individual vs ensemble classifiers
+            at the <code>&tau; = 0.30</code> decision boundary, traces two rounds of exact AdaBoost sample reweighting, and derives exact parameter counts for MLP, CNN, and Vanilla RNN architectures.
+          </p>
+        </div>
 
-      <div class="kpi-grid">
-        <article class="kpi-card">
-          <span class="kpi-label">Root Impurity (Task 4.1)</span>
-          <span class="kpi-value">H = 0.7462 bits</span>
-          <span class="kpi-sub">Root Gini = 0.3347 | Best Split: S4 (IG = 0.1252)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">AdaBoost Round 1 &amp; 2</span>
-          <span class="kpi-value">&alpha;1 = 0.5493, &alpha;2 = 0.8047</span>
-          <span class="kpi-sub">&epsilon;1 = 0.2500, &epsilon;2 = 0.1667 | Ensemble Acc = 0.7500</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Random Forest OOB (N = 560)</span>
-          <span class="kpi-value">0.3676</span>
-          <span class="kpi-sub">(559 / 560)^560 = 0.3676 (Limit 1/e = 0.3679)</span>
-        </article>
-        <article class="kpi-card">
-          <span class="kpi-label">Deep Learning Totals (Task 4.5)</span>
-          <span class="kpi-value">CNN: 15,734</span>
-          <span class="kpi-sub">MLP: 13,002 | RNN: 26,768 | FC vs Conv: 50.3M vs 1,792</span>
-        </article>
-      </div>
+        <div class="kpi-grid">
+          <article class="kpi-card pass">
+            <span class="kpi-label">Root Impurity &amp; Best Split (Task 4.1)</span>
+            <span class="kpi-value">S4 (X1 &le; 24m)</span>
+            <span class="kpi-sub">Root H = 0.7462, Gini = 0.3347 &middot; S4 IG = 0.1252, GG = 0.0606</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">AdaBoost Exact Trajectory (Task 4.3)</span>
+            <span class="kpi-value">&alpha;1 = 0.5493, &alpha;2 = 0.8047</span>
+            <span class="kpi-sub">&epsilon;1 = 0.2500, &epsilon;2 = 0.1667 &middot; Ensemble Acc = 0.7500 (6 / 8)</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">Random Forest OOB Limit (Task 4.4)</span>
+            <span class="kpi-value">0.3676</span>
+            <span class="kpi-sub">(559 / 560)^560 = 0.36755 &rarr; 1/e = 0.36788</span>
+          </article>
+          <article class="kpi-card accent">
+            <span class="kpi-label">Neural Architecture Totals (Task 4.5)</span>
+            <span class="kpi-value">CNN: 15,734</span>
+            <span class="kpi-sub">MLP: 13,002 &middot; RNN: 26,768 &middot; FC vs Conv: 50,332,672 vs 1,792</span>
+          </article>
+        </div>
 
-      <div class="panel-grid">
-        <div class="card-panel">
-          <h3>Task 4.1: Candidate Splits (outputs/part4_splits.csv)</h3>
+        <div class="panel-grid">
+          <div class="card-panel">
+            <h3>Task 4.1: Candidate Split Information Gain vs Gini Gain (N = 560 Training Rows)</h3>
+            <p>
+              Split <code>S4 (Tenure X1 &le; 24 months)</code> achieves the highest impurity reduction under both criteria, isolating a 188-customer cohort with a
+              <code>45.74%</code> churn rate against <code>8.87%</code> in the <code>X1 &gt; 24</code> branch.
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part4-splits" width="640" height="360"></canvas>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <h3>Task 4.5: Deep Learning Parameter Scaling (Log10 Scale Comparison)</h3>
+            <p>
+              On a <code>128 &times; 128 &times; 3</code> image input, a dense layer of 1,024 units requires <code>50,332,672</code> parameters, whereas 64 shared
+              <code>3 &times; 3</code> convolutional filters require only <code>1,792</code> parameters (a <code>28,087&times;</code> reduction).
+            </p>
+            <div class="chart-box">
+              <canvas id="canvas-part4-arch" width="640" height="360"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-grid">
           <div tabindex="0" role="region" aria-labelledby="p4-splits-cap" class="table-wrapper">
-            <table style="--label-2: 'Yes (n / pos)'; --label-3: 'No (n / pos)'; --label-4: 'Info Gain'; --label-5: 'Gini Gain';">
-              <caption id="p4-splits-cap">Candidate Split Impurity Reductions on Training Set (N = 560)</caption>
+            <table style="--label-2: 'Condition'; --label-3: 'Yes Branch (n / pos)'; --label-4: 'No Branch (n / pos)'; --label-5: 'Info Gain'; --label-6: 'Gini Gain';">
+              <caption id="p4-splits-cap">Task 4.1: Exact Candidate Split Table (outputs/part4_splits.csv)</caption>
               <thead>
                 <tr>
-                  <th>Split Rule</th>
-                  <th>Yes Branch (n / pos)</th>
-                  <th>No Branch (n / pos)</th>
+                  <th>Split ID</th>
+                  <th>Condition</th>
+                  <th>Yes (n / pos)</th>
+                  <th>No (n / pos)</th>
                   <th>Info Gain (bits)</th>
                   <th>Gini Gain</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <th>S1 (X2 &ge; 5 complaints)</th>
-                  <td>205 / 67</td>
-                  <td>355 / 52</td>
-                  <td>0.0328</td>
-                  <td>0.0156</td>
+                  <th><code>S1</code></th>
+                  <td><code>X6 == 1</code> (Cash on Delivery)</td>
+                  <td>235 / 64 (27.23%)</td>
+                  <td>325 / 55 (16.92%)</td>
+                  <td>0.0110</td>
+                  <td>0.0052</td>
                 </tr>
                 <tr>
-                  <th>S2 (X3 &ge; 0.50 discount)</th>
-                  <td>217 / 86</td>
-                  <td>343 / 33</td>
-                  <td>0.0928</td>
-                  <td>0.0442</td>
+                  <th><code>S2</code></th>
+                  <td><code>X7 == 1</code> (Flipkart Plus)</td>
+                  <td>281 / 52 (18.51%)</td>
+                  <td>279 / 67 (24.01%)</td>
+                  <td>0.0033</td>
+                  <td>0.0015</td>
                 </tr>
                 <tr>
-                  <th>S3 (X6 == 1 COD)</th>
-                  <td>240 / 67</td>
-                  <td>320 / 52</td>
-                  <td>0.0145</td>
-                  <td>0.0068</td>
+                  <th><code>S3</code></th>
+                  <td><code>X3 &gt; 0.50</code> (High Discount Share)</td>
+                  <td>209 / 87 (41.63%)</td>
+                  <td>351 / 32 (9.12%)</td>
+                  <td>0.1046</td>
+                  <td>0.0494</td>
                 </tr>
-                <tr>
-                  <th>S4 (X1 &le; 24m tenure) [BEST]</th>
-                  <td>188 / 86</td>
-                  <td>372 / 33</td>
-                  <td>0.1252</td>
-                  <td>0.0609</td>
+                <tr class="highlight-row">
+                  <th><code>S4 [BEST]</code></th>
+                  <td><code>X1 &le; 24</code> (Tenure &le; 24 Months)</td>
+                  <td>188 / 86 (45.74%)</td>
+                  <td>372 / 33 (8.87%)</td>
+                  <td><span class="status-tag pass">0.1252</span></td>
+                  <td><span class="status-tag pass">0.0606</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
 
-        <div class="card-panel">
-          <h3>Task 4.2: Individual &amp; Ensemble Voting Models (outputs/part4_voting.csv)</h3>
           <div tabindex="0" role="region" aria-labelledby="p4-vote-cap" class="table-wrapper">
-            <table style="--label-2: 'TP / FP / TN / FN'; --label-3: 'Precision'; --label-4: 'Recall'; --label-5: 'F1 Score'; --label-6: 'Test Cost';">
-              <caption id="p4-vote-cap">Test Set Performance Across Classifiers &amp; Voting Rules</caption>
+            <table style="--label-2: 'TP / FP / TN / FN'; --label-3: 'Precision'; --label-4: 'Recall'; --label-5: 'F1 Score'; --label-6: 'Test Cost (INR)';">
+              <caption id="p4-vote-cap">Task 4.2: Classifier &amp; Ensemble Voting Table at &tau; = 0.30 (outputs/part4_voting.csv &amp; part4_results.txt)</caption>
               <thead>
                 <tr>
-                  <th>Model</th>
+                  <th>Model (&tau; = 0.30 Rule)</th>
                   <th>TP / FP / TN / FN</th>
                   <th>Precision</th>
                   <th>Recall</th>
@@ -495,16 +839,16 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th>Logistic (&tau; = 0.5)</th>
-                  <td>24 / 20 / 169 / 27</td>
-                  <td>0.5455</td>
-                  <td>0.4706</td>
-                  <td>0.5053</td>
-                  <td>INR 11,800 (INR 6,050 at &tau;=0.15)</td>
+                <tr class="highlight-row">
+                  <th><code>logistic</code> (&tau; = 0.30)</th>
+                  <td>38 / 44 / 145 / 13</td>
+                  <td>0.4634</td>
+                  <td>0.7451</td>
+                  <td><span class="status-tag pass">0.5714 (Best F1)</span></td>
+                  <td>INR 7,400 (INR 6,050 at &tau;=0.15)</td>
                 </tr>
                 <tr>
-                  <th>KNN (K = 5)</th>
+                  <th><code>knn</code> (K = 5)</th>
                   <td>17 / 24 / 165 / 34</td>
                   <td>0.4146</td>
                   <td>0.3333</td>
@@ -512,29 +856,88 @@
                   <td>INR 14,800</td>
                 </tr>
                 <tr>
-                  <th>Decision Stump (S4)</th>
-                  <td>37 / 39 / 150 / 14</td>
-                  <td>0.4868</td>
-                  <td>0.7255</td>
-                  <td>0.5827</td>
-                  <td>INR 7,550</td>
-                </tr>
-                <tr>
-                  <th>Hard Majority Vote</th>
-                  <td>26 / 17 / 172 / 25</td>
-                  <td>0.6047</td>
-                  <td>0.5098</td>
+                  <th><code>stump</code> (S4: X1 &le; 24)</th>
+                  <td>39 / 51 / 138 / 12</td>
+                  <td>0.4333</td>
+                  <td>0.7647</td>
                   <td>0.5532</td>
-                  <td>INR 10,850</td>
+                  <td>INR 7,350</td>
                 </tr>
                 <tr>
-                  <th>Soft Probability Vote</th>
-                  <td>28 / 17 / 172 / 23</td>
-                  <td>0.6222</td>
-                  <td>0.5490</td>
-                  <td>0.5833</td>
-                  <td>INR 10,050</td>
+                  <th><code>hard_vote</code> (Majority &ge; 2)</th>
+                  <td>35 / 45 / 144 / 16</td>
+                  <td>0.4375</td>
+                  <td>0.6863</td>
+                  <td>0.5344</td>
+                  <td>INR 8,650</td>
                 </tr>
+                <tr>
+                  <th><code>soft_vote</code> (Mean p &ge; 0.30)</th>
+                  <td>38 / 49 / 140 / 13</td>
+                  <td>0.4368</td>
+                  <td>0.7451</td>
+                  <td>0.5507</td>
+                  <td>INR 7,650</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div tabindex="0" role="region" aria-labelledby="p4-ada-cap" class="table-wrapper" style="max-block-size: 360px;">
+            <table style="--label-2: 'Point'; --label-3: 'Weight Before'; --label-4: 'Unnormalised'; --label-5: 'Weight After';">
+              <caption id="p4-ada-cap">Task 4.3: Exact 16-Row AdaBoost Weight Trajectory (outputs/part4_adaboost.csv)</caption>
+              <thead>
+                <tr>
+                  <th>Round</th>
+                  <th>Point (y / h_t)</th>
+                  <th>Weight Before</th>
+                  <th>Unnormalised</th>
+                  <th>Weight After</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th>Round 1</th><td>Point 1 (+1 / +1)</td><td>0.1250</td><td>0.0722</td><td>0.0833</td></tr>
+                <tr><th>Round 1</th><td>Point 2 (+1 / +1)</td><td>0.1250</td><td>0.0722</td><td>0.0833</td></tr>
+                <tr class="highlight-row"><th>Round 1</th><td>Point 3 (+1 / -1) [ERR]</td><td>0.1250</td><td>0.2165</td><td>0.2500 (Misclassified sum = 0.50)</td></tr>
+                <tr><th>Round 1</th><td>Point 4 (-1 / -1)</td><td>0.1250</td><td>0.0722</td><td>0.0833</td></tr>
+                <tr><th>Round 1</th><td>Point 5 (-1 / -1)</td><td>0.1250</td><td>0.0722</td><td>0.0833</td></tr>
+                <tr><th>Round 1</th><td>Point 6 (-1 / -1)</td><td>0.1250</td><td>0.0722</td><td>0.0833</td></tr>
+                <tr class="highlight-row"><th>Round 1</th><td>Point 7 (+1 / -1) [ERR]</td><td>0.1250</td><td>0.2165</td><td>0.2500 (Misclassified sum = 0.50)</td></tr>
+                <tr><th>Round 1</th><td>Point 8 (-1 / -1)</td><td>0.1250</td><td>0.0722</td><td>0.0833</td></tr>
+                <tr class="highlight-row"><th>Round 2</th><td>Point 1 (+1 / -1) [ERR]</td><td>0.0833</td><td>0.1863</td><td>0.2500 (Misclassified sum = 0.50)</td></tr>
+                <tr><th>Round 2</th><td>Point 2 (+1 / +1)</td><td>0.0833</td><td>0.0373</td><td>0.0500</td></tr>
+                <tr><th>Round 2</th><td>Point 3 (+1 / +1)</td><td>0.2500</td><td>0.1118</td><td>0.1500</td></tr>
+                <tr><th>Round 2</th><td>Point 4 (-1 / -1)</td><td>0.0833</td><td>0.0373</td><td>0.0500</td></tr>
+                <tr class="highlight-row"><th>Round 2</th><td>Point 5 (-1 / +1) [ERR]</td><td>0.0833</td><td>0.1863</td><td>0.2500 (Misclassified sum = 0.50)</td></tr>
+                <tr><th>Round 2</th><td>Point 6 (-1 / -1)</td><td>0.0833</td><td>0.0373</td><td>0.0500</td></tr>
+                <tr><th>Round 2</th><td>Point 7 (+1 / +1)</td><td>0.2500</td><td>0.1118</td><td>0.1500</td></tr>
+                <tr><th>Round 2</th><td>Point 8 (-1 / -1)</td><td>0.0833</td><td>0.0373</td><td>0.0500</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="p4-arch-cap" class="table-wrapper">
+            <table style="--label-2: 'Tensor Shape / Formula'; --label-3: 'Parameter Count'; --label-4: 'Architectural Role';">
+              <caption id="p4-arch-cap">Task 4.5: Neural Network Layer Parameter Breakdown (outputs/part4_architecture.csv &amp; RNN)</caption>
+              <thead>
+                <tr>
+                  <th>Layer Key</th>
+                  <th>Tensor Shape / Arithmetic Formula</th>
+                  <th>Parameters</th>
+                  <th>Architectural Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th><code>mlp_hidden1</code></th><td><code>784 &times; 16 + 16</code></td><td>12,560</td><td>Flattened 28&times;28 input to 16 hidden units</td></tr>
+                <tr><th><code>mlp_hidden2</code></th><td><code>16 &times; 16 + 16</code></td><td>272</td><td>Second dense hidden layer (ReLU)</td></tr>
+                <tr><th><code>mlp_output</code></th><td><code>16 &times; 10 + 10</code></td><td>170</td><td>10-class softmax output (<code>mlp_total = 13,002</code>)</td></tr>
+                <tr><th><code>cnn_conv1</code></th><td><code>(5 &times; 5 &times; 1 + 1) &times; 6</code> (pad=2, stride=1)</td><td>156</td><td>Output 28&times;28&times;6 &rarr; MaxPool 14&times;14&times;6</td></tr>
+                <tr><th><code>cnn_conv2</code></th><td><code>(5 &times; 5 &times; 6 + 1) &times; 16</code> (pad=0, stride=1)</td><td>2,416</td><td>Output 10&times;10&times;16 &rarr; MaxPool 5&times;5&times;16 (400 flat)</td></tr>
+                <tr><th><code>cnn_dense1</code></th><td><code>400 &times; 32 + 32</code></td><td>12,832</td><td>Dense representation layer (ReLU)</td></tr>
+                <tr class="highlight-row"><th><code>cnn_dense2</code></th><td><code>32 &times; 10 + 10</code></td><td>330</td><td>10-class output (<code>cnn_total = 15,734</code>)</td></tr>
+                <tr><th><code>rnn_total</code></th><td><code>(64&times;128) + (128&times;128) + 128 + (128&times;16) + 16</code></td><td>26,768</td><td>Sequence-length invariant review topic RNN</td></tr>
               </tbody>
             </table>
           </div>
@@ -543,22 +946,48 @@
     </section>
 
     <!-- ======================= TAB 5: ROBUSTNESS & DATA PROFILE ======================= -->
-    <section id="tab-robustness" class="tab-panel" role="tabpanel">
-      <div class="section-header">
-        <h2>Supplementary Diagnostics: Bootstrap CIs, 30 Random Splits, Calibration &amp; Wald Tests</h2>
-        <p>Empirical verification from data_profile.py and robustness.py confirming decision stability.</p>
-      </div>
+    <section id="tab-robustness" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-robustness" hidden="until-found">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Supplementary Empirical Audits &middot; data_profile.py &amp; robustness.py</span>
+          <h2>Bootstrap Resampling, Multi-Split Stability, Wald Inference, Calibration &amp; Cohort Profile</h2>
+          <p>
+            Rigorous sensitivity analysis verifying that our primary conclusions hold across 2,000 bootstrap draws of the test set, 30 alternative stratified
+            70/30 splits, five missed-churner penalty assumptions (INR 100 to INR 1,600), and observed-information Wald confidence intervals.
+          </p>
+        </div>
 
-      <div class="panel-grid">
-        <div class="card-panel">
-          <h3>Wald 95% Confidence Intervals on Logistic Weights (Task 2.2 Solution)</h3>
+        <div class="kpi-grid">
+          <article class="kpi-card pass">
+            <span class="kpi-label">2,000 Bootstrap Draws (Seed 2508)</span>
+            <span class="kpi-value">[INR 4,300, INR 8,200]</span>
+            <span class="kpi-sub">95% CI at &tau;=0.15 vs [INR 8,150, INR 15,601] at &tau;=0.50</span>
+          </article>
+          <article class="kpi-card pass">
+            <span class="kpi-label">Bootstrap Saving (0.50 minus 0.15)</span>
+            <span class="kpi-value">100% Positive</span>
+            <span class="kpi-sub">95% CI: [INR 2,398, INR 9,400] &middot; Recall CI: [0.7777, 0.9615]</span>
+          </article>
+          <article class="kpi-card">
+            <span class="kpi-label">30 Stratified 70/30 Re-Splits</span>
+            <span class="kpi-value">30 / 30 Wins</span>
+            <span class="kpi-sub">Mean saving vs 0.50: INR 7,417 (Min INR 4,700, Max INR 10,200)</span>
+          </article>
+          <article class="kpi-card accent">
+            <span class="kpi-label">Order-Value Skewness Profile</span>
+            <span class="kpi-value">Median 5.7650</span>
+            <span class="kpi-sub">Mean 8.9382 &middot; Max 104.5300 &middot; Top 1% = 6.4% of total value</span>
+          </article>
+        </div>
+
+        <div class="panel-grid">
           <div tabindex="0" role="region" aria-labelledby="wald-cap" class="table-wrapper">
-            <table style="--label-2: 'Weight'; --label-3: 'Std Error'; --label-4: '95% CI'; --label-5: 'Odds Ratio'; --label-6: 'Excludes Zero?';">
-              <caption id="wald-cap">Asymptotic Observed-Information Standard Errors (per Training SD)</caption>
+            <table style="--label-2: 'Weight (w_j)'; --label-3: 'Std Error (SE)'; --label-4: '95% Wald Interval'; --label-5: 'Odds Ratio'; --label-6: 'Significance';">
+              <caption id="wald-cap">Task 2.2 &amp; 2.4: Standardized Logistic Weights, Observed-Information Standard Errors &amp; 95% Wald Intervals</caption>
               <thead>
                 <tr>
-                  <th>Predictor</th>
-                  <th>Weight</th>
+                  <th>Predictor (per Training SD)</th>
+                  <th>Weight (w_j)</th>
                   <th>Std Error</th>
                   <th>95% Wald Interval</th>
                   <th>Odds Ratio</th>
@@ -566,32 +995,32 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th>X1 (Tenure)</th>
+                <tr class="highlight-row">
+                  <th><code>X1</code> (Tenure, months)</th>
                   <td>-0.5554</td>
                   <td>0.1905</td>
                   <td>[-0.9287, -0.1820]</td>
                   <td>0.5739</td>
-                  <td>Yes (z = -2.92)</td>
+                  <td><span class="status-tag pass">Yes (z = -2.92)</span></td>
                 </tr>
-                <tr>
-                  <th>X2 (Complaints)</th>
-                  <td>0.5505</td>
+                <tr class="highlight-row">
+                  <th><code>X2</code> (Support Complaints)</th>
+                  <td>+0.5505</td>
                   <td>0.1545</td>
                   <td>[0.2476, 0.8533]</td>
                   <td>1.7341</td>
-                  <td>Yes (z = +3.56)</td>
+                  <td><span class="status-tag pass">Yes (z = +3.56)</span></td>
                 </tr>
-                <tr>
-                  <th>X3 (Discount Share)</th>
-                  <td>0.9013</td>
+                <tr class="highlight-row">
+                  <th><code>X3</code> (Discount Share)</th>
+                  <td>+0.9013</td>
                   <td>0.1905</td>
                   <td>[0.5279, 1.2748]</td>
                   <td>2.4629</td>
-                  <td>Yes (z = +4.73)</td>
+                  <td><span class="status-tag pass">Yes (z = +4.73)</span></td>
                 </tr>
                 <tr>
-                  <th>X4 (Avg Order Value)</th>
+                  <th><code>X4</code> (Avg Order Value)</th>
                   <td>-0.1459</td>
                   <td>0.1410</td>
                   <td>[-0.4224, 0.1305]</td>
@@ -599,7 +1028,7 @@
                   <td>No (z = -1.03)</td>
                 </tr>
                 <tr>
-                  <th>X5 (Loyalty Score)</th>
+                  <th><code>X5</code> (Loyalty Score)</th>
                   <td>-0.2162</td>
                   <td>0.1527</td>
                   <td>[-0.5154, 0.0830]</td>
@@ -607,39 +1036,36 @@
                   <td>No (z = -1.42)</td>
                 </tr>
                 <tr>
-                  <th>X6 (COD Preference)</th>
-                  <td>0.2348</td>
+                  <th><code>X6</code> (Cash on Delivery)</th>
+                  <td>+0.2348</td>
                   <td>0.1211</td>
                   <td>[-0.0025, 0.4721]</td>
                   <td>1.2646</td>
-                  <td>No (z = +1.94)</td>
+                  <td>Borderline (misses 0 by 0.0025)</td>
                 </tr>
                 <tr>
-                  <th>X7 (Flipkart Plus)</th>
+                  <th><code>X7</code> (Flipkart Plus)</th>
                   <td>-0.0120</td>
                   <td>0.1233</td>
                   <td>[-0.2537, 0.2297]</td>
                   <td>0.9881</td>
-                  <td>No (z = -0.10)</td>
+                  <td>No (z = -0.10; wide CI)</td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
 
-        <div class="card-panel">
-          <h3>Cost-Ratio Sensitivity &amp; Calibration Summary</h3>
           <div tabindex="0" role="region" aria-labelledby="sens-cap" class="table-wrapper">
-            <table style="--label-2: 'Chosen Tau'; --label-3: 'Test Cost'; --label-4: 'Flagged / Missed'; --label-5: 'Cost at 0.5'; --label-6: 'Cost Nobody';">
-              <caption id="sens-cap">Optimal Threshold Across Missed-Churner Cost Assumptions (False Alarm = INR 50)</caption>
+            <table style="--label-2: 'Chosen Tau'; --label-3: 'Test Cost'; --label-4: 'Flagged / Missed'; --label-5: 'Cost at 0.50'; --label-6: 'Cost Nobody';">
+              <caption id="sens-cap">Cost-Ratio Sensitivity Analysis (outputs/extras/robustness.txt, False Alarm Fixed at INR 50)</caption>
               <thead>
                 <tr>
-                  <th>Miss Cost (INR)</th>
-                  <th>Chosen &tau;</th>
-                  <th>Test Cost (INR)</th>
+                  <th>Miss Cost (Ratio)</th>
+                  <th>Chosen &tau;*</th>
+                  <th>Test Cost at &tau;*</th>
                   <th>Flagged / Missed</th>
-                  <th>Cost at &tau;=0.5</th>
-                  <th>Cost Nobody</th>
+                  <th>Cost at &tau; = 0.50</th>
+                  <th>Cost Flag Nobody</th>
                 </tr>
               </thead>
               <tbody>
@@ -659,17 +1085,17 @@
                   <td>INR 6,400</td>
                   <td>INR 10,200</td>
                 </tr>
-                <tr>
-                  <th>INR 400 (8:1 Baseline)</th>
-                  <td>0.15</td>
-                  <td>INR 6,050</td>
+                <tr class="highlight-row">
+                  <th>INR 400 (8:1 Brief)</th>
+                  <td><span class="status-tag pass">0.15</span></td>
+                  <td><strong>INR 6,050</strong></td>
                   <td>118 / 6</td>
                   <td>INR 11,800</td>
                   <td>INR 20,400</td>
                 </tr>
                 <tr>
                   <th>INR 800 (16:1)</th>
-                  <td>0.05</td>
+                  <td>0.05 (Grid Edge)</td>
                   <td>INR 4,800</td>
                   <td>147 / 0</td>
                   <td>INR 22,600</td>
@@ -677,7 +1103,7 @@
                 </tr>
                 <tr>
                   <th>INR 1,600 (32:1)</th>
-                  <td>0.05</td>
+                  <td>0.05 (Grid Edge)</td>
                   <td>INR 4,800</td>
                   <td>147 / 0</td>
                   <td>INR 44,200</td>
@@ -687,31 +1113,337 @@
             </table>
           </div>
         </div>
+
+        <div class="panel-grid">
+          <div tabindex="0" role="region" aria-labelledby="cal-cap" class="table-wrapper">
+            <table style="--label-2: 'Test Count'; --label-3: 'Mean Predicted'; --label-4: 'Observed Churn'; --label-5: 'Calibration Assessment';">
+              <caption id="cal-cap">Probability Calibration Audit on Held-Out Test Rows (outputs/extras/robustness.txt)</caption>
+              <thead>
+                <tr>
+                  <th>Probability Bin</th>
+                  <th>Test Count (n)</th>
+                  <th>Mean Predicted p</th>
+                  <th>Observed Churn Rate</th>
+                  <th>Calibration Assessment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <th><code>[0.00, 0.10)</code></th>
+                  <td>104</td>
+                  <td>0.0263</td>
+                  <td>0.0288</td>
+                  <td><span class="status-tag pass">Well Calibrated (Diff: -0.0025)</span></td>
+                </tr>
+                <tr class="highlight-row">
+                  <th><code>[0.10, 0.20)</code> (Contains &tau;* = 0.15)</th>
+                  <td>29</td>
+                  <td>0.1456</td>
+                  <td>0.1724</td>
+                  <td><span class="status-tag pass">Well Calibrated (Diff: -0.0268)</span></td>
+                </tr>
+                <tr>
+                  <th><code>[0.20, 0.40)</code></th>
+                  <td>43</td>
+                  <td>0.2851</td>
+                  <td>0.2791</td>
+                  <td><span class="status-tag pass">Well Calibrated (Diff: +0.0060)</span></td>
+                </tr>
+                <tr>
+                  <th><code>[0.40, 0.60)</code> (Contains &tau; = 0.50)</th>
+                  <td>38</td>
+                  <td>0.4929</td>
+                  <td>0.3684</td>
+                  <td><span class="status-tag warn">Over-Predicts by +0.1245 (Unreliable cut)</span></td>
+                </tr>
+                <tr>
+                  <th><code>[0.60, 1.00]</code></th>
+                  <td>26</td>
+                  <td>0.6928</td>
+                  <td>0.6538</td>
+                  <td><span class="status-tag pass">Closely Aligned (Diff: +0.0390)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="prof-cap" class="table-wrapper">
+            <table style="--label-2: 'Cohort / Stratum'; --label-3: 'Customer Count'; --label-4: 'Observed Churn Rate'; --label-5: 'Analytical Takeaway';">
+              <caption id="prof-cap">Empirical Cohort Churn Profile &amp; Collinearity Structure (outputs/extras/data_profile.txt)</caption>
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Cohort / Stratum</th>
+                  <th>Count</th>
+                  <th>Churn Rate</th>
+                  <th>Analytical Takeaway</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <th>Tenure Stratum 1</th>
+                  <td><code>X1 &le; 12 months</code></td>
+                  <td>93</td>
+                  <td>0.4731 (47.31%)</td>
+                  <td>Highest-risk onboarding window</td>
+                </tr>
+                <tr class="highlight-row">
+                  <th>Tenure Stratum 2</th>
+                  <td><code>12 &lt; X1 &le; 24 months</code></td>
+                  <td>185</td>
+                  <td>0.4378 (43.78%)</td>
+                  <td>Explains why S4 cuts at X1 &le; 24 months</td>
+                </tr>
+                <tr>
+                  <th>Tenure Stratum 3</th>
+                  <td><code>24 &lt; X1 &le; 48 months</code></td>
+                  <td>292</td>
+                  <td>0.1165 (11.65%)</td>
+                  <td>Sharp retention stabilization past year 2</td>
+                </tr>
+                <tr>
+                  <th>Tenure Stratum 4</th>
+                  <td><code>X1 &gt; 48 months</code></td>
+                  <td>230</td>
+                  <td>0.0131 (1.31%)</td>
+                  <td>Near-zero attrition among veteran loyalists</td>
+                </tr>
+                <tr>
+                  <th>Payment Method</th>
+                  <td>COD (<code>X6=1</code>) vs Prepaid (<code>X6=0</code>)</td>
+                  <td>341 / 459</td>
+                  <td>0.2727 vs 0.1678</td>
+                  <td>COD customers churn at 1.63&times; prepaid rate</td>
+                </tr>
+                <tr>
+                  <th>Loyalty Program</th>
+                  <td>Plus (<code>X7=1</code>) vs Non-Plus (<code>X7=0</code>)</td>
+                  <td>404 / 396</td>
+                  <td>0.1683 vs 0.2562</td>
+                  <td>Collinear with tenure (r(X1,X3) = -0.710, r(X1,X5) = +0.557)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ======================= TAB 6: VIVA Q&A & TRACEABILITY ======================= -->
-    <section id="tab-viva" class="tab-panel" role="tabpanel">
-      <div class="section-header">
-        <h2>Interactive Viva Voce Defense Explorer &amp; Requirement Traceability</h2>
-        <p>Search across key mathematical defenses, edge-case guards, and task-to-test mappings.</p>
-      </div>
+    <section id="tab-viva" class="tab-panel" role="tabpanel" aria-labelledby="btn-tab-viva" hidden="until-found">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span class="section-kicker">Academic Defense &amp; Requirement Traceability Matrix</span>
+          <h2>Interactive Master's Viva Voce Defense Explorer &amp; End-to-End Task Traceability</h2>
+          <p>
+            Filter or search 18 graduate-level mathematical defenses covering estimator unbiasedness, numerical stability, tie-breaking determinism,
+            spectral decomposition, and mutation-testing verification, followed by the complete Task-to-Code-to-Test traceability matrix.
+          </p>
+        </div>
 
-      <div class="search-bar">
-        <input type="search" id="viva-search" class="search-input" placeholder="Search viva questions (e.g. Bessel, log-log, sigmoid, elbow, PCA, AdaBoost, OOB)..." aria-label="Search viva defense questions">
-      </div>
+        <div class="search-bar">
+          <input type="search" id="viva-search" class="search-input" placeholder="Search viva defenses (e.g., Bessel, stable sort, sigmoid, leakage, Wald, elbow, PCA sign, AdaBoost, OOB, mutants)..." aria-label="Search viva defense questions">
+        </div>
 
-      <div id="viva-container" class="qa-list">
+        <div class="filter-pills" role="group" aria-label="Filter Viva Questions by Topic">
+          <button type="button" class="filter-pill" data-cat="all" aria-pressed="true">All Defenses (18)</button>
+          <button type="button" class="filter-pill" data-cat="Part 1" aria-pressed="false">Part 1: Inference &amp; OLS</button>
+          <button type="button" class="filter-pill" data-cat="Part 2" aria-pressed="false">Part 2: Churn &amp; Cost</button>
+          <button type="button" class="filter-pill" data-cat="Part 3" aria-pressed="false">Part 3: Unsupervised &amp; PCA</button>
+          <button type="button" class="filter-pill" data-cat="Part 4" aria-pressed="false">Part 4: Ensembles &amp; DL</button>
+          <button type="button" class="filter-pill" data-cat="Hardening" aria-pressed="false">Hardening &amp; Mutation Suite</button>
+        </div>
+
+        <div id="viva-container" class="qa-list">
+        </div>
+
+        <div tabindex="0" role="region" aria-labelledby="trace-cap" class="table-wrapper">
+          <table style="--label-2: 'Brief Requirement'; --label-3: 'Implementation Location'; --label-4: 'Output Artifact &amp; Key'; --label-5: 'Automated Verification Test';">
+            <caption id="trace-cap">Complete Requirement Traceability Matrix (Tasks 1.1 – 4.5 &amp; Hardening Invariants)</caption>
+            <thead>
+              <tr>
+                <th>Task ID</th>
+                <th>Brief Requirement</th>
+                <th>Implementation Location</th>
+                <th>Output Artifact &amp; Key</th>
+                <th>Automated Verification Test</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Task 1.1</th>
+                <td>Sample mean, sample SD (ddof=1), SE, 95% normal CI</td>
+                <td><code>part1.py</code> L16–L23</td>
+                <td><code>part1_results.txt</code> (<code>mean_value=8.9382</code>)</td>
+                <td><code>test_part1_estimation_and_test</code></td>
+              </tr>
+              <tr>
+                <th>Task 1.2</th>
+                <td>Two-sided z-test against H0: &mu; = 8.0 (INR 800)</td>
+                <td><code>part1.py</code> L20–L23</td>
+                <td><code>part1_results.txt</code> (<code>z_stat=2.8930</code>, <code>yes</code>)</td>
+                <td><code>test_part1_estimation_and_test</code></td>
+              </tr>
+              <tr>
+                <th>Task 1.3</th>
+                <td>Minimum sample size for margin E = 0.50 at 95% confidence</td>
+                <td><code>part1.py</code> L24</td>
+                <td><code>part1_results.txt</code> (<code>n_required=1293</code>)</td>
+                <td><code>test_part1_estimation_and_test</code></td>
+              </tr>
+              <tr>
+                <th>Task 1.4</th>
+                <td>Closed-form OLS of order_value on X4 + ANOVA TSS=ESS+RSS</td>
+                <td><code>part1.py</code> L27–L36, <code>common.py</code> <code>ols_simple</code></td>
+                <td><code>part1_results.txt</code> (<code>r2=0.5196</code>, <code>rmse=6.3537</code>)</td>
+                <td><code>test_part1_simple_regression_and_sum_of_squares_identity</code></td>
+              </tr>
+              <tr>
+                <th>Task 1.5</th>
+                <td>500-epoch Gradient Descent on standardized X4 (&eta; = 0.1)</td>
+                <td><code>part1.py</code> L39–L47</td>
+                <td><code>part1_results.txt</code> (<code>gd_J500=40.3698</code>, <code>gap=0.0000</code>)</td>
+                <td><code>test_part1_gradient_descent_converges_to_closed_form</code></td>
+              </tr>
+              <tr>
+                <th>Task 1.6</th>
+                <td>Heteroscedastic funnel ratio &amp; log-log variance stabilization</td>
+                <td><code>part1.py</code> L50–L59, <code>common.py</code> <code>halves_by_fitted</code></td>
+                <td><code>part1_results.txt</code> (<code>3.7525</code> &rarr; <code>1.0396</code>)</td>
+                <td><code>test_part1_stable_sort_matters_and_funnel_numbers_match</code></td>
+              </tr>
+              <tr>
+                <th>Task 1.7</th>
+                <td>Multiple OLS via normal equations + Adjusted R2 comparison</td>
+                <td><code>part1.py</code> L62–L69</td>
+                <td><code>part1_results.txt</code> (<code>mr_adj_r2=0.7403</code>)</td>
+                <td><code>test_part1_multiple_regression_matches_numpy_lstsq</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.1</th>
+                <td>Stratified 70/30 split preserving file order &amp; non-leakage scaler</td>
+                <td><code>part2.py</code> L13–L20, <code>common.py</code> L73–L104</td>
+                <td><code>part2_results.txt</code> (<code>560 / 119</code>, <code>240 / 51</code>)</td>
+                <td><code>test_split_is_stratified_ordered_disjoint_and_complete</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.2</th>
+                <td>Scratch Logistic Regression (1,000 epochs, &eta; = 0.1)</td>
+                <td><code>part2.py</code> L23–L30, <code>common.py</code> <code>train_logistic</code></td>
+                <td><code>part2_results.txt</code> (<code>loss_epoch_1000=0.3704</code>)</td>
+                <td><code>test_part2_gradient_descent_is_near_the_true_minimum_and_loss_is_monotone</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.3</th>
+                <td>200-epoch learning-rate comparison (&eta; = 0.01, 0.1, 1.0)</td>
+                <td><code>part2.py</code> L33–L35</td>
+                <td><code>part2_results.txt</code> (<code>0.5091 / 0.3776 / 0.3703</code>)</td>
+                <td><code>test_part2_learning_rate_ordering_and_odds_ratios</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.4</th>
+                <td>Odds ratios exp(w_j) per training SD</td>
+                <td><code>part2.py</code> L38–L39</td>
+                <td><code>part2_results.txt</code> (<code>odds_ratio_X3=2.4629</code>)</td>
+                <td><code>test_part2_learning_rate_ordering_and_odds_ratios</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.5</th>
+                <td>Confusion matrices &amp; metrics at &tau; = 0.5, &tau; = 0.3, blind baseline</td>
+                <td><code>part2.py</code> L42–L48</td>
+                <td><code>part2_results.txt</code> (<code>blind_accuracy=0.7875</code>)</td>
+                <td><code>test_part2_confusion_tables_are_internally_consistent</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.6</th>
+                <td>9-point threshold sweep (0.1 to 0.9) on test set</td>
+                <td><code>part2.py</code> L52–L57</td>
+                <td><code>outputs/part2_thresholds.csv</code> (9 rows)</td>
+                <td><code>test_part2_threshold_sweep_monotone_and_matches_results</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.7</th>
+                <td>Scratch KNN + 5-fold CV over odd K = 1..21</td>
+                <td><code>part2.py</code> L60–L68, <code>common.py</code> <code>select_k</code></td>
+                <td><code>part2_knn_cv.csv</code>, <code>knn_best_k=5</code></td>
+                <td><code>test_part2_knn_cv_matches_independent_recomputation</code></td>
+              </tr>
+              <tr>
+                <th>Task 2.8</th>
+                <td>Asymmetric cost optimization on training set (INR 50 / INR 400)</td>
+                <td><code>part2.py</code> L71–L82, <code>common.py</code> <code>choose_tau</code></td>
+                <td><code>cost_tau=0.1500</code>, <code>cost_test_at_tau=6050</code></td>
+                <td><code>test_part2_cost_threshold_is_optimal_on_training_rows</code></td>
+              </tr>
+              <tr>
+                <th>Task 3.1</th>
+                <td>Scratch K-Means (K = 2..6) &amp; discrete second-difference elbow</td>
+                <td><code>part3.py</code> L16–L39</td>
+                <td><code>part3_results.txt</code> (<code>elbow_k=3</code>)</td>
+                <td><code>test_part3_kmeans_matches_slow_reimplementation_and_is_a_fixed_point</code></td>
+              </tr>
+              <tr>
+                <th>Task 3.2</th>
+                <td>Segment profiling in original units ordered by ascending X3</td>
+                <td><code>part3.py</code> L42–L53</td>
+                <td><code>outputs/part3_segments.csv</code> (322 / 255 / 223)</td>
+                <td><code>test_part3_segments_file_is_consistent_with_data</code></td>
+              </tr>
+              <tr>
+                <th>Task 3.3</th>
+                <td>Agglomerative clustering (Single, Complete, Average) &amp; gap cut</td>
+                <td><code>part3.py</code> L56–L82</td>
+                <td><code>outputs/part3_hierarchical.csv</code> (15 rows, 4/2/2)</td>
+                <td><code>test_part3_all_fifteen_merges_match_an_independent_lance_williams_implementation</code></td>
+              </tr>
+              <tr>
+                <th>Tasks 3.4–3.5</th>
+                <td>Correlation PCA, sign convention, 80% rule, segment PC1 means</td>
+                <td><code>part3.py</code> L85–L110</td>
+                <td><code>eigenvalue_sum=5.0000</code>, <code>components_for_80pct=3</code></td>
+                <td><code>test_part3_pca_matches_numpy_on_the_correlation_matrix</code></td>
+              </tr>
+              <tr>
+                <th>Task 4.1</th>
+                <td>Root entropy/Gini &amp; candidate split evaluation (S1..S4)</td>
+                <td><code>part4.py</code> L23–L45</td>
+                <td><code>outputs/part4_splits.csv</code> (Best: <code>S4</code>)</td>
+                <td><code>test_part4_entropy_and_gini_edge_cases_and_split_table</code></td>
+              </tr>
+              <tr>
+                <th>Task 4.2</th>
+                <td>Decision stump, Hard Voting &amp; Soft Voting ensembles at &tau; = 0.30</td>
+                <td><code>part4.py</code> L48–L67</td>
+                <td><code>outputs/part4_voting.csv</code> (5 models)</td>
+                <td><code>test_part4_stump_and_voting_rules</code></td>
+              </tr>
+              <tr>
+                <th>Task 4.3</th>
+                <td>2-round exact AdaBoost manual trace on 8-point dataset</td>
+                <td><code>part4.py</code> L70–L85, <code>common.py</code> <code>adaboost_round</code></td>
+                <td><code>outputs/part4_adaboost.csv</code> (16 rows)</td>
+                <td><code>test_part4_adaboost_by_independent_hand_calculation</code></td>
+              </tr>
+              <tr>
+                <th>Tasks 4.4–4.5</th>
+                <td>Random Forest OOB fraction &amp; MLP / CNN / RNN parameter sizing</td>
+                <td><code>part4.py</code> L88–L106</td>
+                <td><code>outputs/part4_architecture.csv</code>, <code>oob=0.3676</code></td>
+                <td><code>test_part4_oob_and_architecture_arithmetic</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
+  <!-- ======================= ACADEMIC FOOTER ======================= -->
   <footer class="site-footer">
     <div class="footer-inner">
-      <span><strong>Flipkart E-commerce Decision Intelligence</strong> — Capstone Project (IIT Mandi)</span>
-      <span>Author: <strong>Gaurav Chakraborty</strong> (iitmd_dsai_2508432) | Python + NumPy 2.2.6</span>
+      <span><strong>Flipkart E-commerce Decision Intelligence</strong> &mdash; Graduate Capstone Submission (IIT Mandi)</span>
+      <span>Author: <strong>Gaurav Chakraborty</strong> (<code>iitmd_dsai_2508432</code>) &middot; Deterministic Python + NumPy 2.2.6</span>
     </div>
   </footer>
 
