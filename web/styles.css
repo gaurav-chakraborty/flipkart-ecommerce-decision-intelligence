@@ -398,17 +398,58 @@ svg {
 .nav-bar {
   background-color: var(--bg-surface);
   border-block-end: 1px solid var(--border-subtle);
-  padding-inline: clamp(1rem, 4vw, 3rem);
   position: sticky;
   inset-block-start: 0;
   z-index: 20;
 }
 
-.nav-list.scroller {
+.nav-wrapper {
   max-inline-size: 1400px;
   margin-inline: auto;
-  padding-block: 0;
-  padding-inline: 0;
+  padding-inline: clamp(0.5rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  position: relative;
+}
+
+.nav-scroll-btn {
+  appearance: none;
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  flex: none;
+  z-index: 5;
+  transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  user-select: none;
+}
+
+.nav-scroll-btn:hover:not(:disabled) {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: var(--bg-surface);
+}
+
+.nav-scroll-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+  pointer-events: none;
+}
+
+.nav-list.scroller {
+  flex: 1 1 auto;
+  margin-inline: 0;
+  padding-block: 0.2rem;
+  padding-inline: 0.1rem;
   margin-block: 0;
   display: flex;
   flex-wrap: nowrap;
@@ -416,7 +457,22 @@ svg {
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  gap: 0.2rem;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  gap: 0.25rem;
+  scroll-behavior: smooth;
+}
+
+.nav-list.scroller::-webkit-scrollbar {
+  height: 4px;
+}
+
+.nav-list.scroller::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+}
+
+.nav-list.scroller::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Tab Buttons: Never change box dimensions on selection */

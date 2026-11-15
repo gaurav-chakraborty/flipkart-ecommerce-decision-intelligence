@@ -160,6 +160,7 @@
       document.documentElement.removeAttribute("data-theme");
     }
     drawAllCharts();
+    updateNavScrollButtons();
   }
 
   if (themeSelect) {
@@ -170,6 +171,7 @@
 
   darkMediaQuery.addEventListener("change", function () {
     drawAllCharts();
+    updateNavScrollButtons();
   });
 
   // ---------------- Tablist Navigation & hidden="until-found" Support ----------------
@@ -217,6 +219,7 @@
     }
 
     drawAllCharts();
+    updateNavScrollButtons();
   }
 
   if (tablist) {
@@ -230,6 +233,41 @@
         }
       }
     }, { passive: false });
+  }
+
+  var btnPrev = document.getElementById("btn-nav-prev");
+  var btnNext = document.getElementById("btn-nav-next");
+
+  function updateNavScrollButtons() {
+    if (!tablist || !btnPrev || !btnNext) return;
+    var maxScroll = tablist.scrollWidth - tablist.clientWidth;
+    if (maxScroll <= 4) {
+      btnPrev.style.visibility = "hidden";
+      btnNext.style.visibility = "hidden";
+    } else {
+      btnPrev.style.visibility = "visible";
+      btnNext.style.visibility = "visible";
+      btnPrev.disabled = tablist.scrollLeft <= 4;
+      btnNext.disabled = tablist.scrollLeft >= maxScroll - 4;
+    }
+  }
+
+  if (btnPrev && btnNext) {
+    btnPrev.addEventListener("click", function () {
+      if (tablist) {
+        tablist.scrollBy({ left: -240, behavior: "smooth" });
+      }
+    });
+    btnNext.addEventListener("click", function () {
+      if (tablist) {
+        tablist.scrollBy({ left: 240, behavior: "smooth" });
+      }
+    });
+    if (tablist) {
+      tablist.addEventListener("scroll", updateNavScrollButtons, { passive: true });
+    }
+    window.addEventListener("resize", updateNavScrollButtons, { passive: true });
+    setTimeout(updateNavScrollButtons, 50);
   }
 
   navButtons.forEach(function (btn, idx) {
