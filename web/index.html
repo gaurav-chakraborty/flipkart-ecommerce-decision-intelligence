@@ -44,14 +44,18 @@
 
   <!-- ======================= SINGLE-ROW SCROLLABLE TABLIST ======================= -->
   <nav class="nav-bar" aria-label="Analytical Modules">
-    <div class="nav-list scroller" focusgroup="tablist nomemory" role="tablist" aria-label="Capstone Modules">
-      <button type="button" id="btn-tab-overview" class="nav-btn" role="tab" aria-selected="true" focusgroupstart data-tab="tab-overview">0. Executive Synthesis</button>
-      <button type="button" id="btn-tab-part1" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part1">1. Parametric Inference &amp; OLS</button>
-      <button type="button" id="btn-tab-part2" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part2">2. Churn &amp; Cost Simulator</button>
-      <button type="button" id="btn-tab-part3" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part3">3. Unsupervised &amp; Spectral PCA</button>
-      <button type="button" id="btn-tab-part4" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part4">4. Ensembles, Boosting &amp; DL</button>
-      <button type="button" id="btn-tab-robustness" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-robustness">5. Robustness &amp; Cohort Audit</button>
-      <button type="button" id="btn-tab-viva" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-viva">6. Viva Defense &amp; Traceability</button>
+    <div class="nav-wrapper">
+      <button type="button" class="nav-scroll-btn nav-scroll-left" id="btn-nav-prev" aria-label="Scroll tabs left" title="Scroll tabs left">&lsaquo;</button>
+      <div class="nav-list scroller" focusgroup="tablist nomemory" role="tablist" aria-label="Capstone Modules">
+        <button type="button" id="btn-tab-overview" class="nav-btn" role="tab" aria-selected="true" focusgroupstart data-tab="tab-overview">0. Executive Synthesis</button>
+        <button type="button" id="btn-tab-part1" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part1">1. Parametric Inference &amp; OLS</button>
+        <button type="button" id="btn-tab-part2" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part2">2. Churn &amp; Cost Simulator</button>
+        <button type="button" id="btn-tab-part3" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part3">3. Unsupervised &amp; Spectral PCA</button>
+        <button type="button" id="btn-tab-part4" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-part4">4. Ensembles, Boosting &amp; DL</button>
+        <button type="button" id="btn-tab-robustness" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-robustness">5. Robustness &amp; Cohort Audit</button>
+        <button type="button" id="btn-tab-viva" class="nav-btn" role="tab" aria-selected="false" data-tab="tab-viva">6. Viva Defense &amp; Traceability</button>
+      </div>
+      <button type="button" class="nav-scroll-btn nav-scroll-right" id="btn-nav-next" aria-label="Scroll tabs right" title="Scroll tabs right">&rsaquo;</button>
     </div>
   </nav>
 
@@ -453,7 +457,7 @@
               <strong>Epoch-200 Learning-Rate Sweep (Task 2.3):</strong> <code>&eta; = 1.0 (0.3703) &lt; &eta; = 0.1 (0.3776) &lt; &eta; = 0.01 (0.5091)</code>.<br>
               <strong>KNN 5-Fold Cross-Validation (Task 2.7, outputs/part2_knn_cv.csv):</strong> Best <code>K = 5</code> (mean CV F1 = <code>0.4541</code>; test F1 = <code>0.3696</code>, TP=17, FP=24, TN=165, FN=34).
             </p>
-            <div tabindex="0" role="region" aria-labelledby="p2-knn-cap" class="table-wrapper" style="max-block-size: 270px;">
+            <div tabindex="0" role="region" aria-labelledby="p2-knn-cap" class="table-wrapper">
               <table style="--label-2: '5-Fold Mean CV F1'; --label-3: 'Selection Note';">
                 <caption id="p2-knn-cap">Task 2.7: 5-Fold Cross-Validation F1 Across Odd K = 1..21 (outputs/part2_knn_cv.csv)</caption>
                 <thead>
@@ -680,7 +684,7 @@
             </table>
           </div>
 
-          <div tabindex="0" role="region" aria-labelledby="p3-hier-cap" class="table-wrapper" style="max-block-size: 340px;">
+          <div tabindex="0" role="region" aria-labelledby="p3-hier-cap" class="table-wrapper">
             <table style="--label-2: 'Merge #'; --label-3: 'Cluster A'; --label-4: 'Cluster B'; --label-5: 'Merge Height';">
               <caption id="p3-hier-cap">Task 3.3: Complete 15-Merge Agglomerative Schedule (outputs/part3_hierarchical.csv)</caption>
               <thead>
@@ -885,7 +889,7 @@
         </div>
 
         <div class="panel-grid">
-          <div tabindex="0" role="region" aria-labelledby="p4-ada-cap" class="table-wrapper" style="max-block-size: 360px;">
+          <div tabindex="0" role="region" aria-labelledby="p4-ada-cap" class="table-wrapper">
             <table style="--label-2: 'Point'; --label-3: 'Weight Before'; --label-4: 'Unnormalised'; --label-5: 'Weight After';">
               <caption id="p4-ada-cap">Task 4.3: Exact 16-Row AdaBoost Weight Trajectory (outputs/part4_adaboost.csv)</caption>
               <thead>

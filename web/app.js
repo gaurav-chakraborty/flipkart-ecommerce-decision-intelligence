@@ -201,18 +201,35 @@
     });
 
     if (moveFocus) {
-      targetBtn.focus();
+      targetBtn.focus({ preventScroll: true });
     }
 
-    if (typeof targetBtn.scrollIntoView === "function") {
-      try {
-        targetBtn.scrollIntoView({ block: "nearest", inline: "nearest", container: "nearest" });
-      } catch (err) {
-        targetBtn.scrollIntoView({ block: "nearest", inline: "nearest" });
+    if (tablist && tablist.scrollWidth > tablist.clientWidth) {
+      var btnLeft = targetBtn.offsetLeft;
+      var btnRight = btnLeft + targetBtn.offsetWidth;
+      var viewLeft = tablist.scrollLeft;
+      var viewRight = viewLeft + tablist.clientWidth;
+      if (btnLeft < viewLeft) {
+        tablist.scrollLeft = Math.max(0, btnLeft - 16);
+      } else if (btnRight > viewRight) {
+        tablist.scrollLeft = btnRight - tablist.clientWidth + 16;
       }
     }
 
     drawAllCharts();
+  }
+
+  if (tablist) {
+    tablist.addEventListener("wheel", function (e) {
+      if (tablist.scrollWidth <= tablist.clientWidth) return;
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        var prevLeft = tablist.scrollLeft;
+        tablist.scrollLeft += e.deltaY;
+        if (tablist.scrollLeft !== prevLeft) {
+          e.preventDefault();
+        }
+      }
+    }, { passive: false });
   }
 
   navButtons.forEach(function (btn, idx) {

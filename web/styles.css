@@ -393,7 +393,7 @@ svg {
 }
 
 /* ==========================================================================
-   Single-Row Scrollable Tablist with Edge Fade Masks (modern-web-guidance: tabs)
+   Single-Row Scrollable Tablist (Frictionless Horizontal & Responsive Navigation)
    ========================================================================== */
 .nav-bar {
   background-color: var(--bg-surface);
@@ -413,70 +413,24 @@ svg {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  scrollbar-width: none;
-  scroll-snap-type: inline proximity;
-  scroll-padding-inline: 3rem;
-  gap: 0.25rem;
-  --fade-size: 3rem;
-  --fade-dir: right;
-  --fade-start-pos: 0;
-  --fade-end-pos: 100%;
-  mask:
-    linear-gradient(black, black) no-clip subtract,
-    linear-gradient(to var(--fade-dir), black, transparent) var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
-    linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos) 0 / var(--fade-end) 100% no-repeat no-clip;
-  animation: reveal-fade-start linear both, hide-fade-end linear both;
-  animation-timeline: scroll(self inline);
-  animation-range: 0 var(--fade-size), calc(100% - var(--fade-size)) 100%;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  gap: 0.2rem;
 }
 
-.nav-list.scroller::-webkit-scrollbar {
-  display: none;
-}
-
-.nav-list.scroller:dir(rtl) {
-  --fade-dir: left;
-  --fade-start-pos: 100%;
-  --fade-end-pos: 0;
-}
-
-@keyframes reveal-fade-start {
-  to {
-    --fade-start: var(--fade-size);
-  }
-}
-
-@keyframes hide-fade-end {
-  from {
-    --fade-end: var(--fade-size);
-  }
-}
-
-/* Fallback for browsers without scroll-driven animations */
-@supports not (animation-timeline: scroll()) {
-  .nav-list.scroller {
-    transition: --fade-start 0.2s, --fade-end 0.2s;
-  }
-  .nav-list.scroller.more-start {
-    --fade-start: var(--fade-size);
-  }
-  .nav-list.scroller.more-end {
-    --fade-end: var(--fade-size);
-  }
-}
-
-/* Tab Buttons: Never change box dimensions on selection (modern-web-guidance: tabs) */
+/* Tab Buttons: Never change box dimensions on selection */
 [role="tab"].nav-btn {
   position: relative;
-  flex: none;
-  scroll-snap-align: start;
+  flex: 1 0 auto;
+  text-align: center;
   appearance: none;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
-  padding-block: 0.85rem;
-  padding-inline: 1rem;
-  font-size: 0.9rem;
+  padding-block: 0.78rem;
+  padding-inline: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -508,20 +462,21 @@ svg {
 
 /* ==========================================================================
    Main Workspace & Tab Panels
-   IMPORTANT: Do not put padding/border/margin/background on [role="tabpanel"]
-   itself because hidden="until-found" only hides contents. Style .panel-inner!
    ========================================================================== */
 .main-container {
   inline-size: 100%;
   max-inline-size: 1400px;
   margin-inline: auto;
-  display: grid;
-  grid-template-columns: 100%;
+  display: block;
 }
 
 .tab-panel {
-  grid-area: 1 / 1;
   min-inline-size: 0;
+}
+
+.tab-panel[hidden] {
+  display: none !important;
+  pointer-events: none !important;
 }
 
 .panel-inner {
@@ -754,15 +709,14 @@ svg {
 }
 
 /* ==========================================================================
-   Responsive Data Tables (modern-web-guidance: responsive-table)
+   Responsive Data Tables (Clean Page-Level Vertical & Card-Level Horizontal Scroll)
    ========================================================================== */
 .table-wrapper {
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
   max-inline-size: 100%;
-  max-block-size: min(540px, 80vh);
-  container-type: inline-size;
-  scrollbar-gutter: stable;
-  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background-color: var(--bg-surface);
@@ -775,9 +729,9 @@ svg {
 
 table {
   inline-size: 100%;
-  border-collapse: separate;
+  border-collapse: collapse;
   border-spacing: 0;
-  font-size: 0.89rem;
+  font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -792,31 +746,23 @@ caption {
   border-block-end: 1px solid var(--border-subtle);
 }
 
-thead {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 2;
-}
-
 th,
 td {
-  padding-block: 0.65rem;
-  padding-inline: 0.85rem;
+  padding-block: 0.55rem;
+  padding-inline: 0.65rem;
   text-align: start;
   border-block-end: 1px solid var(--border-subtle);
+  vertical-align: top;
 }
 
 thead th {
   background-color: var(--bg-elevated);
   color: var(--text-primary);
   font-weight: 700;
-  white-space: nowrap;
+  line-height: 1.3;
 }
 
 tbody th {
-  position: sticky;
-  inset-inline-start: 0;
-  z-index: 1;
   background-color: var(--bg-surface);
   font-weight: 700;
 }
@@ -848,77 +794,6 @@ tbody tr:hover th {
 
 .status-tag.warn {
   color: var(--status-warn);
-}
-
-/* Container Query Stacked Table Transformation for Narrow Containers */
-@container (width < 600px) {
-  table,
-  thead,
-  tbody,
-  tr,
-  th,
-  td {
-    display: block;
-  }
-
-  thead {
-    /* MANDATORY: Hide column header from layout and screen readers */
-    display: none;
-  }
-
-  tr {
-    margin-block-end: 1rem;
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-  }
-
-  tbody th {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 2;
-    background-color: var(--bg-elevated);
-  }
-
-  td:nth-child(2)::before {
-    content: var(--label-2, "Col 2") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(3)::before {
-    content: var(--label-3, "Col 3") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(4)::before {
-    content: var(--label-4, "Col 4") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(5)::before {
-    content: var(--label-5, "Col 5") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(6)::before {
-    content: var(--label-6, "Col 6") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(7)::before {
-    content: var(--label-7, "Col 7") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(8)::before {
-    content: var(--label-8, "Col 8") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-  td:nth-child(9)::before {
-    content: var(--label-9, "Col 9") ": ";
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
 }
 
 /* ==========================================================================
